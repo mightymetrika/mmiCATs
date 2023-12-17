@@ -36,7 +36,7 @@
 #                                 family=binomial(link="logit"),
 #                                 method = "misclass")
 #   summary(rlogit.model)
-#   clust.im.p <- cluster_im_glmrob(rlogit.model, WVS, ~ country, report = T)
+#   clust.im.p <- cluster_im_glmRob(rlogit.model, WVS, ~ country, report = F)
 #
 #   # Cluster-Adjusted p-values:
 #   #

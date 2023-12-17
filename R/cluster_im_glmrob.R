@@ -1,5 +1,5 @@
 cluster_im_glmRob <-function(robmod, dat, cluster, ci.level = 0.95, report = TRUE,
-                             drop = TRUE, return.vcv = FALSE,
+                             drop = TRUE, return.vcv = FALSE, method,
                              ...){
 
 

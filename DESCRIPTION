@@ -16,7 +16,8 @@ Imports:
     clusterSEs,
     DT,
     robust,
-    shiny
+    shiny,
+    shinythemes
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
