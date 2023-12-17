@@ -34,6 +34,7 @@
 mmiCATs <- function(){
   # UI
   ui <- shiny::fluidPage(
+    theme = shinythemes::shinytheme("lumen"),
     shiny::titlePanel("Set Up CATs Analysis"),
     shiny::sidebarLayout(
       shiny::sidebarPanel(
@@ -45,11 +46,12 @@ mmiCATs <- function(){
         shiny::uiOutput("model_input_ui"),
         shiny::textInput("additional_args", "Additional Arguments (key=value format)"),
         shiny::numericInput("ci_value", "Confidence Interval", value = 0.95, min = 0, max = 1),
+        shiny::numericInput("round", "Round", value = 2, min = 0, max = 10),
         shiny::actionButton("fit", "Fit Model"),
         shiny::textInput("cluster", "Cluster Variable"),
         shiny::checkboxInput("drop", "Drop", value = FALSE),
         shiny::checkboxInput("truncate", "Truncate", value = FALSE),
-        shiny::checkboxInput("return.vcv", "Return Cluster Specific Coefficient Estimates", value = FALSE),
+        shiny::checkboxInput("return.vcv", "Show Cluster Estimates", value = FALSE),
         shiny::numericInput("seed_value", "Set seed (optional)", value = NA, min = 1, max = .Machine$integer.max),
         shiny::actionButton("run_analysis", "Run Analysis")
       ),
@@ -57,6 +59,7 @@ mmiCATs <- function(){
         shiny::htmlOutput("variables_section"),
         shiny::uiOutput("model_summ_header"),
         DT::DTOutput("model_summ"),
+        DT::DTOutput("glance_model"),
         shiny::uiOutput("CATs_results_header"),
         shiny::verbatimTextOutput("print_CATs_output")
       )
@@ -77,6 +80,7 @@ mmiCATs <- function(){
       # Read the CSV and return it
       utils::read.csv(inFile$datapath, stringsAsFactors = TRUE)
     })
+
 
     # Display the entire variables section (header + variable names)
     output$variables_section <- shiny::renderUI({
@@ -139,14 +143,23 @@ mmiCATs <- function(){
 
           # Round numeric columns to 3 decimal places
           numeric_columns <- sapply(tidy_model, is.numeric)
-          tidy_model[numeric_columns] <- lapply(tidy_model[numeric_columns], round, 3)
+          tidy_model[numeric_columns] <- lapply(tidy_model[numeric_columns], round, input$round)
 
           DT::datatable(tidy_model, options = list(pageLength = 5))
         })
 
-        # output$model_summ <- DT::renderDT({
-        #   broom::tidy(model, conf.int = TRUE, conf.level = input$ci_value)
-        # }, options = list(pageLength = 5))
+
+        output$glance_model <- DT::renderDT({
+          shiny::req(model_fitted())
+          gmod <- broom::glance(model)
+
+          # Round numeric columns to 3 decimal places
+          numeric_columns <- sapply(gmod, is.numeric)
+          gmod[numeric_columns] <- lapply(gmod[numeric_columns], round, input$round)
+
+          DT::datatable(gmod, options = list(pageLength = 5))
+        })
+
 
       }, error = function(e) {
         shiny::showNotification(
@@ -189,10 +202,10 @@ mmiCATs <- function(){
                                           truncate = input$truncate,
                                           return.vcv = input$return.vcv))
 
-        # Set outputs for the model and bain analysis
+        # Set outputs for the CATs analysis
         output$print_CATs_output <- shiny::renderPrint({ print(CATs_result) })
 
-        # Flag that bain analysis is done
+        # Flag that CATs analysis is done
         CATs_analysis_done(TRUE)
 
       }, error = function(e) {
@@ -202,7 +215,7 @@ mmiCATs <- function(){
           duration = NULL
         )
 
-        # Flag that bain analysis is not done
+        # Flag that CATs analysis is not done
         CATs_analysis_done(FALSE)
       })
     })
