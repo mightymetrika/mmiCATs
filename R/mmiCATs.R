@@ -106,15 +106,35 @@ mmiCATs <- function(){
       row_number <- info$row
       new_value <- info$value
 
-      if (info$col == 2) {  # Assuming the 'Type' column is the second column
+      if (info$col == 0){
+        tryCatch({
+          names(data)[row_number] <- new_value
+          # Update the reactive data frame
+          uploaded_data(data)
+        }, error = function(e) {
+          shiny::showNotification(
+            paste("Error in changing variable name:", e$message),
+            type = "error",
+            duration = NULL
+          )
+        })
+      }
+
+      if (info$col == 1) {  # Assuming the 'Type' column is the second column
         variable_name <- names(data)[row_number]  # Fetch the variable name using row_number
         tryCatch({
           if (new_value == "factor") {
             data[[variable_name]] <- as.factor(data[[variable_name]])
           } else if (new_value == "numeric") {
-            data[[variable_name]] <- as.numeric(as.character(data[[variable_name]]))
+            data[[variable_name]] <- as.numeric(data[[variable_name]])
+          } else if (new_value == "integer") {
+            data[[variable_name]] <- as.integer(data[[variable_name]])
+          } else if (new_value == "double") {
+            data[[variable_name]] <- as.double(data[[variable_name]])
           } else if (new_value == "character") {
             data[[variable_name]] <- as.character(data[[variable_name]])
+          } else {
+            stop("New data type must be one of the following: factor, numeric, integer, double, character")
           }
           # Update the reactive data frame
           uploaded_data(data)
