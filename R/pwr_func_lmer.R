@@ -1,4 +1,4 @@
-pwr_func_lmer <- function(betas = list("int" = 1, "x1" = -5, "x2" = 0),
+pwr_func_lmer <- function(betas = list("int" = 1, "x1" = -5, "x2" = 0, "x3" = 2),
                           dists = list("x1" = stats::rnorm, "x2" = stats::rbinom, "x3" = stats::rnorm),
                           distpar = list("x1" = list(mean = 0, sd = 1), "x2" = list(size = 1, prob = 0.4), "x3" = list(mean = 1, sd = 2)),
                           N = 25,
@@ -7,9 +7,10 @@ pwr_func_lmer <- function(betas = list("int" = 1, "x1" = -5, "x2" = 0),
                           var_intr = "x1",
                           grp = "ID",
                           mod = paste0("out ~ x1 + x2 + x3 + (1|", grp, ")"),
+                          catsmod = "out ~ x1 + x2 + x3",
                           r_slope = "x1",
                           r_int = "int",
-                          n_time = 5,
+                          n_time = 20,
                           mean_i = 0,
                           var_i = 1,
                           mean_s = 0,
@@ -60,24 +61,81 @@ pwr_func_lmer <- function(betas = list("int" = 1, "x1" = -5, "x2" = 0),
     # Model outcome with Gaussian error term
     data$out <- linear_combination + stats::rnorm(n, mean = mean_r, sd = sqrt(var_r))
 
+    # Safe Model Fitting Function
+    safe_fit_model <- function(fit_expression) {
+      tryCatch(
+        eval(fit_expression),
+        error = function(e) {
+          warning(sprintf("Model fitting failed: %s", e$message))
+          return(NULL)
+        }
+      )
+    }
 
-    fit <- lmerTest::lmer(stats::as.formula(mod), data = data)
-    tidy_fit <- broom.mixed::tidy(fit)
 
-    coef_value <- tidy_fit[tidy_fit$term == var_intr, "estimate"]
-    p_value <- tidy_fit[tidy_fit$term == var_intr, "p.value"] < alpha
+    # Fit models for each method
+    lmer_fit <- safe_fit_model(quote(lmerTest::lmer(stats::as.formula(mod), data = data)))
+    lm_fit <- safe_fit_model(quote(stats::glm(stats::as.formula(catsmod), data = data)))
+    cats_fit <- safe_fit_model(quote(clusterSEs::cluster.im.glm(lm_fit, dat = data, cluster = stats::as.formula(paste0("~ ",grp)), truncate = FALSE, drop = TRUE)))
+    cats_fit_trunc <- safe_fit_model(quote(clusterSEs::cluster.im.glm(lm_fit, dat = data, cluster = stats::as.formula(paste0("~ ",grp)), truncate = TRUE, drop = TRUE)))
+    lmrob_fit <- safe_fit_model(quote(robust::lmRob(stats::as.formula(catsmod), data = data)))
+    cats_fit_rob_cluster <- safe_fit_model(quote(cluster_im_lmRob(lmrob_fit, dat = data, cluster = stats::as.formula(paste0("~ ",grp)), drop = TRUE)))
 
-    return(c(coef_value[[1]], p_value[[1]]))
+    # Safe Result Extraction Function
+    safe_extract_results <- function(extract_function, ...) {
+      tryCatch(
+        extract_function(...),
+        error = function(e) {
+          warning(sprintf("Result extraction failed: %s", e$message))
+          return(list(estimate = NA, significant = NA))
+        }
+      )
+    }
+
+
+    # Extract results using helper functions
+    lme_results <- safe_extract_results(extract_lme_results, lmer_fit, var_intr, alpha)
+    cats_results <- safe_extract_results(extract_cats_results, lm_fit, cats_fit, var_intr, alpha)
+    cats_trunc_results <- safe_extract_results(extract_cats_results,lm_fit, cats_fit_trunc, var_intr, alpha)
+    cats_rob_results <- safe_extract_results(extract_cats_results,lmrob_fit, cats_fit_rob_cluster, var_intr, alpha)
+
+    # Combine results
+    combined_results <- list(lme = lme_results, cats = cats_results, cats_trunc = cats_trunc_results, cats_rob = cats_rob_results)
+    return(combined_results)
   }
 
-  results <- t(sapply(1:reps, function(x) simulate()))
-  sim_results <- data.frame(
-    mean_coef = mean(results[, 1]),
-    power = mean(results[, 2]) * 100
-  )
+  all_results <- replicate(reps, simulate(), simplify = FALSE)
+
+
+  compute_method_results <- function(results, method) {
+    method_results <- lapply(results, function(sim_result) sim_result[[method]])
+    mean_coef <- mean(sapply(method_results, function(x) unlist(x$estimate)), na.rm = TRUE)
+    power <- mean(sapply(method_results, function(x) unlist(x$significant)), na.rm = TRUE) * 100
+    return(list(mean_coef = mean_coef, power = power))
+  }
+
+  sim_results <- lapply(c("lme", "cats", "cats_trunc", "cats_rob"), function(method) compute_method_results(all_results, method))
 
   return(sim_results)
 }
+
+extract_lme_results <- function(fit, var_intr, alpha) {
+  tidy_fit <- broom.mixed::tidy(fit)
+  estimate <- tidy_fit[tidy_fit$term == var_intr, "estimate"]
+  p_value <- tidy_fit[tidy_fit$term == var_intr, "p.value"] < alpha
+  list(estimate = estimate, significant = p_value)
+}
+
+extract_cats_results <- function(fit, clust_fit, var_intr, alpha) {
+  tidy_fit <- broom::tidy(fit)
+  estimate <- tidy_fit[tidy_fit$term == var_intr, "estimate"]
+  p_value <- clust_fit$p.values[var_intr, ] < alpha
+  list(estimate = estimate, significant = p_value)
+}
+
+
+
+
 
 
 # pwr_func_lmer <- function(betas = list("int" = 1, "x1" = -5, "x2" = 0),
