@@ -1,10 +1,36 @@
-cluster_im_lmRob <-function(robmod, dat, cluster, ci.level = 0.95, report = TRUE,
+#' Cluster-Robust Inference for Linear Models
+#'
+#' Performs cluster-robust inference on a linear model object, using robust linear regression within each cluster. This function is designed to handle models where observations are clustered, and standard errors need to be adjusted to account for this clustering. The function applies a robust linear regression model to each cluster and then aggregates the results.
+#'
+#' @param robmod A robust linear model object, typically created using `lmrob()` from the `robustbase` package.
+#' @param formula A formula
+#' @param dat A data frame containing the data used in the model.
+#' @param cluster A formula or a character string indicating the clustering variable in `dat`.
+#' @param ci.level Confidence level for the confidence intervals, default is 0.95.
+#' @param report Logical; if TRUE, prints the cluster-adjusted p-values and confidence intervals.
+#' @param drop Logical; if TRUE, drops clusters where the model does not converge.
+#' @param return.vcv Logical; if TRUE, the variance-covariance matrix of the cluster-averaged coefficients will be returned.
+#' @param ... Additional arguments to be passed to the `lmRob()` function.
+#'
+#' @return An invisible list containing the following elements:
+#' \describe{
+#'   \item{p.values}{A matrix of p-values for each independent variable.}
+#'   \item{ci}{A matrix with the lower and upper bounds of the confidence intervals for each independent variable.}
+#'   \item{vcv.hat}{The variance-covariance matrix of the cluster-averaged coefficients, returned if `return.vcv` is TRUE.}
+#'   \item{beta.bar}{The cluster-averaged coefficients, returned if `return.vcv` is TRUE.}
+#' }
+#'
+#' @examples
+#' form <- Sepal.Length ~ Petal.Length + Petal.Width
+#' mod <- robust::lmRob(formula = form, dat = iris)
+#' cluster_im_lmRob(robmod = mod, formula = form, dat = iris,cluster = ~Species)
+#'
+#' @export
+cluster_im_lmRob <-function(robmod, formula, dat, cluster, ci.level = 0.95, report = TRUE,
                              drop = TRUE, return.vcv = FALSE,
                              ...){
 
-
-  form <- robmod$call$formula                                                  # what is the formula of this model?
-  variables <- all.vars(form)                                           # what variables are in this model?
+  variables <- all.vars(stats::as.formula(formula))                                           # what variables are in this model?
   clust.name <- all.vars(cluster)                                       # what is the name of the clustering variable?
   used.idx <- which(rownames(dat) %in% rownames(robmod$model))             # what were the actively used observations in the model?
   dat <- dat[used.idx,]                                                 # keep only active observations
@@ -18,13 +44,18 @@ cluster_im_lmRob <-function(robmod, dat, cluster, ci.level = 0.95, report = TRUE
 
   G.o <- G
   # Function to process each cluster
-  process_cluster <- function(clust_i, data, formula, ind_variables, drop, ...){
+  process_cluster <- function(clust_i, pdata, formula, ind_variables, drop){
     clust.ind <- which(clust == clust_i)  # select obs in cluster i
-    clust.dat <- data[clust.ind,]  # create the cluster i data set
+    clust.dat <- pdata[clust.ind,]  # create the cluster i data set
+
+    # clust.mod <- suppressWarnings(tryCatch(robustbase::lmrob(formula,
+    #                                                          data = clust.dat,
+    #                                                          ...),  # run cluster model
+    #                                        error = function(e){return(NULL)}))
     clust.mod <- suppressWarnings(tryCatch(robust::lmRob(formula,
-                                                          data = clust.dat,
-                                                          ...),  # run cluster model
+                                                         data = clust.dat),  # run cluster model
                                            error = function(e){return(NULL)}))
+
 
     # if(is.null(clust.mod) == FALSE ){
     #   if(clust.mod$converged == 0){clust.mod <- NULL}                  # judge GLM as failure if convergence not achieved
@@ -37,19 +68,19 @@ cluster_im_lmRob <-function(robmod, dat, cluster, ci.level = 0.95, report = TRUE
       if(fail == T){stop("cluster-specific model returned error (try drop = TRUE)", call.=FALSE)}
 
       # detect whether variables were dropped in individual clusters
-      if(length(rownames(summary(clust.mod)$coefficients)) != length(ind.variables)){
+      if(length(rownames(summary(clust.mod)$coefficients)) != length(ind_variables)){
         stop("cluster-specific model(s) dropped variables; ensure that all variables vary within clusters", call.=FALSE)
       }
 
-      b.clust_i <- stats::coefficients(clust.mod)[ind.variables]
+      b.clust_i <- stats::coefficients(clust.mod)[ind_variables]
 
     }else{
       if(fail == F){
         # detect whether variables were dropped in individual clusters
-        if(length(rownames(summary(clust.mod)$coefficients)) != length(ind.variables)){
+        if(length(rownames(summary(clust.mod)$coefficients)) != length(ind_variables)){
           stop("cluster-specific model(s) dropped variables; ensure that all variables vary within clusters", call.=FALSE)
         }
-        b.clust_i <- stats::coefficients(clust.mod)[ind.variables]
+        b.clust_i <- stats::coefficients(clust.mod)[ind_variables]
       }else{
         b.clust_i  <- NA
       }
@@ -57,8 +88,8 @@ cluster_im_lmRob <-function(robmod, dat, cluster, ci.level = 0.95, report = TRUE
   }
 
   # Use lapply to iterate over each unique cluster
-  results <- lapply(unique(clust), process_cluster, data = dat, formula = form,
-                    ind_variables = ind.variables, drop = drop, ...)
+  results <- lapply(unique(clust), process_cluster, pdata = dat, formula = formula,
+                    ind_variables = ind.variables, drop = drop)
 
   # Combine the results into a matrix
   b.clust <- do.call(rbind, results)
