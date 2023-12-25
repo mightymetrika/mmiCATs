@@ -1,4 +1,4 @@
-pwr_func_lmer <- function(betas = list("int" = 1, "x1" = -5, "x2" = 0, "x3" = 2),
+pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10),
                           dists = list("x1" = stats::rnorm, "x2" = stats::rbinom, "x3" = stats::rnorm),
                           distpar = list("x1" = list(mean = 0, sd = 1), "x2" = list(size = 1, prob = 0.4), "x3" = list(mean = 1, sd = 2)),
                           N = 25,
@@ -21,10 +21,12 @@ pwr_func_lmer <- function(betas = list("int" = 1, "x1" = -5, "x2" = 0, "x3" = 2)
                           cor_mat = diag(2),
                           corvars = list(c("x1", "x3"))) {
 
+  formula <- catsmod
+
   simulate <- function() {
     n <- N * n_time
-    data <- data.frame(grp = rep(1:N, each = n_time))
-    names(data) <- grp
+    sdata <- data.frame(grp = rep(1:N, each = n_time))
+    names(sdata) <- grp
 
     # Generate data for correlated variables
     for (cor_group in corvars) {
@@ -33,7 +35,7 @@ pwr_func_lmer <- function(betas = list("int" = 1, "x1" = -5, "x2" = 0, "x3" = 2)
         group_means <- sapply(cor_group, function(var) distpar[[var]]$mean)
         mv_data <- MASS::mvrnorm(N*n_time, mu = group_means, Sigma = cor_mat)
         colnames(mv_data) <- cor_group
-        data <- cbind(data, mv_data)
+        sdata <- cbind(sdata, mv_data)
       }
     }
 
@@ -41,25 +43,25 @@ pwr_func_lmer <- function(betas = list("int" = 1, "x1" = -5, "x2" = 0, "x3" = 2)
     non_correlated_vars <- setdiff(names(dists), unlist(corvars))
     for (var in non_correlated_vars) {
       params <- distpar[[var]]
-      data[[var]] <- do.call(dists[[var]], c(list(N*n_time), params))
+      sdata[[var]] <- do.call(dists[[var]], c(list(N*n_time), params))
     }
 
     # Random effects
     REff <- MASS::mvrnorm(N, mu = c(mean_i, mean_s), Sigma = rbind(c(var_i, cov_is), c(cov_is, var_s)))  # Using N instead of n_pers
     colnames(REff) <- c(r_int, r_slope)
 
-    data[["rand_int"]] <- rep(REff[, r_int], each = n_time)
-    data[["rand_slope"]] <- rep(REff[, r_slope], each = n_time)
+    sdata[["rand_int"]] <- rep(REff[, r_int], each = n_time)
+    sdata[["rand_slope"]] <- rep(REff[, r_slope], each = n_time)
 
     # Model outcome with Gaussian error term
-    linear_combination <- betas[[r_int]] + data[["rand_int"]] + (betas[[r_slope]] + data[["rand_slope"]]) * data[[r_slope]]
+    linear_combination <- betas[[r_int]] + sdata[["rand_int"]] + (betas[[r_slope]] + sdata[["rand_slope"]]) * sdata[[r_slope]]
 
     # Use Map to add contributions from each beta and corresponding variable
-    fixed_effects <- Map(`*`, betas[names(betas) != r_int & names(betas) != r_slope], data[names(betas) != r_int & names(betas) != r_slope])
+    fixed_effects <- Map(`*`, betas[names(betas) != r_int & names(betas) != r_slope], sdata[names(betas) != r_int & names(betas) != r_slope])
     linear_combination <- linear_combination + Reduce(`+`, fixed_effects)
 
     # Model outcome with Gaussian error term
-    data$out <- linear_combination + stats::rnorm(n, mean = mean_r, sd = sqrt(var_r))
+    sdata$out <- linear_combination + stats::rnorm(n, mean = mean_r, sd = sqrt(var_r))
 
     # Safe Model Fitting Function
     safe_fit_model <- function(fit_expression) {
@@ -74,12 +76,19 @@ pwr_func_lmer <- function(betas = list("int" = 1, "x1" = -5, "x2" = 0, "x3" = 2)
 
 
     # Fit models for each method
-    lmer_fit <- safe_fit_model(quote(lmerTest::lmer(stats::as.formula(mod), data = data)))
-    lm_fit <- safe_fit_model(quote(stats::glm(stats::as.formula(catsmod), data = data)))
-    cats_fit <- safe_fit_model(quote(clusterSEs::cluster.im.glm(lm_fit, dat = data, cluster = stats::as.formula(paste0("~ ",grp)), truncate = FALSE, drop = TRUE)))
-    cats_fit_trunc <- safe_fit_model(quote(clusterSEs::cluster.im.glm(lm_fit, dat = data, cluster = stats::as.formula(paste0("~ ",grp)), truncate = TRUE, drop = TRUE)))
-    lmrob_fit <- safe_fit_model(quote(robust::lmRob(stats::as.formula(catsmod), data = data)))
-    cats_fit_rob_cluster <- safe_fit_model(quote(cluster_im_lmRob(lmrob_fit, dat = data, cluster = stats::as.formula(paste0("~ ",grp)), drop = TRUE)))
+    lmer_fit <- safe_fit_model(quote(lmerTest::lmer(stats::as.formula(mod), data = sdata)))
+    lm_fit <- safe_fit_model(quote(stats::glm(stats::as.formula(catsmod), data = sdata)))
+    cats_fit <- safe_fit_model(quote(clusterSEs::cluster.im.glm(lm_fit, dat = sdata, cluster = stats::as.formula(paste0("~ ",grp)), truncate = FALSE, drop = TRUE, report = FALSE)))
+    cats_fit_trunc <- safe_fit_model(quote(clusterSEs::cluster.im.glm(lm_fit, dat = sdata, cluster = stats::as.formula(paste0("~ ",grp)), truncate = TRUE, drop = TRUE, report = FALSE)))
+    lmrob_fit <- safe_fit_model(quote(robust::lmRob(stats::as.formula(catsmod), data = sdata)))
+    cats_fit_rob_cluster <- safe_fit_model(quote(cluster_im_lmRob(lmrob_fit, formula = formula, dat = sdata, cluster = stats::as.formula(paste0("~ ",grp)), drop = TRUE, report = FALSE)))
+
+    #cats_fit_rob_cluster <- cluster_im_lmRob(lmrob_fit, dat = sdata, cluster = stats::as.formula(paste0("~ ",grp)), drop = TRUE, report = FALSE)
+    # cats_fit_rob_cluster <- tryCatch({
+    #   cluster_im_lmRob(lmrob_fit, dat = sdata, cluster = stats::as.formula(paste0("~ ",grp)), drop = TRUE, report = FALSE)
+    # }, error = function(e) NULL)
+
+    print(paste0("cats_fit_rob_cluster: ", cats_fit_rob_cluster)) ### DEBUG ###
 
     # Safe Result Extraction Function
     safe_extract_results <- function(extract_function, ...) {
@@ -90,6 +99,23 @@ pwr_func_lmer <- function(betas = list("int" = 1, "x1" = -5, "x2" = 0, "x3" = 2)
           return(list(estimate = NA, significant = NA))
         }
       )
+    }
+
+    extract_lme_results <- function(fit, var_intr, alpha) {
+      tidy_fit <- broom.mixed::tidy(fit)
+      estimate <- tidy_fit[tidy_fit$term == var_intr, "estimate"]
+      p_value <- tidy_fit[tidy_fit$term == var_intr, "p.value"] < alpha
+      list(estimate = estimate, significant = p_value)
+    }
+
+    extract_cats_results <- function(fit, clust_fit, var_intr, alpha) {
+      tidy_fit <- broom::tidy(fit)
+      estimate <- tidy_fit[tidy_fit$term == var_intr, "estimate"]
+      p_value <- clust_fit$p.values[var_intr, ] < alpha
+      if(is.null(p_value)){
+        p_value <- NA
+      }
+      list(estimate = estimate, significant = p_value)
     }
 
 
@@ -119,19 +145,7 @@ pwr_func_lmer <- function(betas = list("int" = 1, "x1" = -5, "x2" = 0, "x3" = 2)
   return(sim_results)
 }
 
-extract_lme_results <- function(fit, var_intr, alpha) {
-  tidy_fit <- broom.mixed::tidy(fit)
-  estimate <- tidy_fit[tidy_fit$term == var_intr, "estimate"]
-  p_value <- tidy_fit[tidy_fit$term == var_intr, "p.value"] < alpha
-  list(estimate = estimate, significant = p_value)
-}
 
-extract_cats_results <- function(fit, clust_fit, var_intr, alpha) {
-  tidy_fit <- broom::tidy(fit)
-  estimate <- tidy_fit[tidy_fit$term == var_intr, "estimate"]
-  p_value <- clust_fit$p.values[var_intr, ] < alpha
-  list(estimate = estimate, significant = p_value)
-}
 
 
 

@@ -1,3 +1,9 @@
+form <- Sepal.Length ~ Petal.Length + Petal.Width
+mod <- robust::lmRob(formula = form, dat = iris)
+cluster_im_lmRob(robmod = mod, formula = form, dat = iris,cluster = ~Species)
+
+
+
 # test_that("cluster_im_glmrob works", {
 #   rlogit.model <- robust::glmRob(Sepal.Length ~ Sepal.Width + Petal.Length, data=iris)
 #   robustbase::glmrob(Sepal.Length ~ Sepal.Width + Petal.Length + Species, family = "gaussian", data=iris)
