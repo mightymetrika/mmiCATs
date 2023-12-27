@@ -13,25 +13,33 @@ cluster_im_lmRob(
   report = TRUE,
   drop = TRUE,
   return.vcv = FALSE,
+  engine = "robust",
   ...
 )
 }
 \arguments{
-\item{robmod}{A robust linear model object, typically created using \code{lmrob()} from the \code{robustbase} package.}
+\item{robmod}{A robust linear model object, typically created using
+robust::lmRob() or robustbase::lmrob().}
 
 \item{formula}{A formula}
 
 \item{dat}{A data frame containing the data used in the model.}
 
-\item{cluster}{A formula or a character string indicating the clustering variable in \code{dat}.}
+\item{cluster}{A formula or a character string indicating the clustering
+variable in \code{dat}.}
 
 \item{ci.level}{Confidence level for the confidence intervals, default is 0.95.}
 
-\item{report}{Logical; if TRUE, prints the cluster-adjusted p-values and confidence intervals.}
+\item{report}{Logical; if TRUE, prints the cluster-adjusted p-values and
+confidence intervals.}
 
 \item{drop}{Logical; if TRUE, drops clusters where the model does not converge.}
 
-\item{return.vcv}{Logical; if TRUE, the variance-covariance matrix of the cluster-averaged coefficients will be returned.}
+\item{return.vcv}{Logical; if TRUE, the variance-covariance matrix of the
+cluster-averaged coefficients will be returned.}
+
+\item{engine}{Set the engine to "robust" to use robust::lmRob() or "robustbase"
+to use robustbase::lmrob(). Default is "robust".}
 
 \item{...}{Additional arguments to be passed to the \code{lmRob()} function.}
 }
@@ -45,7 +53,10 @@ An invisible list containing the following elements:
 }
 }
 \description{
-Performs cluster-robust inference on a linear model object, using robust linear regression within each cluster. This function is designed to handle models where observations are clustered, and standard errors need to be adjusted to account for this clustering. The function applies a robust linear regression model to each cluster and then aggregates the results.
+Performs cluster-robust inference on a linear model object, using robust linear
+regression within each cluster. This function is designed to handle models
+where observations are clustered, and standard errors need to be adjusted to
+account for this clustering. The function applies a robust linear regression model to each cluster and then aggregates the results.
 }
 \examples{
 form <- Sepal.Length ~ Petal.Length + Petal.Width
