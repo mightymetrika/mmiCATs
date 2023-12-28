@@ -168,19 +168,22 @@
 #
 # # lmer
 # lmer_fit <- lmerTest::lmer(Sepal.Length ~ Petal.Length + Petal.Width + (1|Species), data = iris)
-# lmer_tidy <- broom.mixed::tidy(lmer_fit)
+# lmer_tidy <- broom.mixed::tidy(lmer_fit, conf.int = TRUE)
 #
 # (lmer_coef <- lmer_tidy[lmer_tidy$term == var_intr, "estimate"])
 # (lmer_p <- lmer_tidy[lmer_tidy$term == var_intr, "p.value"] < alpha)
+# (lmer_low <- lmer_tidy[lmer_tidy$term == var_intr, "conf.low"])
+# (lmer_high <- lmer_tidy[lmer_tidy$term == var_intr, "conf.high"])
 #
 # # Cats Truncate
 # cats_prefit_trunc <- stats::glm(Sepal.Length ~ Petal.Length + Petal.Width, data=iris)
 # cats_fit_trunc <- clusterSEs::cluster.im.glm(cats_prefit_trunc, dat = iris, cluster = ~ Species,
-#                                        report = T, truncate = TRUE)
+#                                        report = T, truncate = TRUE, return.vcv = TRUE)
 #
 # cats_tidy_trunc <- broom::tidy(cats_prefit_trunc)
 #
 # (cats_coef_trunc <- cats_tidy_trunc[cats_tidy_trunc$term == var_intr, "estimate"])
+# (cats_coef_func <- cats_fit_trunc$beta.bar[[var_intr]])
 # (cats_p_trunc <- cats_fit_trunc$p.values[var_intr,])
 #
 # # Cats
@@ -192,10 +195,13 @@
 #
 # (cats_coef <- cats_tidy_trunc[cats_tidy$term == var_intr, "estimate"])
 # (cats_p <- cats_fit$p.values[var_intr,])
+# (cats_low <- cats_fit$ci[var_intr,1])
+# (cats_high <- cats_fit$ci[var_intr,2])
 #
 # # Cats Rob
 # cats_prefit_rob <- robust::lmRob(Sepal.Length ~ Petal.Length + Petal.Width, data=iris)
-# cats_fit_rob <- cluster_im_lmRob(cats_prefit_rob, dat = iris, cluster = ~ Species)
+# cats_fit_rob <- cluster_im_lmRob(cats_prefit_rob, Sepal.Length ~ Petal.Length + Petal.Width,
+#                                  dat = iris, cluster = ~ Species, return.vcv = TRUE)
 #
 # cats_prefit_rob <- robustbase::lmrob(Sepal.Length ~ Petal.Length + Petal.Width, data=iris)
 # cats_fit_rob <- cluster_im_lmRob(cats_prefit_rob, dat = iris, cluster = ~ Species)
@@ -204,6 +210,36 @@
 #
 # (cats_coef_rob <- cats_tidy_rob[cats_tidy_rob$term == var_intr, "estimate"])
 # (cats_p_rob <- cats_fit_rob$p.values[var_intr,])
+#
+#
+#
+#
+# pwr_func_lmer2 <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10),
+#                           var_intr = "x1") {
+#   true_coefficient <- betas[[var_intr]]
+#
+#   return(true_coefficient)
+# }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #
 #
 #

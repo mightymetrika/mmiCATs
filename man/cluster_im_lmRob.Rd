@@ -10,7 +10,6 @@ cluster_im_lmRob(
   dat,
   cluster,
   ci.level = 0.95,
-  report = TRUE,
   drop = TRUE,
   return.vcv = FALSE,
   engine = "robust",
@@ -29,9 +28,6 @@ robust::lmRob() or robustbase::lmrob().}
 variable in \code{dat}.}
 
 \item{ci.level}{Confidence level for the confidence intervals, default is 0.95.}
-
-\item{report}{Logical; if TRUE, prints the cluster-adjusted p-values and
-confidence intervals.}
 
 \item{drop}{Logical; if TRUE, drops clusters where the model does not converge.}
 

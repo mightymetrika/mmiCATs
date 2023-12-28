@@ -79,12 +79,12 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
     lmer_fit <- safe_fit_model(quote(lmerTest::lmer(stats::as.formula(mod), data = sdata)))
     ri_fit <- safe_fit_model(quote(lmerTest::lmer(stats::as.formula(ri_formula), data = sdata)))
     lm_fit <- safe_fit_model(quote(stats::glm(stats::as.formula(catsmod), data = sdata)))
-    cats_fit <- safe_fit_model(quote(clusterSEs::cluster.im.glm(lm_fit, dat = sdata, cluster = stats::as.formula(paste0("~ ",grp)), truncate = FALSE, drop = TRUE, report = FALSE)))
-    cats_fit_trunc <- safe_fit_model(quote(clusterSEs::cluster.im.glm(lm_fit, dat = sdata, cluster = stats::as.formula(paste0("~ ",grp)), truncate = TRUE, drop = TRUE, report = FALSE)))
+    cats_fit <- safe_fit_model(quote(clusterSEs::cluster.im.glm(lm_fit, dat = sdata, cluster = stats::as.formula(paste0("~ ",grp)), truncate = FALSE, drop = TRUE, report = FALSE, ci.level = 1 - alpha, return.vcv = TRUE)))
+    cats_fit_trunc <- safe_fit_model(quote(clusterSEs::cluster.im.glm(lm_fit, dat = sdata, cluster = stats::as.formula(paste0("~ ",grp)), truncate = TRUE, drop = TRUE, report = FALSE, ci.level = 1 - alpha, return.vcv = TRUE)))
     lmRob_fit <- safe_fit_model(quote(robust::lmRob(stats::as.formula(catsmod), data = sdata)))
-    cats_fit_robust_cluster <- safe_fit_model(quote(cluster_im_lmRob(lmRob_fit, formula = catsmod, dat = sdata, cluster = stats::as.formula(paste0("~ ",grp)), drop = TRUE, report = FALSE)))
+    cats_fit_robust_cluster <- safe_fit_model(quote(cluster_im_lmRob(lmRob_fit, formula = catsmod, dat = sdata, cluster = stats::as.formula(paste0("~ ",grp)), drop = TRUE, ci.level = 1 - alpha, return.vcv = TRUE)))
     lmrobBase_fit <- safe_fit_model(quote(robustbase::lmrob(stats::as.formula(catsmod), data = sdata)))
-    cats_fit_robustbase_cluster <- safe_fit_model(quote(cluster_im_lmRob(lmrobBase_fit, formula = catsmod, dat = sdata, cluster = stats::as.formula(paste0("~ ",grp)), drop = TRUE, report = FALSE, engine = "robustbase")))
+    cats_fit_robustbase_cluster <- safe_fit_model(quote(cluster_im_lmRob(lmrobBase_fit, formula = catsmod, dat = sdata, cluster = stats::as.formula(paste0("~ ",grp)), drop = TRUE, ci.level = 1 - alpha, return.vcv = TRUE, engine = "robustbase")))
 
     # Safe Result Extraction Function
     safe_extract_results <- function(extract_function, ...) {
@@ -92,35 +92,52 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
         extract_function(...),
         error = function(e) {
           warning(sprintf("Result extraction failed: %s", e$message))
-          return(list(estimate = NA, significant = NA))
+          return(list(estimate = NA, significant = NA, conf_low = NA, conf_high = NA))
         }
       )
     }
 
     extract_lme_results <- function(fit, var_intr, alpha) {
-      tidy_fit <- broom.mixed::tidy(fit)
+      tidy_fit <- broom.mixed::tidy(fit, conf.int = TRUE, conf.level = 1 - alpha)
       estimate <- tidy_fit[tidy_fit$term == var_intr, "estimate"]
       p_value <- tidy_fit[tidy_fit$term == var_intr, "p.value"] < alpha
-      list(estimate = estimate, significant = p_value)
+      conf_low <- tidy_fit[tidy_fit$term == var_intr, "conf.low"]
+      conf_high <- tidy_fit[tidy_fit$term == var_intr, "conf.high"]
+      list(estimate = estimate, significant = p_value, conf_low = conf_low, conf_high = conf_high)
     }
 
-    extract_cats_results <- function(fit, clust_fit, var_intr, alpha) {
-      tidy_fit <- broom::tidy(fit)
-      estimate <- tidy_fit[tidy_fit$term == var_intr, "estimate"]
+    extract_cats_results <- function(clust_fit, var_intr, alpha) {
+      estimate <- clust_fit$beta.bar[var_intr]
       p_value <- clust_fit$p.values[var_intr, ] < alpha
+      conf_low <- clust_fit$ci[var_intr,1]
+      conf_high <- clust_fit$ci[var_intr,2]
+
       if(is.null(p_value)){
         p_value <- NA
       }
-      list(estimate = estimate, significant = p_value)
+
+      if(is.null(estimate)){
+        estimate <- NA
+      }
+
+      if(is.null(conf_low)){
+        conf_low <- NA
+      }
+
+      if(is.null(conf_high)){
+        conf_high <- NA
+      }
+
+      list(estimate = estimate, significant = p_value, conf_low = conf_low, conf_high = conf_high)
     }
 
     # Extract results using helper functions
     lme_results <- safe_extract_results(extract_lme_results, lmer_fit, var_intr, alpha)
     ri_results <- safe_extract_results(extract_lme_results, ri_fit, var_intr, alpha)
-    cats_results <- safe_extract_results(extract_cats_results, lm_fit, cats_fit, var_intr, alpha)
-    cats_trunc_results <- safe_extract_results(extract_cats_results,lm_fit, cats_fit_trunc, var_intr, alpha)
-    cats_rob_results <- safe_extract_results(extract_cats_results,lmRob_fit, cats_fit_robust_cluster, var_intr, alpha)
-    cats_robBase_results <- safe_extract_results(extract_cats_results,lmrobBase_fit, cats_fit_robustbase_cluster, var_intr, alpha)
+    cats_results <- safe_extract_results(extract_cats_results, cats_fit, var_intr, alpha)
+    cats_trunc_results <- safe_extract_results(extract_cats_results, cats_fit_trunc, var_intr, alpha)
+    cats_rob_results <- safe_extract_results(extract_cats_results, cats_fit_robust_cluster, var_intr, alpha)
+    cats_robBase_results <- safe_extract_results(extract_cats_results, cats_fit_robustbase_cluster, var_intr, alpha)
 
     # Combine results
     combined_results <- list(lme = lme_results,
@@ -134,15 +151,26 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
 
   all_results <- replicate(reps, simulate(), simplify = FALSE)
 
-
-  compute_method_results <- function(results, method) {
+  compute_method_results <- function(results, method, true_coefficient) {
     method_results <- lapply(results, function(sim_result) sim_result[[method]])
-    mean_coef <- mean(sapply(method_results, function(x) unlist(x$estimate)), na.rm = TRUE)
-    power <- mean(sapply(method_results, function(x) unlist(x$significant)), na.rm = TRUE) * 100
-    return(list(mean_coef = mean_coef, power = power))
+    estimates <- sapply(method_results, function(x) unlist(x$estimate))
+    significant <- sapply(method_results, function(x) unlist(x$significant))
+    conf_low <- sapply(method_results, function(x) unlist(x$conf_low))
+    conf_high <- sapply(method_results, function(x) unlist(x$conf_high))
+
+    mean_coef <- mean(estimates, na.rm = TRUE)
+    rejection_rate <- mean(significant, na.rm = TRUE) * 100
+    rejection_rate_se <- stats::sd(significant, na.rm = TRUE) / sqrt(length(significant))
+
+    rmse <- sqrt(mean((estimates - true_coefficient)^2, na.rm = TRUE))
+    rrmse <- rmse / abs(true_coefficient)
+
+    coverage <- mean((conf_low <= true_coefficient) & (conf_high >= true_coefficient), na.rm = TRUE) * 100
+
+    return(list(mean_coef = mean_coef, rejection_rate = rejection_rate, rejection_rate_se = rejection_rate_se, rmse = rmse, rrmse = rrmse, coverage = coverage))
   }
 
-  sim_results <- lapply(c("lme", "ri", "cats", "cats_trunc", "cats_robust", "cats_robustbase"), function(method) compute_method_results(all_results, method))
+  sim_results <- lapply(c("lme", "ri", "cats", "cats_trunc", "cats_robust", "cats_robustbase"), function(method) compute_method_results(all_results, method, true_coefficient = betas[[var_intr]]))
 
   names(sim_results) <- c("lme", "ri", "cats", "cats_trunc", "cats_robust", "cats_robustbase")
 
