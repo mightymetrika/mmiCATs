@@ -11,7 +11,10 @@
 #
 #
 #   rlin.model.n <- robust::lmRob(degree.n ~ gender.n + age + genderXage + religion, data=WVS)
-#   rclust.im.result <- cluster_im_lmRob(rlin.model.n, WVS, ~ country, report = T, return.vcv = T)
+#   rclust.im.result <- cluster_im_lmRob(rlin.model.n,
+#                                        degree.n ~ gender.n + age + genderXage + religion,
+#                                        WVS,
+#                                        ~ country, return.vcv = T)
 #
 #   expect_equal(2 * 2, 4)
 # })

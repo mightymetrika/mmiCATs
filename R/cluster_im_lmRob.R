@@ -12,8 +12,6 @@
 #' @param cluster A formula or a character string indicating the clustering
 #'                variable in `dat`.
 #' @param ci.level Confidence level for the confidence intervals, default is 0.95.
-#' @param report Logical; if TRUE, prints the cluster-adjusted p-values and
-#'               confidence intervals.
 #' @param drop Logical; if TRUE, drops clusters where the model does not converge.
 #' @param return.vcv Logical; if TRUE, the variance-covariance matrix of the
 #'                   cluster-averaged coefficients will be returned.
@@ -35,7 +33,7 @@
 #' cluster_im_lmRob(robmod = mod, formula = form, dat = iris,cluster = ~Species)
 #'
 #' @export
-cluster_im_lmRob <-function(robmod, formula, dat, cluster, ci.level = 0.95, report = TRUE,
+cluster_im_lmRob <-function(robmod, formula, dat, cluster, ci.level = 0.95,
                              drop = TRUE, return.vcv = FALSE, engine = "robust",
                              ...){
 
@@ -162,25 +160,25 @@ cluster_im_lmRob <-function(robmod, formula, dat, cluster, ci.level = 0.95, repo
     utils::write.table(format(m, justify="right"), row.names=F, col.names=F, quote=F, sep = "   ")
   }
 
-  if(report==T){
-    cat("\n", "Cluster-Adjusted p-values: ", "\n", "\n")
-    printmat(out.p)
-
-    cat("\n", "Confidence Intervals (centered on cluster-averaged results):", "\n", "\n")
-    printmat(print.ci)
-
-    if(G.o > G){
-      cat("\n", "Note:", G.o - G, "clusters were dropped (see help file).", "\n", "\n")
-    }
-
-    if(length(ind.variables) < length(ind.variables.full)){
-      cat("\n", "\n", "****", "Note: ", length(ind.variables.full) - length(ind.variables), " variables were unidentified in the model and are not reported.", "****", "\n", sep="")
-      cat("Variables not reported:", "\n", sep="")
-      cat(ind.variables.full[!ind.variables.full %in% ind.variables], sep=", ")
-      cat("\n", "\n")
-    }
-
-  }
+  # if(report==T){
+  #   cat("\n", "Cluster-Adjusted p-values: ", "\n", "\n")
+  #   printmat(out.p)
+  #
+  #   cat("\n", "Confidence Intervals (centered on cluster-averaged results):", "\n", "\n")
+  #   printmat(print.ci)
+  #
+  #   if(G.o > G){
+  #     cat("\n", "Note:", G.o - G, "clusters were dropped (see help file).", "\n", "\n")
+  #   }
+  #
+  #   if(length(ind.variables) < length(ind.variables.full)){
+  #     cat("\n", "\n", "****", "Note: ", length(ind.variables.full) - length(ind.variables), " variables were unidentified in the model and are not reported.", "****", "\n", sep="")
+  #     cat("Variables not reported:", "\n", sep="")
+  #     cat(ind.variables.full[!ind.variables.full %in% ind.variables], sep=", ")
+  #     cat("\n", "\n")
+  #   }
+  #
+  # }
 
 
   out.list<-list()
