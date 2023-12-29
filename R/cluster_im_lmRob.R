@@ -55,27 +55,8 @@ cluster_im_lmRob <-function(robmod, formula, dat, cluster, ci.level = 0.95,
     clust.ind <- which(clust == clust_i)  # select obs in cluster i
     clust.dat <- pdata[clust.ind,]  # create the cluster i data set
 
-    # if (engine == "robust"){
-    #   clust.mod <- suppressWarnings(tryCatch(robust::lmRob(formula,
-    #                                                        data = clust.dat,
-    #                                                        ...),  # run cluster model
-    #                                          error = function(e){return(NULL)}))
-    # } else if (engine == "robustbase") {
-    #   clust.mod <- suppressWarnings(tryCatch(robustbase::lmrob(formula,
-    #                                                            data = clust.dat,
-    #                                                            ...),  # run cluster model
-    #                                          error = function(e){return(NULL)}))
-    # } else {
-    #   stop("The engine parameter must be set to 'robust' or 'robustbase'.")
-    # }
-    clust.mod <- fit_model(engine, formula, clust.dat, ...)
+    clust.mod <- fit_model(engine, formula = formula, data = clust.dat, ...)
 
-
-
-
-    # if(is.null(clust.mod) == FALSE ){
-    #   if(clust.mod$converged == 0){clust.mod <- NULL}                  # judge GLM as failure if convergence not achieved
-    # }
     fail <- is.null(clust.mod)                                         # determine whether the GLM process created an error
 
 
@@ -160,26 +141,6 @@ cluster_im_lmRob <-function(robmod, formula, dat, cluster, ci.level = 0.95,
     utils::write.table(format(m, justify="right"), row.names=F, col.names=F, quote=F, sep = "   ")
   }
 
-  # if(report==T){
-  #   cat("\n", "Cluster-Adjusted p-values: ", "\n", "\n")
-  #   printmat(out.p)
-  #
-  #   cat("\n", "Confidence Intervals (centered on cluster-averaged results):", "\n", "\n")
-  #   printmat(print.ci)
-  #
-  #   if(G.o > G){
-  #     cat("\n", "Note:", G.o - G, "clusters were dropped (see help file).", "\n", "\n")
-  #   }
-  #
-  #   if(length(ind.variables) < length(ind.variables.full)){
-  #     cat("\n", "\n", "****", "Note: ", length(ind.variables.full) - length(ind.variables), " variables were unidentified in the model and are not reported.", "****", "\n", sep="")
-  #     cat("Variables not reported:", "\n", sep="")
-  #     cat(ind.variables.full[!ind.variables.full %in% ind.variables], sep=", ")
-  #     cat("\n", "\n")
-  #   }
-  #
-  # }
-
 
   out.list<-list()
   out.list[["p.values"]] <- out
@@ -190,12 +151,11 @@ cluster_im_lmRob <-function(robmod, formula, dat, cluster, ci.level = 0.95,
 
 }
 
-
 fit_model <- function(engine, formula, data, ...) {
   switch(engine,
-         "robust" = suppressWarnings(tryCatch(robust::lmRob(formula, data = data, ...),
+         "robust" = suppressWarnings(tryCatch(robust::lmRob(formula = formula, data = data, ...),
                                               error = function(e) NULL)),
-         "robustbase" = suppressWarnings(tryCatch(robustbase::lmrob(formula, data = data, ...),
+         "robustbase" = suppressWarnings(tryCatch(robustbase::lmrob(formula = formula, data = data, ...),
                                                   error = function(e) NULL)),
          stop("The engine parameter must be set to 'robust' or 'robustbase'.")
   )
