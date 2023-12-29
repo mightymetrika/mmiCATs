@@ -64,7 +64,7 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
     # Model outcome with Gaussian error term
     sdata$out <- linear_combination + stats::rnorm(n, mean = mean_r, sd = sqrt(var_r))
 
-    # Safe Model Fitting Function
+    #Safe model fitting function
     safe_fit_model <- function(fit_expression) {
       tryCatch(
         eval(fit_expression),
@@ -111,22 +111,6 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
       p_value <- clust_fit$p.values[var_intr, ] < alpha
       conf_low <- clust_fit$ci[var_intr,1]
       conf_high <- clust_fit$ci[var_intr,2]
-
-      if(is.null(p_value)){
-        p_value <- NA
-      }
-
-      if(is.null(estimate)){
-        estimate <- NA
-      }
-
-      if(is.null(conf_low)){
-        conf_low <- NA
-      }
-
-      if(is.null(conf_high)){
-        conf_high <- NA
-      }
 
       list(estimate = estimate, significant = p_value, conf_low = conf_low, conf_high = conf_high)
     }

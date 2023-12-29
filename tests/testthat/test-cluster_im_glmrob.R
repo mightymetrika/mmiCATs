@@ -1,6 +1,6 @@
-form <- Sepal.Length ~ Petal.Length + Petal.Width
-mod <- robust::lmRob(formula = form, dat = iris)
-cluster_im_lmRob(robmod = mod, formula = form, dat = iris,cluster = ~Species)
+# form <- Sepal.Length ~ Petal.Length + Petal.Width
+# mod <- robust::lmRob(formula = form, dat = iris)
+# cluster_im_lmRob(robmod = mod, formula = form, dat = iris,cluster = ~Species)
 
 
 
@@ -17,7 +17,7 @@ cluster_im_lmRob(robmod = mod, formula = form, dat = iris,cluster = ~Species)
 #   logit.model <- glm(degree ~ religion + gender + age, data=WVS, family=binomial(link="logit"))
 #   summary(logit.model)
 #
-#   # compute cluster-adjusted p-values
+#   #compute cluster-adjusted p-values
 #   clust.im.p <- clusterSEs::cluster.im.glm(logit.model, WVS, ~ country, report = T)
 #
 #   # Cluster-Adjusted p-values:
@@ -38,11 +38,13 @@ cluster_im_lmRob(robmod = mod, formula = form, dat = iris,cluster = ~Species)
 #
 #
 #
-#   rlogit.model <- robust::glmRob(degree ~ religion + gender + age, data=WVS,
+#   rlogit.model <- robust::glmRob(degree ~  religion + gender + age, data=WVS,
 #                                 family=binomial(link="logit"),
 #                                 method = "misclass")
 #   summary(rlogit.model)
-#   clust.im.p <- cluster_im_glmRob(rlogit.model, WVS, ~ country, report = F)
+#
+#   clust.im.p <- cluster_im_glmRob(rlogit.model, WVS, ~ country, engine = "robust",
+#                                   method = "misclass")
 #
 #   # Cluster-Adjusted p-values:
 #   #
