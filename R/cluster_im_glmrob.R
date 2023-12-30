@@ -1,5 +1,5 @@
 cluster_im_glmRob <-function(robmod, dat, cluster, ci.level = 0.95,
-                             drop = TRUE, return.vcv = FALSE, method, engine = "robust",
+                             drop = TRUE, return.vcv = FALSE, engine = "robust",
                              ...){
 
 
@@ -25,7 +25,7 @@ cluster_im_glmRob <-function(robmod, dat, cluster, ci.level = 0.95,
     clust.mod <- fit_model_g(engine, formula = formula, family = family,
                              data = clust.dat, method = method, ...)
 
-    if(is.null(clust.mod) == FALSE ){
+    if(is.null(clust.mod) == FALSE & engine == "robustbase"){
       if(clust.mod$converged == 0){clust.mod <- NULL}                  # judge GLM as failure if convergence not achieved
     }
     fail <- is.null(clust.mod)                                         # determine whether the GLM process created an error

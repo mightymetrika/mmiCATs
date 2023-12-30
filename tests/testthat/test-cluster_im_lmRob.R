@@ -1,20 +1,45 @@
-# test_that("multiplication works", {
-#   require(effects)
-#   data(WVS)
-#   write.csv(WVS, file = "C:/Users/Administrator/Desktop/WVS.csv", row.names = FALSE)
-#   WVS$degree.n <- as.numeric(WVS$degree)
-#   WVS$gender.n <- as.numeric(WVS$gender)
-#   WVS$genderXage <- WVS$gender.n * WVS$age
-#   lin.model.n <- glm(degree.n ~ gender.n + age + genderXage + religion, data=WVS)
-#   clust.im.result <- clusterSEs::cluster.im.glm(lin.model.n, WVS, ~ country, report = T, return.vcv = T,
-#                                                 truncate = TRUE)
-#
-#
-#   rlin.model.n <- robust::lmRob(degree.n ~ gender.n + age + genderXage + religion, data=WVS)
-#   rclust.im.result <- cluster_im_lmRob(rlin.model.n,
-#                                        degree.n ~ gender.n + age + genderXage + religion,
-#                                        WVS,
-#                                        ~ country, return.vcv = T)
-#
-#   expect_equal(2 * 2, 4)
-# })
+test_that("cluster_im_lmRob works with the robust engine", {
+  # Run robust model
+  robout <- robust::lmRob(Sepal.Length ~ Petal.Length + Petal.Width, data = iris)
+
+  # Fit individual models
+  imout <- cluster_im_lmRob(robout,
+                            formula = Sepal.Length ~ Petal.Length + Petal.Width,
+                            dat = iris,
+                            cluster = ~ Species,
+                            return.vcv = TRUE,
+                            engine = "robust")
+
+  # Test the p.value for Petal.Width
+  expect_true(imout$p.values[3] > 0.71 & imout$p.values[3] < 0.72)
+
+  # Test the beta.bar for Petal.Width
+  expect_true(imout$beta.bar[[3]] > 0.12 & imout$beta.bar[[3]] < 0.13)
+
+  # Test the length of the cluster_im_lmRob output (with return.vcv = TRUE)
+  expect_equal(length(imout), 4)
+
+})
+
+test_that("cluster_im_lmRob works with the robustbase engine", {
+  # Run robust model
+  robout <- robustbase::lmrob(Sepal.Length ~ Petal.Length + Petal.Width, data = iris)
+
+  # Fit individual models
+  imout <- cluster_im_lmRob(robout,
+                            formula = Sepal.Length ~ Petal.Length + Petal.Width,
+                            dat = iris,
+                            cluster = ~ Species,
+                            return.vcv = TRUE,
+                            engine = "robustbase")
+
+  # Test the p.value for Petal.Width
+  expect_true(imout$p.values[3] > 0.72 & imout$p.values[3] < 0.73)
+
+  # Test the beta.bar for Petal.Width
+  expect_true(imout$beta.bar[[3]] > 0.11 & imout$beta.bar[[3]] < 0.12)
+
+  # Test the length of the cluster_im_lmRob output (with return.vcv = TRUE)
+  expect_equal(length(imout), 4)
+
+})
