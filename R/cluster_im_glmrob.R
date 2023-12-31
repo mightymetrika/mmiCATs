@@ -2,24 +2,12 @@ cluster_im_glmRob <-function(robmod, dat, cluster, ci.level = 0.95,
                              drop = TRUE, return.vcv = FALSE, engine = "robust",
                              ...){
 
+  # Extract model info
+  .info <- info(formula = NULL, cluster = cluster, dat = dat, robmod = robmod)
 
-  form <- robmod$formula                                                   # what is the formula of this model?
-  variables <- all.vars(form)                                           # what variables are in this model?
-  clust.name <- all.vars(cluster)                                       # what is the name of the clustering variable?
-  used.idx <- which(rownames(dat) %in% rownames(robmod$model))             # what were the actively used observations in the model?
-  dat <- dat[used.idx,]                                                 # keep only active observations
-  clust <- as.vector(unlist(dat[[clust.name]]))                         # store cluster index in convenient vector
-  G<-length(unique(clust))                                              # how many clusters are in this model?
-  ind.variables.full <- names(stats::coefficients(robmod))                        # what independent variables are in this model?
-  ind.variables <- rownames(summary(robmod)$coefficients)                  # what non-dropped independent variables in this model?
-
-  b.clust <- matrix(data = NA, nrow = G, ncol = length(ind.variables))  # a matrix to store the betas
-  n.clust <- c()
-
-  G.o <- G
   # Function to process each cluster
   process_cluster <- function(clust_i, pdata, formula, family, method, ind_variables, drop, ...){
-    clust.ind <- which(clust == clust_i)  # select obs in cluster i
+    clust.ind <- which(.info$clust == clust_i)  # select obs in cluster i
     clust.dat <- pdata[clust.ind,]  # create the cluster i data set
 
     clust.mod <- fit_model_g(engine, formula = formula, family = family,
@@ -56,11 +44,12 @@ cluster_im_glmRob <-function(robmod, dat, cluster, ci.level = 0.95,
   }
 
   # Use lapply to iterate over each unique cluster
-  results <- lapply(unique(clust), process_cluster, pdata = dat, formula = form,
+  results <- lapply(unique(.info$clust), process_cluster, pdata = .info$dat, formula = robmod$formula,
                     family = robmod$family, method = robmod$method,
-                    ind_variables = ind.variables, drop = drop, ...)
+                    ind_variables = .info$ind.variables, drop = drop, ...)
 
   # Combine the results into a matrix
+  b.clust <- matrix(data = NA, nrow = length(unique(.info$clust)), ncol = length(.info$ind.variables))
   b.clust <- do.call(rbind, results)
 
 
@@ -79,13 +68,13 @@ cluster_im_glmRob <-function(robmod, dat, cluster, ci.level = 0.95,
   b.hat <- colMeans(b.clust)                                # calculate the avg beta across clusters
   b.dev <- sweep(b.clust, MARGIN = 2, STATS = b.hat)        # sweep out the avg betas
   vcv.hat <- stats::cov(b.dev)                                     # calculate VCV matrix
-  rownames(vcv.hat) <- ind.variables
-  colnames(vcv.hat) <- ind.variables
+  rownames(vcv.hat) <- .info$ind.variables
+  colnames(vcv.hat) <- .info$ind.variables
   s.hat <- sqrt(diag(vcv.hat))                              # calculate standard error
 
   t.hat <- sqrt(G) * (b.hat / s.hat)                        # calculate t-statistic
 
-  names(b.hat) <- ind.variables
+  names(b.hat) <- .info$ind.variables
 
   # compute p-val based on # of clusters
   p.out <- 2*pmin( stats::pt(t.hat, df = G-1, lower.tail = TRUE), stats::pt(t.hat, df = G-1, lower.tail = FALSE) )
@@ -96,16 +85,16 @@ cluster_im_glmRob <-function(robmod, dat, cluster, ci.level = 0.95,
   ci.hi <- b.hat + stats::qt((1-ci.level)/2, df=(G-1), lower.tail=FALSE)*(s.hat/sqrt(G))
 
   out <- matrix(p.out, ncol=1)
-  rownames(out) <- ind.variables
+  rownames(out) <- .info$ind.variables
 
-  out.p <- cbind( ind.variables, round(out, 3))
+  out.p <- cbind( .info$ind.variables, round(out, 3))
   out.p <- rbind(c("variable name", "cluster-adjusted p-value"), out.p)
 
   out.ci <- cbind(ci.lo, ci.hi)
-  rownames(out.ci) <- ind.variables
+  rownames(out.ci) <- .info$ind.variables
   colnames(out.ci) <- c("CI lower", "CI higher")
 
-  print.ci <- cbind(ind.variables, ci.lo, ci.hi)
+  print.ci <- cbind(.info$ind.variables, ci.lo, ci.hi)
   print.ci <- rbind(c("variable name", "CI lower", "CI higher"), print.ci)
 
 
