@@ -49,16 +49,11 @@ cluster_im_glmRob <-function(robmod, dat, cluster, ci.level = 0.95,
                     ind_variables = .info$ind.variables, drop = drop, ...)
 
   # Combine the results into a matrix
-  b.clust <- matrix(data = NA, nrow = length(unique(.info$clust)), ncol = length(.info$ind.variables))
   b.clust <- do.call(rbind, results)
 
-
-  if(drop==TRUE){
-    dropped.nc <- 0                                                             # store number of non-converged clusters
+  if(drop){
     b.clust <- stats::na.omit(b.clust)
-    dropped.nc <- length(attr(b.clust, "na.action"))                            # record number of models dropped
-    G.t <- nrow(b.clust)
-    if(G.t == 0){stop("all clusters were dropped (see help file).")}
+    if(nrow(b.clust) == 0){stop("all clusters were dropped (see help file).")}
   }
 
   G <- nrow(b.clust)
@@ -87,26 +82,18 @@ cluster_im_glmRob <-function(robmod, dat, cluster, ci.level = 0.95,
   out <- matrix(p.out, ncol=1)
   rownames(out) <- .info$ind.variables
 
-  out.p <- cbind( .info$ind.variables, round(out, 3))
-  out.p <- rbind(c("variable name", "cluster-adjusted p-value"), out.p)
-
   out.ci <- cbind(ci.lo, ci.hi)
   rownames(out.ci) <- .info$ind.variables
   colnames(out.ci) <- c("CI lower", "CI higher")
 
-  print.ci <- cbind(.info$ind.variables, ci.lo, ci.hi)
-  print.ci <- rbind(c("variable name", "CI lower", "CI higher"), print.ci)
+  # Combine results into a list
+  out.list <- list(
+    p.values = out,
+    ci = out.ci,
+    vcv.hat = if(return.vcv) vcv.hat,
+    beta.bar = if(return.vcv) b.hat
+  )
 
-
-  printmat <- function(m){
-    utils::write.table(format(m, justify="right"), row.names=F, col.names=F, quote=F, sep = "   ")
-  }
-
-  out.list<-list()
-  out.list[["p.values"]] <- out
-  out.list[["ci"]] <- out.ci
-  if(return.vcv == TRUE){out.list[["vcv.hat"]] <- vcv.hat}
-  if(return.vcv == TRUE){out.list[["beta.bar"]] <- b.hat}
   return(invisible(out.list))
 
 }
