@@ -29,23 +29,44 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
     sdata <- data.frame(grp = rep(1:N, each = n_time))
     names(sdata) <- grp
 
+    # # Generate data for correlated variables
+    # for (cor_group in corvars) {
+    #   if (all(sapply(cor_group, function(x) x %in% names(dists) && identical(dists[[x]], stats::rnorm)))) {
+    #     # Generate correlated normal data for this group
+    #     group_means <- sapply(cor_group, function(var) distpar[[var]]$mean)
+    #     mv_data <- MASS::mvrnorm(N*n_time, mu = group_means, Sigma = cor_mat)
+    #     colnames(mv_data) <- cor_group
+    #     sdata <- cbind(sdata, mv_data)
+    #   }
+    # }
+    #
+    # # Generate data for non-correlated variables
+    # non_correlated_vars <- setdiff(names(dists), unlist(corvars))
+    # for (var in non_correlated_vars) {
+    #   params <- distpar[[var]]
+    #   sdata[[var]] <- do.call(dists[[var]], c(list(N*n_time), params))
+    # }
     # Generate data for correlated variables
-    for (cor_group in corvars) {
+    correlated_data <- lapply(corvars, function(cor_group) {
       if (all(sapply(cor_group, function(x) x %in% names(dists) && identical(dists[[x]], stats::rnorm)))) {
-        # Generate correlated normal data for this group
         group_means <- sapply(cor_group, function(var) distpar[[var]]$mean)
         mv_data <- MASS::mvrnorm(N*n_time, mu = group_means, Sigma = cor_mat)
         colnames(mv_data) <- cor_group
-        sdata <- cbind(sdata, mv_data)
+        return(mv_data)
+      } else {
+        return(NULL)
       }
-    }
+    })
+    correlated_data <- do.call(cbind, correlated_data)
+    sdata <- cbind(sdata, correlated_data)
 
     # Generate data for non-correlated variables
     non_correlated_vars <- setdiff(names(dists), unlist(corvars))
-    for (var in non_correlated_vars) {
-      params <- distpar[[var]]
-      sdata[[var]] <- do.call(dists[[var]], c(list(N*n_time), params))
-    }
+    non_correlated_data <- Map(function(var, params) {
+      do.call(dists[[var]], c(list(N*n_time), params))
+    }, var = non_correlated_vars, params = distpar[non_correlated_vars])
+    sdata <- cbind(sdata, non_correlated_data)
+
 
     # Random effects
     REff <- MASS::mvrnorm(N, mu = c(mean_i, mean_s), Sigma = rbind(c(var_i, cov_is), c(cov_is, var_s)))  # Using N instead of n_pers

@@ -18,29 +18,8 @@ cluster_im_glmRob <-function(robmod, dat, cluster, ci.level = 0.95,
     }
     fail <- is.null(clust.mod)                                         # determine whether the GLM process created an error
 
-
-    # should we stop if one cluster-specific model does not converge?
-    if(drop==FALSE){
-      if(fail == T){stop("cluster-specific model returned error (try drop = TRUE)", call.=FALSE)}
-
-      # detect whether variables were dropped in individual clusters
-      if(length(rownames(summary(clust.mod)$coefficients)) != length(ind_variables)){
-        stop("cluster-specific model(s) dropped variables; ensure that all variables vary within clusters", call.=FALSE)
-      }
-
-      b.clust_i <- stats::coefficients(clust.mod)[ind_variables]
-
-    }else{
-      if(fail == F){
-        # detect whether variables were dropped in individual clusters
-        if(length(rownames(summary(clust.mod)$coefficients)) != length(ind_variables)){
-          stop("cluster-specific model(s) dropped variables; ensure that all variables vary within clusters", call.=FALSE)
-        }
-        b.clust_i <- stats::coefficients(clust.mod)[ind_variables]
-      }else{
-        b.clust_i  <- NA
-      }
-    }
+    # Handle convergence and dropped variables
+    b.clust_i <- fail_drop(drop, fail, clust.mod, ind_variables)
   }
 
   # Use lapply to iterate over each unique cluster
@@ -48,53 +27,9 @@ cluster_im_glmRob <-function(robmod, dat, cluster, ci.level = 0.95,
                     family = robmod$family, method = robmod$method,
                     ind_variables = .info$ind.variables, drop = drop, ...)
 
-  # Combine the results into a matrix
-  b.clust <- do.call(rbind, results)
-
-  if(drop){
-    b.clust <- stats::na.omit(b.clust)
-    if(nrow(b.clust) == 0){stop("all clusters were dropped (see help file).")}
-  }
-
-  G <- nrow(b.clust)
-  if(G == 0){stop("all clusters were dropped (see help file).")}
-
-
-  b.hat <- colMeans(b.clust)                                # calculate the avg beta across clusters
-  b.dev <- sweep(b.clust, MARGIN = 2, STATS = b.hat)        # sweep out the avg betas
-  vcv.hat <- stats::cov(b.dev)                                     # calculate VCV matrix
-  rownames(vcv.hat) <- .info$ind.variables
-  colnames(vcv.hat) <- .info$ind.variables
-  s.hat <- sqrt(diag(vcv.hat))                              # calculate standard error
-
-  t.hat <- sqrt(G) * (b.hat / s.hat)                        # calculate t-statistic
-
-  names(b.hat) <- .info$ind.variables
-
-  # compute p-val based on # of clusters
-  p.out <- 2*pmin( stats::pt(t.hat, df = G-1, lower.tail = TRUE), stats::pt(t.hat, df = G-1, lower.tail = FALSE) )
-
-
-  # compute CIs
-  ci.lo <- b.hat - stats::qt((1-ci.level)/2, df=(G-1), lower.tail=FALSE)*(s.hat/sqrt(G))
-  ci.hi <- b.hat + stats::qt((1-ci.level)/2, df=(G-1), lower.tail=FALSE)*(s.hat/sqrt(G))
-
-  out <- matrix(p.out, ncol=1)
-  rownames(out) <- .info$ind.variables
-
-  out.ci <- cbind(ci.lo, ci.hi)
-  rownames(out.ci) <- .info$ind.variables
-  colnames(out.ci) <- c("CI lower", "CI higher")
-
-  # Combine results into a list
-  out.list <- list(
-    p.values = out,
-    ci = out.ci,
-    vcv.hat = if(return.vcv) vcv.hat,
-    beta.bar = if(return.vcv) b.hat
-  )
-
-  return(invisible(out.list))
+  # Process results and return
+  return(process_results(results, ind_variables = .info$ind.variables,
+                         ci.level, drop, return.vcv))
 
 }
 
