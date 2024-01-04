@@ -18,8 +18,8 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
                           cov_is = 0,
                           mean_r = 0,
                           var_r = 1,
-                          cor_mat = diag(2),
-                          corvars = list(c("x1", "x3"))) {
+                          cor_mat = NULL,
+                          corvars = NULL) {
 
   #Create ri formula
   ri_formula <- paste0(catsmod, "+ (1|", grp, ")")
@@ -29,36 +29,22 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
     sdata <- data.frame(grp = rep(1:N, each = n_time))
     names(sdata) <- grp
 
-    # # Generate data for correlated variables
-    # for (cor_group in corvars) {
-    #   if (all(sapply(cor_group, function(x) x %in% names(dists) && identical(dists[[x]], stats::rnorm)))) {
-    #     # Generate correlated normal data for this group
-    #     group_means <- sapply(cor_group, function(var) distpar[[var]]$mean)
-    #     mv_data <- MASS::mvrnorm(N*n_time, mu = group_means, Sigma = cor_mat)
-    #     colnames(mv_data) <- cor_group
-    #     sdata <- cbind(sdata, mv_data)
-    #   }
-    # }
-    #
-    # # Generate data for non-correlated variables
-    # non_correlated_vars <- setdiff(names(dists), unlist(corvars))
-    # for (var in non_correlated_vars) {
-    #   params <- distpar[[var]]
-    #   sdata[[var]] <- do.call(dists[[var]], c(list(N*n_time), params))
-    # }
-    # Generate data for correlated variables
-    correlated_data <- lapply(corvars, function(cor_group) {
-      if (all(sapply(cor_group, function(x) x %in% names(dists) && identical(dists[[x]], stats::rnorm)))) {
-        group_means <- sapply(cor_group, function(var) distpar[[var]]$mean)
-        mv_data <- MASS::mvrnorm(N*n_time, mu = group_means, Sigma = cor_mat)
-        colnames(mv_data) <- cor_group
-        return(mv_data)
-      } else {
-        return(NULL)
-      }
-    })
-    correlated_data <- do.call(cbind, correlated_data)
-    sdata <- cbind(sdata, correlated_data)
+    # Check if cor_mat and corvars are not NULL
+    if (!is.null(cor_mat) && !is.null(corvars)) {
+      # Process the correlated variables
+      correlated_data <- lapply(corvars, function(cor_group) {
+        if (all(sapply(cor_group, function(x) x %in% names(dists) && identical(dists[[x]], stats::rnorm)))) {
+          group_means <- sapply(cor_group, function(var) distpar[[var]]$mean)
+          mv_data <- MASS::mvrnorm(N*n_time, mu = group_means, Sigma = cor_mat)
+          colnames(mv_data) <- cor_group
+          return(mv_data)
+        } else {
+          return(NULL)
+        }
+      })
+      correlated_data <- do.call(cbind, correlated_data)
+      sdata <- cbind(sdata, correlated_data)
+    }
 
     # Generate data for non-correlated variables
     non_correlated_vars <- setdiff(names(dists), unlist(corvars))
@@ -156,6 +142,36 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
 
   all_results <- replicate(reps, simulate(), simplify = FALSE)
 
+  # compute_method_results <- function(results, method, true_coefficient) {
+  #   method_results <- lapply(results, function(sim_result) sim_result[[method]])
+  #   estimates <- sapply(method_results, function(x) unlist(x$estimate))
+  #   significant <- sapply(method_results, function(x) unlist(x$significant))
+  #   conf_low <- sapply(method_results, function(x) unlist(x$conf_low))
+  #   conf_high <- sapply(method_results, function(x) unlist(x$conf_high))
+  #
+  #   mean_coef <- mean(estimates, na.rm = TRUE)
+  #   rejection_rate <- mean(significant, na.rm = TRUE) * 100
+  #   rejection_rate_se <- stats::sd(significant, na.rm = TRUE) / sqrt(length(significant))
+  #
+  #   rmse <- sqrt(mean((estimates - true_coefficient)^2, na.rm = TRUE))
+  #   rrmse <- rmse / abs(true_coefficient)
+  #
+  #   coverage <- mean((conf_low <= true_coefficient) & (conf_high >= true_coefficient), na.rm = TRUE) * 100
+  #
+  #   avg_ci_width <- mean(conf_high - conf_low, na.rm = TRUE)
+  #
+  #
+  #   return(list(mean_coef = mean_coef, rejection_rate = rejection_rate,
+  #               rejection_rate_se = rejection_rate_se, rmse = rmse, rrmse = rrmse,
+  #               coverage = coverage, avg_ci_width = avg_ci_width))
+  # }
+  #
+  # sim_results <- lapply(c("lme", "ri", "cats", "cats_trunc", "cats_robust", "cats_robustbase"), function(method) compute_method_results(all_results, method, true_coefficient = betas[[var_intr]]))
+  #
+  # names(sim_results) <- c("lme", "ri", "cats", "cats_trunc", "cats_robust", "cats_robustbase")
+  #
+  # return(sim_results)
+
   compute_method_results <- function(results, method, true_coefficient) {
     method_results <- lapply(results, function(sim_result) sim_result[[method]])
     estimates <- sapply(method_results, function(x) unlist(x$estimate))
@@ -166,20 +182,23 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
     mean_coef <- mean(estimates, na.rm = TRUE)
     rejection_rate <- mean(significant, na.rm = TRUE) * 100
     rejection_rate_se <- stats::sd(significant, na.rm = TRUE) / sqrt(length(significant))
-
     rmse <- sqrt(mean((estimates - true_coefficient)^2, na.rm = TRUE))
     rrmse <- rmse / abs(true_coefficient)
-
     coverage <- mean((conf_low <= true_coefficient) & (conf_high >= true_coefficient), na.rm = TRUE) * 100
+    avg_ci_width <- mean(conf_high - conf_low, na.rm = TRUE)
 
-    return(list(mean_coef = mean_coef, rejection_rate = rejection_rate, rejection_rate_se = rejection_rate_se, rmse = rmse, rrmse = rrmse, coverage = coverage))
+    data.frame(model = method, mean_coef = mean_coef, rejection_rate = rejection_rate,
+               rejection_rate_se = rejection_rate_se, rmse = rmse, rrmse = rrmse,
+               coverage = coverage, avg_ci_width = avg_ci_width)
   }
 
-  sim_results <- lapply(c("lme", "ri", "cats", "cats_trunc", "cats_robust", "cats_robustbase"), function(method) compute_method_results(all_results, method, true_coefficient = betas[[var_intr]]))
+  sim_results <- lapply(c("lme", "ri", "cats", "cats_trunc", "cats_robust", "cats_robustbase"),
+                        function(method) compute_method_results(all_results, method, true_coefficient = betas[[var_intr]]))
 
-  names(sim_results) <- c("lme", "ri", "cats", "cats_trunc", "cats_robust", "cats_robustbase")
+  # Combine results into a single dataframe
+  final_results <- do.call(rbind, sim_results)
 
-  return(sim_results)
+  return(final_results)
 }
 
 
