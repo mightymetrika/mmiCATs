@@ -142,36 +142,6 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
 
   all_results <- replicate(reps, simulate(), simplify = FALSE)
 
-  # compute_method_results <- function(results, method, true_coefficient) {
-  #   method_results <- lapply(results, function(sim_result) sim_result[[method]])
-  #   estimates <- sapply(method_results, function(x) unlist(x$estimate))
-  #   significant <- sapply(method_results, function(x) unlist(x$significant))
-  #   conf_low <- sapply(method_results, function(x) unlist(x$conf_low))
-  #   conf_high <- sapply(method_results, function(x) unlist(x$conf_high))
-  #
-  #   mean_coef <- mean(estimates, na.rm = TRUE)
-  #   rejection_rate <- mean(significant, na.rm = TRUE) * 100
-  #   rejection_rate_se <- stats::sd(significant, na.rm = TRUE) / sqrt(length(significant))
-  #
-  #   rmse <- sqrt(mean((estimates - true_coefficient)^2, na.rm = TRUE))
-  #   rrmse <- rmse / abs(true_coefficient)
-  #
-  #   coverage <- mean((conf_low <= true_coefficient) & (conf_high >= true_coefficient), na.rm = TRUE) * 100
-  #
-  #   avg_ci_width <- mean(conf_high - conf_low, na.rm = TRUE)
-  #
-  #
-  #   return(list(mean_coef = mean_coef, rejection_rate = rejection_rate,
-  #               rejection_rate_se = rejection_rate_se, rmse = rmse, rrmse = rrmse,
-  #               coverage = coverage, avg_ci_width = avg_ci_width))
-  # }
-  #
-  # sim_results <- lapply(c("lme", "ri", "cats", "cats_trunc", "cats_robust", "cats_robustbase"), function(method) compute_method_results(all_results, method, true_coefficient = betas[[var_intr]]))
-  #
-  # names(sim_results) <- c("lme", "ri", "cats", "cats_trunc", "cats_robust", "cats_robustbase")
-  #
-  # return(sim_results)
-
   compute_method_results <- function(results, method, true_coefficient) {
     method_results <- lapply(results, function(sim_result) sim_result[[method]])
     estimates <- sapply(method_results, function(x) unlist(x$estimate))
