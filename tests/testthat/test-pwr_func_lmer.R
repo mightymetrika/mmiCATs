@@ -1,6 +1,8 @@
 test_that("pwr_func_lmer works and produces output of the correct length with no
           correlation", {
 
+            set.seed(235)
+
             pwr_out <- suppressWarnings(pwr_func_lmer(reps = 5))
 
             expect_equal(length(pwr_out), 8)
@@ -13,6 +15,8 @@ test_that("pwr_func_lmer works and produces output of the correct length with no
 
 
 test_that("pwr_func_lmer works and produces output of the correct length", {
+
+  set.seed(475)
 
   pwr_out <- suppressWarnings(pwr_func_lmer(reps = 5, cor_mat = diag(2), corvars = list(c("x1", "x3"))))
 
@@ -28,6 +32,8 @@ test_that("pwr_func_lmer works and produces output of the correct length", {
 
 test_that("pwr_func_lmer works and produces output of the correct length for a
           different cor_mat", {
+
+  set.seed(345)
 
   pwr_out <- suppressWarnings(pwr_func_lmer(betas = list("int" = 0, "x1" = -0.25, "x2" = 2, "x3" = 10),
                                             reps = 5, cor_mat = matrix(data = c(1,0.2, 0.13, 1), nrow =2, ncol =2)))
