@@ -58,14 +58,22 @@ process_results <- function(results, ind_variables, ci.level, drop, return.vcv){
   G <- nrow(b.clust)
   if(G == 0){stop("all clusters were dropped (see help file).")}
 
-  b.hat <- colMeans(b.clust)                                # calculate the avg beta across clusters
-  b.dev <- sweep(b.clust, MARGIN = 2, STATS = b.hat)        # sweep out the avg betas
-  vcv.hat <- stats::cov(b.dev)                                     # calculate VCV matrix
+  # calculate the avg beta across clusters
+  b.hat <- colMeans(b.clust)
+
+  # sweep out the avg betas
+  b.dev <- sweep(b.clust, MARGIN = 2, STATS = b.hat)
+
+  # calculate VCV matrix
+  vcv.hat <- stats::cov(b.dev)
   rownames(vcv.hat) <- ind_variables
   colnames(vcv.hat) <- ind_variables
-  s.hat <- sqrt(diag(vcv.hat))                              # calculate standard error
 
-  t.hat <- sqrt(G) * (b.hat / s.hat)                        # calculate t-statistic
+  # calculate standard error
+  s.hat <- sqrt(diag(vcv.hat))
+
+  # calculate t-statistic
+  t.hat <- sqrt(G) * (b.hat / s.hat)
 
   names(b.hat) <- ind_variables
 
@@ -94,5 +102,4 @@ process_results <- function(results, ind_variables, ci.level, drop, return.vcv){
 
   return(invisible(out.list))
 }
-
 
