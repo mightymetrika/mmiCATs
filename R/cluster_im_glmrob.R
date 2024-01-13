@@ -1,3 +1,50 @@
+#' Cluster-Robust Inference for Generalized Linear Models
+#'
+#' Performs cluster-robust inference on a generalized linear model object, using
+#' robust generalized linear regression within each cluster. This function is
+#' tailored for models where observations are clustered, and standard errors
+#' need adjustment for clustering. The function applies a robust generalized
+#' linear regression model to each cluster using the specified family and method,
+#' and then aggregates the results.
+#'
+#' @param robmod A robust generalized linear model object, usually created using
+#'               robust::glmRob() or robustbase::glmrob(). It must contain
+#'               elements 'formula', 'family', and 'method'.
+#' @param dat A data frame containing the data used in the model.
+#' @param cluster A formula or a character string indicating the clustering
+#'                variable in `dat`.
+#' @param ci.level Confidence level for the confidence intervals, default is 0.95.
+#' @param drop Logical; if TRUE, drops clusters where the model does not converge.
+#' @param return.vcv Logical; if TRUE, the variance-covariance matrix of the
+#'                   cluster-averaged coefficients will be returned.
+#' @param engine Set the engine to "robust" to use robust::glmRob() or "robustbase"
+#'               to use robustbase::glmrob(). Default is "robust".
+#' @param ... Additional arguments to be passed to `robust::glmRob()` or
+#'            `robustbase::glmrob()`.
+#'
+#' @return An invisible list containing the following elements:
+#' \describe{
+#'   \item{p.values}{A matrix of p-values for each independent variable.}
+#'   \item{ci}{A matrix with the lower and upper bounds of the confidence intervals
+#'             for each independent variable.}
+#'   \item{vcv.hat}{The variance-covariance matrix of the cluster-averaged
+#'                  coefficients, returned if `return.vcv` is TRUE.}
+#'   \item{beta.bar}{The cluster-averaged coefficients, returned if `return.vcv`
+#'                   is TRUE.}
+#' }
+#'
+#' @examples
+#' iris_bin <- iris
+#' # Create a binary variable for MPG (e.g., MPG > 20)
+#' iris_bin$high_Sepal.Length = as.factor(ifelse(iris_bin$Sepal.Length > 5.8, 1, 0))
+#'
+#' robout <- robustbase::glmrob(formula = high_Sepal.Length ~ Petal.Length + Petal.Width,
+#'                              family = binomial,
+#'                              data = iris_bin)
+#' cluster_im_glmRob(robout, dat = iris_bin, ~Species, return.vcv = TRUE,
+#'                   engine = "robustbase")
+#'
+#' @export
 cluster_im_glmRob <-function(robmod, dat, cluster, ci.level = 0.95,
                              drop = TRUE, return.vcv = FALSE, engine = "robust",
                              ...){
