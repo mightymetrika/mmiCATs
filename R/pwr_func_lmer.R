@@ -1,3 +1,48 @@
+#' Power Analysis for Linear Mixed-Effect Regression Models
+#'
+#' Conducts a power analysis for linear mixed-effect regression models using
+#' simulation. This function allows for comparing the performance of different
+#' estimation methods in terms of power, rejection rate, root mean square error
+#' (RMSE), relative RMSE, coverage probability, and average confidence interval
+#'  width.
+#'
+#' @param betas Named list of true coefficient values for the fixed effects.
+#' @param dists Named list of functions to generate random distributions for each
+#'              predictor.
+#' @param distpar Named list of parameter lists for each distribution function in
+#'                `dists`.
+#' @param N Integer specifying the number of groups.
+#' @param reps Integer specifying the number of replications for the simulation.
+#' @param alpha Numeric value specifying the significance level for hypothesis
+#'              testing.
+#' @param var_intr Name of the variable of interest (for power calculations) as
+#'                 a string.
+#' @param grp Name of the grouping variable as a string.
+#' @param mod Formula for the mixed-effects model.
+#' @param catsmod Formula for the fixed-effects only model.
+#' @param r_slope Name of the random slope variable as a string.
+#' @param r_int Name of the random intercept as a string.
+#' @param n_time Integer specifying the number of time points per group.
+#' @param mean_i Mean for the random intercept.
+#' @param var_i Variance for the random intercept.
+#' @param mean_s Mean for the random slope.
+#' @param var_s Variance for the random slope.
+#' @param cov_is Covariance between the random intercept and slope.
+#' @param mean_r Mean for the residual error.
+#' @param var_r Variance for the residual error.
+#' @param cor_mat Correlation matrix for correlated predictors, if any.
+#' @param corvars List of vectors, each vector containing names of correlated
+#'                variables.
+#'
+#' @return A dataframe summarizing the results of the power analysis, including
+#'         average coefficient estimate, rejection rate, root mean square error,
+#'         relative root mean square error, coverage probability, and average
+#'         confidence interval width for each method.
+#'
+#' @examples
+#' pwr_func_lmer(reps = 2)
+#'
+#' @export
 pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10),
                           dists = list("x1" = stats::rnorm, "x2" = stats::rbinom, "x3" = stats::rnorm),
                           distpar = list("x1" = list(mean = 0, sd = 1), "x2" = list(size = 1, prob = 0.4), "x3" = list(mean = 1, sd = 2)),
