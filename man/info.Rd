@@ -2,28 +2,26 @@
 % Please edit documentation in R/helpers_cimrob.R
 \name{info}
 \alias{info}
-\title{Extract Model Information for Cluster-Robust Inference}
+\title{Extract Model Information for Cluster-Adjusted Robust Inference}
 \usage{
 info(formula = NULL, cluster, dat, robmod)
 }
 \arguments{
-\item{formula}{Optional formula object used in the model fitting, applicable
-only if \code{robmod} does not contain a formula.}
+\item{formula}{A formula used in the model fitting.}
 
 \item{cluster}{A formula or a character string indicating the clustering
 variable in \code{dat}.}
 
 \item{dat}{A data frame containing the data used in the model.}
 
-\item{robmod}{A model object (of class \code{lmRob} or \code{lmrob}) from which to
-extract information.}
+\item{robmod}{A robust model object from which to extract information.}
 }
 \value{
 A list containing the following elements:
 \describe{
 \item{variables}{Vector of all variable names used in the model.}
 \item{clust.name}{Name of the clustering variable.}
-\item{dat}{Filtered dataset containing only the observations used in the
+\item{dat}{Filtered data set containing only the observations used in the
 model.}
 \item{clust}{Vector representing the cluster index for each observation in
 \code{dat}.}
@@ -35,8 +33,9 @@ model.}
 }
 \description{
 This internal function extracts essential information from a model object and
-associated data, specifically for use in cluster-robust inference functions
-like \code{cluster_im_glmRob} and \code{cluster_im_lmRob}. It handles variable extraction,
-clustering information, and filtering the dataset based on the model's usage.
+associated data, specifically for use in cluster-adjusted robust inference
+functions like \code{cluster_im_glmRob} and \code{cluster_im_lmRob}. It handles variable
+extraction, clustering information, and filtering the dataset based on the
+model's usage.
 }
 \keyword{internal}

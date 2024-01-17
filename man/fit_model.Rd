@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster_im_lmRob.R
 \name{fit_model}
 \alias{fit_model}
-\title{Fit a Generalized Linear Model with Robust Estimation}
+\title{Fit a Linear Model with Robust Estimation}
 \usage{
 fit_model(engine, formula, data, ...)
 }
@@ -29,7 +29,7 @@ engine.}
 A fitted model.
 }
 \description{
-This function fits a generalized linear model using robust estimation methods.
+This function fits a linear model using robust estimation methods.
 It allows the use of either the 'robust' or 'robustbase' packages for fitting
 the model.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/helpers_cimrob.R
 \name{process_results}
 \alias{process_results}
-\title{Process Cluster-Robust Inference Results}
+\title{Process Cluster-Adjusted Robust Inference Results}
 \usage{
 process_results(results, ind_variables, ci.level, drop, return.vcv)
 }
