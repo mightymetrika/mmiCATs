@@ -1,18 +1,17 @@
-#' Cluster-Robust Inference for Generalized Linear Models
+#' Cluster-Adjusted Confidence Intervals And p-Values Robust GLMs
 #'
-#' Performs cluster-robust inference on a generalized linear model object, using
-#' robust generalized linear regression within each cluster. This function is
+#' Performs cluster-adjusted inference on a robust generalized linear model object,
+#' using robust generalized linear regression within each cluster. This function is
 #' tailored for models where observations are clustered, and standard errors
 #' need adjustment for clustering. The function applies a robust generalized
 #' linear regression model to each cluster using the specified family and method,
 #' and then aggregates the results.
 #'
-#' @param robmod A robust generalized linear model object, usually created using
+#' @param robmod A robust generalized linear model object created using
 #'               robust::glmRob() or robustbase::glmrob(). It must contain
 #'               elements 'formula', 'family', and 'method'.
 #' @param dat A data frame containing the data used in the model.
-#' @param cluster A formula or a character string indicating the clustering
-#'                variable in `dat`.
+#' @param cluster A formula indicating the clustering variable in `dat`.
 #' @param ci.level Confidence level for the confidence intervals, default is 0.95.
 #' @param drop Logical; if TRUE, drops clusters where the model does not converge.
 #' @param return.vcv Logical; if TRUE, the variance-covariance matrix of the
@@ -48,6 +47,36 @@
 cluster_im_glmRob <-function(robmod, dat, cluster, ci.level = 0.95,
                              drop = TRUE, return.vcv = FALSE, engine = "robust",
                              ...){
+
+  # Check if robmod is a glmRob object or similar
+  if (!(inherits(robmod, "glmRob") | inherits(robmod, "glmrob"))) {
+    stop("robmod must be an object created by robust::glmRob() or robustbase::glmrob().")
+  }
+
+  # Check if dat is a data frame
+  if (!is.data.frame(dat)) {
+    stop("dat must be a data frame.")
+  }
+
+  # Check if ci.level is a numeric value between 0 and 1
+  if (!is.numeric(ci.level) || ci.level <= 0 || ci.level >= 1) {
+    stop("ci.level must be a numeric value between 0 and 1.")
+  }
+
+  # Check if drop is a logical value
+  if (!is.logical(drop)) {
+    stop("drop must be a logical value.")
+  }
+
+  # Check if return.vcv is a logical value
+  if (!is.logical(return.vcv)) {
+    stop("return.vcv must be a logical value.")
+  }
+
+  # Check if engine is either "robust" or "robustbase"
+  if (!(engine %in% c("robust", "robustbase"))) {
+    stop("engine must be either 'robust' or 'robustbase'.")
+  }
 
   # Extract model info
   .info <- info(formula = NULL, cluster = cluster, dat = dat, robmod = robmod)
@@ -107,9 +136,17 @@ cluster_im_glmRob <-function(robmod, dat, cluster, ci.level = 0.95,
 #' @keywords internal
 fit_model_g <- function(engine, formula, data, family, method, ...) {
   switch(engine,
-         "robust" = suppressWarnings(tryCatch(robust::glmRob(formula = formula, family = family, data = data, method = method, ...),
+         "robust" = suppressWarnings(tryCatch(robust::glmRob(formula = formula,
+                                                             family = family,
+                                                             data = data,
+                                                             method = method,
+                                                             ...),
                                               error = function(e) NULL)),
-         "robustbase" = suppressWarnings(tryCatch(robustbase::glmrob(formula = formula, family = family, data = data, method = method, ...),
+         "robustbase" = suppressWarnings(tryCatch(robustbase::glmrob(formula = formula,
+                                                                     family = family,
+                                                                     data = data,
+                                                                     method = method,
+                                                                     ...),
                                                   error = function(e) NULL)),
          stop("The engine parameter must be set to 'robust' or 'robustbase'.")
   )

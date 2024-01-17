@@ -26,8 +26,8 @@ variables in \code{clust.mod}.
 }
 \description{
 This internal function is designed to handle failures in cluster-specific model
-fitting and variable dropping issues in the context of cluster-robust inference
-functions. It checks for model fitting failures and whether independent variables
-have been dropped in the model.
+fitting and variable dropping issues in the context of cluster-adjusted robust
+inference functions. It checks for model fitting failures and whether independent
+variables have been dropped in the model.
 }
 \keyword{internal}

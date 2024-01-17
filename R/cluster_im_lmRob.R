@@ -1,15 +1,16 @@
-#' Cluster-Robust Inference for Linear Models
+#' Cluster-Adjusted Confidence Intervals And p-Values Robust Linear Models
 #'
-#' Performs cluster-robust inference on a linear model object, using robust linear
-#' regression within each cluster. This function is designed to handle models
-#' where observations are clustered, and standard errors need to be adjusted to
-#' account for this clustering. The function applies a robust linear regression model to each cluster and then aggregates the results.
+#' Performs cluster-adjusted inference on a robust linear model object, using
+#' robust linear regression within each cluster. This function is designed to
+#' handle models where observations are clustered, and standard errors need to be
+#' adjusted to account for this clustering. The function applies a robust linear
+#' regression model to each cluster and then aggregates the results.
 #'
-#' @param robmod A robust linear model object, typically created using
-#'               robust::lmRob() or robustbase::lmrob().
-#' @param formula A formula
+#' @param robmod A robust linear model object created using robust::lmRob() or
+#'               robustbase::lmrob().
+#' @param formula A formula or a string that can be coerced to a formula.
 #' @param dat A data frame containing the data used in the model.
-#' @param cluster A formula or a character string indicating the clustering
+#' @param cluster A formula indicating the clustering
 #'                variable in `dat`.
 #' @param ci.level Confidence level for the confidence intervals, default is 0.95.
 #' @param drop Logical; if TRUE, drops clusters where the model does not converge.
@@ -17,14 +18,18 @@
 #'                   cluster-averaged coefficients will be returned.
 #' @param engine Set the engine to "robust" to use robust::lmRob() or "robustbase"
 #'               to use robustbase::lmrob(). Default is "robust".
-#' @param ... Additional arguments to be passed to the `lmRob()` function.
+#' @param ... Additional arguments to be passed to the robust::lmRob() or the
+#'            robustbase::lmrob() function.
 #'
 #' @return An invisible list containing the following elements:
 #' \describe{
 #'   \item{p.values}{A matrix of p-values for each independent variable.}
-#'   \item{ci}{A matrix with the lower and upper bounds of the confidence intervals for each independent variable.}
-#'   \item{vcv.hat}{The variance-covariance matrix of the cluster-averaged coefficients, returned if `return.vcv` is TRUE.}
-#'   \item{beta.bar}{The cluster-averaged coefficients, returned if `return.vcv` is TRUE.}
+#'   \item{ci}{A matrix with the lower and upper bounds of the confidence intervals
+#'             for each independent variable.}
+#'   \item{vcv.hat}{The variance-covariance matrix of the cluster-averaged
+#'                  coefficients, returned if `return.vcv` is TRUE.}
+#'   \item{beta.bar}{The cluster-averaged coefficients, returned if `return.vcv`
+#'                   is TRUE.}
 #' }
 #'
 #' @examples
@@ -36,6 +41,48 @@
 cluster_im_lmRob <-function(robmod, formula, dat, cluster, ci.level = 0.95,
                              drop = TRUE, return.vcv = FALSE, engine = "robust",
                              ...){
+
+  # Check if robmod is a lmRob object from either robust or robustbase package
+  if (!(inherits(robmod, "lmRob") | inherits(robmod, "lmrob"))) {
+    stop("robmod must be a robust linear model object created using robust::lmRob() or robustbase::lmrob().")
+  }
+
+  # Check if formula is a valid R formula
+  if (!(inherits(formula, "formula") |
+        inherits(stats::as.formula(formula),
+                 "formula"))) {
+    stop("formula must be a valid R formula.")
+  }
+
+  # Check if dat is a data frame
+  if (!is.data.frame(dat)) {
+    stop("dat must be a data frame.")
+  }
+
+  # Check if cluster is a valid R formula
+  if (!inherits(cluster, "formula")) {
+    stop("cluster must be a valid R formula indicating the clustering variable.")
+  }
+
+  # Check if ci.level is a numeric value between 0 and 1
+  if (!is.numeric(ci.level) || ci.level <= 0 || ci.level >= 1) {
+    stop("ci.level must be a numeric value between 0 and 1.")
+  }
+
+  # Check if drop is a logical value
+  if (!is.logical(drop)) {
+    stop("drop must be a logical value.")
+  }
+
+  # Check if return.vcv is a logical value
+  if (!is.logical(return.vcv)) {
+    stop("return.vcv must be a logical value.")
+  }
+
+  # Check if engine is either "robust" or "robustbase"
+  if (!(engine %in% c("robust", "robustbase"))) {
+    stop("engine must be either 'robust' or 'robustbase'.")
+  }
 
   # Extract model info
   .info <- info(formula = formula, cluster = cluster, dat = dat, robmod = robmod)
@@ -64,9 +111,9 @@ cluster_im_lmRob <-function(robmod, formula, dat, cluster, ci.level = 0.95,
 
 }
 
-#' Fit a Generalized Linear Model with Robust Estimation
+#' Fit a Linear Model with Robust Estimation
 #'
-#' This function fits a generalized linear model using robust estimation methods.
+#' This function fits a linear model using robust estimation methods.
 #' It allows the use of either the 'robust' or 'robustbase' packages for fitting
 #' the model.
 #'

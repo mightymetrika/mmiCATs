@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster_im_glmRob.R
 \name{cluster_im_glmRob}
 \alias{cluster_im_glmRob}
-\title{Cluster-Robust Inference for Generalized Linear Models}
+\title{Cluster-Adjusted Confidence Intervals And p-Values Robust GLMs}
 \usage{
 cluster_im_glmRob(
   robmod,
@@ -16,14 +16,13 @@ cluster_im_glmRob(
 )
 }
 \arguments{
-\item{robmod}{A robust generalized linear model object, usually created using
+\item{robmod}{A robust generalized linear model object created using
 robust::glmRob() or robustbase::glmrob(). It must contain
 elements 'formula', 'family', and 'method'.}
 
 \item{dat}{A data frame containing the data used in the model.}
 
-\item{cluster}{A formula or a character string indicating the clustering
-variable in \code{dat}.}
+\item{cluster}{A formula indicating the clustering variable in \code{dat}.}
 
 \item{ci.level}{Confidence level for the confidence intervals, default is 0.95.}
 
@@ -51,8 +50,8 @@ is TRUE.}
 }
 }
 \description{
-Performs cluster-robust inference on a generalized linear model object, using
-robust generalized linear regression within each cluster. This function is
+Performs cluster-adjusted inference on a robust generalized linear model object,
+using robust generalized linear regression within each cluster. This function is
 tailored for models where observations are clustered, and standard errors
 need adjustment for clustering. The function applies a robust generalized
 linear regression model to each cluster using the specified family and method,

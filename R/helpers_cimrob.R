@@ -1,23 +1,22 @@
-#' Extract Model Information for Cluster-Robust Inference
+#' Extract Model Information for Cluster-Adjusted Robust Inference
 #'
 #' This internal function extracts essential information from a model object and
-#' associated data, specifically for use in cluster-robust inference functions
-#' like `cluster_im_glmRob` and `cluster_im_lmRob`. It handles variable extraction,
-#' clustering information, and filtering the dataset based on the model's usage.
+#' associated data, specifically for use in cluster-adjusted robust inference
+#' functions like `cluster_im_glmRob` and `cluster_im_lmRob`. It handles variable
+#' extraction, clustering information, and filtering the dataset based on the
+#' model's usage.
 #'
-#' @param formula Optional formula object used in the model fitting, applicable
-#'                only if `robmod` does not contain a formula.
+#' @param formula A formula used in the model fitting.
 #' @param cluster A formula or a character string indicating the clustering
 #'                variable in `dat`.
 #' @param dat A data frame containing the data used in the model.
-#' @param robmod A model object (of class `lmRob` or `lmrob`) from which to
-#'               extract information.
+#' @param robmod A robust model object from which to extract information.
 #'
 #' @return A list containing the following elements:
 #' \describe{
 #'   \item{variables}{Vector of all variable names used in the model.}
 #'   \item{clust.name}{Name of the clustering variable.}
-#'   \item{dat}{Filtered dataset containing only the observations used in the
+#'   \item{dat}{Filtered data set containing only the observations used in the
 #'              model.}
 #'   \item{clust}{Vector representing the cluster index for each observation in
 #'                `dat`.}
@@ -59,9 +58,9 @@ info <- function(formula = NULL, cluster, dat, robmod){
 #' Handle Model Fitting Failures and Variable Dropping
 #'
 #' This internal function is designed to handle failures in cluster-specific model
-#' fitting and variable dropping issues in the context of cluster-robust inference
-#' functions. It checks for model fitting failures and whether independent variables
-#' have been dropped in the model.
+#' fitting and variable dropping issues in the context of cluster-adjusted robust
+#' inference functions. It checks for model fitting failures and whether independent
+#' variables have been dropped in the model.
 #'
 #' @param drop Logical; if TRUE, allows the function to return `NA` for failed
 #'             model fits, otherwise stops execution with an error message.
@@ -96,7 +95,7 @@ fail_drop <- function(drop, fail, clust.mod, ind_variables){
   stats::coefficients(clust.mod)[ind_variables]
 }
 
-#' Process Cluster-Robust Inference Results
+#' Process Cluster-Adjusted Robust Inference Results
 #'
 #' This internal function processes results from cluster-specific model fittings
 #' for cluster-robust inference functions. It combines results, computes
