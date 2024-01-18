@@ -1,10 +1,9 @@
-#' Power Analysis for Linear Mixed-Effect Regression Models
+#' Power Analysis for Clustered Data
 #'
-#' Conducts a power analysis for linear mixed-effect regression models using
-#' simulation. This function allows for comparing the performance of different
-#' estimation methods in terms of power, rejection rate, root mean square error
-#' (RMSE), relative RMSE, coverage probability, and average confidence interval
-#'  width.
+#' Conducts a power analysis for clustered data using simulation. This function
+#' allows for comparing the performance of different estimation methods in terms
+#' of power, rejection rate, root mean square error (RMSE), relative RMSE, coverage
+#' probability, and average confidence interval width.
 #'
 #' @param betas Named list of true coefficient values for the fixed effects.
 #' @param dists Named list of functions to generate random distributions for each
@@ -19,7 +18,7 @@
 #'                 a string.
 #' @param grp Name of the grouping variable as a string.
 #' @param mod Formula for the mixed-effects model.
-#' @param catsmod Formula for the fixed-effects only model.
+#' @param catsmod Formula for the CATs model.
 #' @param r_slope Name of the random slope variable as a string.
 #' @param r_int Name of the random intercept as a string.
 #' @param n_time Integer specifying the number of time points per group.
