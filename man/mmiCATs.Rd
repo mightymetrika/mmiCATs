@@ -23,9 +23,6 @@ elements like file upload, text input, numeric input, and action buttons. The
 server part handles the data processing, model fitting, and execution of the
 CATs analysis. The application outputs include the list of variables,
 GLM model summary, and the results from the CATs analysis.
-
-The function relies on the \code{shiny}, \code{utils}, \code{stats}, and \code{clusterSEs} packages.
-It is important to have these packages installed and loaded in your R environment.
 }
 \examples{
 # To run the Shiny app

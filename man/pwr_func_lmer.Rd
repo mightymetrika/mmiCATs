@@ -2,7 +2,7 @@
 % Please edit documentation in R/pwr_func_lmer.R
 \name{pwr_func_lmer}
 \alias{pwr_func_lmer}
-\title{Power Analysis for Linear Mixed-Effect Regression Models}
+\title{Power Analysis for Clustered Data}
 \usage{
 pwr_func_lmer(
   betas = list(int = 0, x1 = -5, x2 = 2, x3 = 10),
@@ -53,7 +53,7 @@ a string.}
 
 \item{mod}{Formula for the mixed-effects model.}
 
-\item{catsmod}{Formula for the fixed-effects only model.}
+\item{catsmod}{Formula for the CATs model.}
 
 \item{r_slope}{Name of the random slope variable as a string.}
 
@@ -87,11 +87,10 @@ relative root mean square error, coverage probability, and average
 confidence interval width for each method.
 }
 \description{
-Conducts a power analysis for linear mixed-effect regression models using
-simulation. This function allows for comparing the performance of different
-estimation methods in terms of power, rejection rate, root mean square error
-(RMSE), relative RMSE, coverage probability, and average confidence interval
-width.
+Conducts a power analysis for clustered data using simulation. This function
+allows for comparing the performance of different estimation methods in terms
+of power, rejection rate, root mean square error (RMSE), relative RMSE, coverage
+probability, and average confidence interval width.
 }
 \examples{
 pwr_func_lmer(reps = 2)
