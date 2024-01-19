@@ -111,7 +111,7 @@ fail_drop <- function(drop, fail, clust.mod, ind_variables){
 #' @param return.vcv Logical; if TRUE, returns the variance-covariance matrix of
 #'                   the cluster-averaged coefficients.
 #'
-#' @return An invisible list containing the following elements:
+#' @return A list containing the following elements:
 #' \describe{
 #'   \item{p.values}{A matrix of p-values for each independent variable.}
 #'   \item{ci}{A matrix with the lower and upper bounds of the confidence intervals
@@ -177,6 +177,6 @@ process_results <- function(results, ind_variables, ci.level, drop, return.vcv){
     beta.bar = if(return.vcv) b.hat
   )
 
-  return(invisible(out.list))
+  return(out.list)
 }
 

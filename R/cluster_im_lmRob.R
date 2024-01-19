@@ -21,7 +21,7 @@
 #' @param ... Additional arguments to be passed to the robust::lmRob() or the
 #'            robustbase::lmrob() function.
 #'
-#' @return An invisible list containing the following elements:
+#' @return A list containing the following elements:
 #' \describe{
 #'   \item{p.values}{A matrix of p-values for each independent variable.}
 #'   \item{ci}{A matrix with the lower and upper bounds of the confidence intervals

@@ -18,37 +18,64 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of mmiCATs is to provide web 'shiny' web applications for 
+The goal of the Mighty Metrika Interface to Cluster Adjusted t-Statistics ('mmiCATs') R package is to provide ‘shiny’ web applications for CATs and to provide research tools which can be used to further understand when CATs models might be preferred over other statistical models used for cluster adjustment.
+
+The implementations of CATs in mmiCATs is based on the cluster.im.glm() function from the R package 'clusterSEs'. For more information on CATs see [Esarey and Menger (2018)](https://doi.org/10.1017/psrm.2017.42).
 
 ## Installation
 
 You can install the development version of mmiCATs like so:
 
-``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+```{r, eval=FALSE}
+# install.packages("devtools")
+devtools::install_github("mightymetrika/mmiCATs")
 ```
 
-## Example
+## Shiny Application
 
-This is a basic example which shows you how to solve a common problem:
+Load the 'mmiCATs' package and call the mmiCATs() function to launch a 'shiny' web application which allows you to run the clusterSEs::cluster.im.glm() function on your csv data:
 
-```{r example}
+```{r}
 library(mmiCATs)
-## basic example code
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
 
-```{r cars}
-summary(cars)
+```{r, eval=FALSE}
+mmiCATs()
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
 
-You can also embed plots, for example:
+## CATs with Robust Models (for research purposes only)
 
-```{r pressure, echo = FALSE}
-plot(pressure)
+R packages such as 'robust' and 'robustbase' have functions which allow users to run robust alternatives to stats::lm() and stats::glm(). The 'mmiCATs' has the functions cluster_im_lmRob() and cluster_im_glmRob() which take the basic algorithm used in clusterSEs::cluster.im.glm() but swap out stats::glm() for robust::lmRob() or robustbase::lmrob(), in the case of cluster_im_lmRob(), or for robust::glmRob() or robustbase::glmrob(), in the case of cluster_im_glmRob(). The example below shows some simple results comparing the methods for linear models.
+
+```{r}
+# Get common parameters
+.form <- Sepal.Length ~ Petal.Length + Petal.Width
+.clust <- ~ Species
+
+# clusterSEs::cluster.im.glm()
+glmout <- stats::glm(.form,
+                     family = "gaussian",
+                     data = iris)
+
+clusterSEs::cluster.im.glm(glmout, dat = iris, cluster = .clust,
+                           return.vcv = TRUE)
+
+# robust::lmRob()
+robustout <- robust::lmRob(.form, data = iris)
+
+cluster_im_lmRob(robustout, .form, dat = iris, cluster = .clust,
+                 engine = "robust", return.vcv = TRUE)
+
+# robustbase::lmrob()
+robustbaseout <- robustbase::lmrob(.form, data = iris)
+
+cluster_im_lmRob(robustbaseout, .form, dat = iris, cluster = .clust,
+                 engine = "robustbase", return.vcv = TRUE)
+
+
+
 ```
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
+

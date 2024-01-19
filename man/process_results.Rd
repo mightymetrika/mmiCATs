@@ -21,7 +21,7 @@ from the results.}
 the cluster-averaged coefficients.}
 }
 \value{
-An invisible list containing the following elements:
+A list containing the following elements:
 \describe{
 \item{p.values}{A matrix of p-values for each independent variable.}
 \item{ci}{A matrix with the lower and upper bounds of the confidence intervals
