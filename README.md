@@ -116,13 +116,13 @@ cluster_im_lmRob(robustbaseout, .form, dat = iris, cluster = .clust,
 #>                    [,1]
 #> (Intercept)  0.10305707
 #> Petal.Length 0.03924708
-#> Petal.Width  0.72343658
+#> Petal.Width  0.72343660
 #> 
 #> $ci
 #>                 CI lower CI higher
-#> (Intercept)  -1.26209472  6.312871
+#> (Intercept)  -1.26209471  6.312871
 #> Petal.Length  0.09756128  1.507929
-#> Petal.Width  -1.10924300  1.341017
+#> Petal.Width  -1.10924303  1.341017
 #> 
 #> $vcv.hat
 #>              (Intercept) Petal.Length Petal.Width
@@ -133,4 +133,93 @@ cluster_im_lmRob(robustbaseout, .form, dat = iris, cluster = .clust,
 #> $beta.bar
 #>  (Intercept) Petal.Length  Petal.Width 
 #>    2.5253884    0.8027451    0.1158868
+```
+
+The simulation study in [Esarey and Menger
+(2018)](https://doi.org/10.1017/psrm.2017.42) tested a few different
+methods for handling clustering. They found that a correctly specified
+mixed effects model tends to perform most efficiently; however, they
+found that CATs can outperform a mispecified mixed effects model. The
+pwr_func_lmer() function can be used to run a simulation where data is
+generated from a mixed effect model and results are compared between:
+
+- The data generating mixed effects model
+- A random intercept model
+- A clusterSEs::cluster.im.glm(drop = TRUE, truncate = FALSE) model
+- A clusterSEs::cluster.im.glm(drop = TRUE, truncate = TRUE) model
+- A cluster_im_lmRob(drop = TRUE, engine = “robust”) model
+- A cluster_im_lmRob(drop = TRUE, engine = “robustbase”) model
+
+The models are compared on:
+
+- Mean coefficient
+- Rejection rate
+- Rejection rate standard error
+- Root mean square error
+- Relative root mean square error
+- Confidence interval coverage
+- Average confidence interval width
+
+The following example shows a simulation where both a random intercept
+and random slope are specified and where two of the variables (x1 and
+x3) are correlated. The simulation is limited to 5 reps to minimize
+computation time. The main variable of interest is variable x1; as such,
+the comparison metrics will be with respect to x1.
+
+``` r
+pwr_func_lmer(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10),
+              dists = list("x1" = stats::rnorm,
+                           "x2" = stats::rbinom,
+                           "x3" = stats::rnorm),
+              distpar = list("x1" = list(mean = 0, sd = 1),
+                             "x2" = list(size = 1, prob = 0.4),
+                             "x3" = list(mean = 1, sd = 2)),
+              N = 50,
+              reps = 5,
+              alpha = 0.05,
+              var_intr = "x1",
+              grp = "ID",
+              mod = "out ~ x1 + x2 + x3 + (x3|ID)",
+              catsmod = "out ~ x1 + x2 + x3",
+              r_slope = "x3",
+              r_int = "int",
+              n_time = 100,
+              mean_i = 0,
+              var_i = 1,
+              mean_s = 0,
+              var_s = 1,
+              cov_is = 0,
+              mean_r = 0,
+              var_r = 1,
+              cor_mat = diag(2),
+              corvars = list(c("x1", "x3")))
+#> Warning in mapply(FUN = f, ..., SIMPLIFY = FALSE): longer argument not a
+#> multiple of length of shorter
+
+#> Warning in mapply(FUN = f, ..., SIMPLIFY = FALSE): longer argument not a
+#> multiple of length of shorter
+#> Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
+#> Model failed to converge with max|grad| = 0.00235469 (tol = 0.002, component 1)
+#> Warning in mapply(FUN = f, ..., SIMPLIFY = FALSE): longer argument not a
+#> multiple of length of shorter
+
+#> Warning in mapply(FUN = f, ..., SIMPLIFY = FALSE): longer argument not a
+#> multiple of length of shorter
+
+#> Warning in mapply(FUN = f, ..., SIMPLIFY = FALSE): longer argument not a
+#> multiple of length of shorter
+#>             model mean_coef rejection_rate rejection_rate_se       rmse
+#> 1             lme -5.010642            100                 0 0.01687085
+#> 2              ri -5.003537            100                 0 0.01152078
+#> 3            cats -5.009515            100                 0 0.01760967
+#> 4      cats_trunc -5.009515            100                 0 0.01760967
+#> 5     cats_robust -5.010065            100                 0 0.01787275
+#> 6 cats_robustbase -5.009868            100                 0 0.01766864
+#>         rrmse coverage avg_ci_width
+#> 1 0.003374170      100   0.05647763
+#> 2 0.002304156      100   0.07688258
+#> 3 0.003521933      100   0.05723904
+#> 4 0.003521933      100   0.05723904
+#> 5 0.003574549      100   0.06070427
+#> 6 0.003533728      100   0.05881840
 ```

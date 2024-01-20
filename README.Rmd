@@ -79,3 +79,54 @@ cluster_im_lmRob(robustbaseout, .form, dat = iris, cluster = .clust,
 ```
 
 
+The simulation study in [Esarey and Menger (2018)](https://doi.org/10.1017/psrm.2017.42) tested a few different methods for handling clustering. They found that a correctly specified mixed effects model tends to perform most efficiently; however, they found that CATs can outperform a mispecified mixed effects model. The pwr_func_lmer() function can be used to run a simulation where data is generated from a mixed effect model and results are compared between:
+
+* The data generating mixed effects model
+* A random intercept model
+* A clusterSEs::cluster.im.glm(drop = TRUE, truncate = FALSE) model
+* A clusterSEs::cluster.im.glm(drop = TRUE, truncate = TRUE) model
+* A cluster_im_lmRob(drop = TRUE, engine = "robust") model
+* A cluster_im_lmRob(drop = TRUE, engine = "robustbase") model
+
+The models are compared on:
+
+* Mean coefficient
+* Rejection rate
+* Rejection rate standard error
+* Root mean square error
+* Relative root mean square error
+* Confidence interval coverage
+* Average confidence interval width
+
+The following example shows a simulation where both a random intercept and random slope are specified and where two of the variables (x1 and x3) are correlated. The simulation is limited to 5 reps to minimize computation time. The main variable of interest is variable x1; as such, the comparison metrics will be with respect to x1.
+
+```{r}
+pwr_func_lmer(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10),
+              dists = list("x1" = stats::rnorm,
+                           "x2" = stats::rbinom,
+                           "x3" = stats::rnorm),
+              distpar = list("x1" = list(mean = 0, sd = 1),
+                             "x2" = list(size = 1, prob = 0.4),
+                             "x3" = list(mean = 1, sd = 2)),
+              N = 50,
+              reps = 5,
+              alpha = 0.05,
+              var_intr = "x1",
+              grp = "ID",
+              mod = "out ~ x1 + x2 + x3 + (x3|ID)",
+              catsmod = "out ~ x1 + x2 + x3",
+              r_slope = "x3",
+              r_int = "int",
+              n_time = 100,
+              mean_i = 0,
+              var_i = 1,
+              mean_s = 0,
+              var_s = 1,
+              cov_is = 0,
+              mean_r = 0,
+              var_r = 1,
+              cor_mat = diag(2),
+              corvars = list(c("x1", "x3")))
+```
+
+
