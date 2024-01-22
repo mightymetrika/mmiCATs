@@ -109,7 +109,9 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
     linear_combination <- betas[[r_int]] + sdata[["rand_int"]] + (betas[[r_slope]] + sdata[["rand_slope"]]) * sdata[[r_slope]]
 
     # Use Map to add contributions from each beta and corresponding variable
-    fixed_effects <- Map(`*`, betas[names(betas) != r_int & names(betas) != r_slope], sdata[names(betas) != r_int & names(betas) != r_slope])
+    fixed_effects <- Map(`*`,
+                         betas[names(betas) != r_int & names(betas) != r_slope],
+                         sdata[names(sdata) %in% names(betas) & names(sdata) != r_int & names(sdata) != r_slope])
     linear_combination <- linear_combination + Reduce(`+`, fixed_effects)
 
     # Model outcome with Gaussian error term
