@@ -92,10 +92,13 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
 
     # Generate data for non-correlated variables
     non_correlated_vars <- setdiff(names(dists), unlist(corvars))
-    non_correlated_data <- Map(function(var, params) {
-      do.call(dists[[var]], c(list(N*n_time), params))
-    }, var = non_correlated_vars, params = distpar[non_correlated_vars])
-    sdata <- cbind(sdata, non_correlated_data)
+    if (!identical(non_correlated_vars, character(0))){
+      non_correlated_data <- Map(function(var, params) {
+        do.call(dists[[var]], c(list(N*n_time), params))
+      }, var = non_correlated_vars, params = distpar[non_correlated_vars])
+      sdata <- cbind(sdata, non_correlated_data)
+    }
+
 
 
     # Random effects
