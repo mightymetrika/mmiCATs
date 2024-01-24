@@ -3,5 +3,5 @@ test_that("close cats game flow works", {
   cc_matrix <- cc_swapper(cc_matrix, 2)
   hand1 <- process_hand(cc_matrix, 1)
 
-  expect_true(all(names(hand1) == c("lme_coef", "mod_coef", "mispec_dist")))
+  expect_true(all(names(hand1) == c("mispec_dist", "results")))
 })

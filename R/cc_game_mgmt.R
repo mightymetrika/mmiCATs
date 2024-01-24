@@ -58,59 +58,63 @@ process_hand <- function(x, process_col,
                          mean_i = 0,
                          var_i = 1,
                          mean_s = 0,
-                         var_s = 1,
-                         cov_is = 0.1,
                          mean_r = 0,
                          var_r = 1,
-                         cor_mat = matrix(c(1,0.1,0.1,1), 2, 2),
-                         corvars = list(c("x1", "x2"))){
+                         cor_pred = NULL,
+                         truncate = FALSE,
+                         var_s_factor = 1,
+                         cov_is_factor = 14.75){
 
-  # Extract mean and sd values for the current column
-  cov_is <- x[[1, process_col]]$value/14.75
-  cor_pred <- x[[2, process_col]]$value/14.75
-
-  pwr_out <- suppressWarnings(pwr_func_lmer(betas = list("int" = beta_int, "x1" = beta_x1, "x2" = beta_x2),
-                                            dists = list("x1" = stats::rnorm, "x2" = stats::rnorm),
-                                            distpar = list("x1" = list(mean = mean_x1, sd = sd_x1), "x2" = list(mean = mean_x2, sd = sd_x2)),
-                                            N = N,
-                                            reps = 1,
-                                            alpha = alpha,
-                                            var_intr = "x1",
-                                            grp = "ID",
-                                            mod = paste0("out ~ x1 + x2 + (x2|ID)"),
-                                            catsmod = "out ~ x1 + x2",
-                                            r_slope = "x2",
-                                            r_int = "int",
-                                            n_time = n_time,
-                                            mean_i = mean_i,
-                                            var_i = var_i,
-                                            mean_s = mean_s,
-                                            var_s = var_s,
-                                            cov_is = cov_is,
-                                            mean_r = mean_r,
-                                            var_r = var_r,
-                                            cor_mat = matrix(c(1,cor_pred,cor_pred,1), 2, 2),
-                                            corvars = list(c("x1", "x2"))))
-
-  lme_coef <- pwr_out[pwr_out$model == "lme", ][[2]]
-
-  if (process_col == 1){
-    mispec_dist <- abs(pwr_out[pwr_out$model == "ri",][[5]] - pwr_out[pwr_out$model == "lme",][[5]])
-    mod_coef <- pwr_out[pwr_out$model == "ri", ][[2]]
-  } else if (process_col == 2){
-    if (truncate == TRUE){
-      mispec_dist <- abs(pwr_out[pwr_out$model == "cats_trunc",][[5]] - pwr_out[pwr_out$model == "lme",][[5]])
-      mod_coef <- pwr_out[pwr_out$model == "cats_trunc", ][[2]]
-    } else {
-      mispec_dist <- abs(pwr_out[pwr_out$model == "cats",][[5]] - pwr_out[pwr_out$model == "lme",][[5]])
-      mod_coef <- pwr_out[pwr_out$model == "cats", ][[2]]
-    }
+  # Set correlation between x1 and x2
+  if (is.null(cor_pred)){
+    corvars <- NULL
+    cor_mat <- NULL
   } else {
-    stop("process_col must be 1 or 2")
+    corvars <- list(c("x1", "x2"))
+    cor_mat <- matrix(c(1,cor_pred,cor_pred,1), 2, 2)
+
   }
 
+  # Extract random slope variance and covariance
+  var_s <- x[[1, process_col]]$value/var_s_factor
+  cov_is <- x[[2, process_col]]$value/cov_is_factor
 
-  return(list(lme_coef = lme_coef,
-              mod_coef = mod_coef,
-              mispec_dist =  mispec_dist))
+  # Generate data and fit models
+  pwr_out <- pwr_func_lmer(betas = list("int" = beta_int, "x1" = beta_x1, "x2" = beta_x2),
+                           dists = list("x1" = stats::rnorm, "x2" = stats::rnorm),
+                           distpar = list("x1" = list(mean = mean_x1, sd = sd_x1),
+                                          "x2" = list(mean = mean_x2, sd = sd_x2)),
+                           N = N,
+                           reps = 1,
+                           alpha = alpha,
+                           var_intr = "x1",
+                           grp = "ID",
+                           mod = paste0("out ~ x1 + x2 + (x2|ID)"),
+                           catsmod = "out ~ x1 + x2",
+                           r_slope = "x2",
+                           r_int = "int",
+                           n_time = n_time,
+                           mean_i = mean_i,
+                           var_i = var_i,
+                           mean_s = mean_s,
+                           var_s = var_s,
+                           cov_is = cov_is,
+                           mean_r = mean_r,
+                           var_r = var_r,
+                           cor_mat = cor_mat,
+                           corvars = corvars)
+
+  # Extract mispecification distance
+  if (truncate == TRUE){
+    mispec_dist <-pwr_out[pwr_out$model == "cats_trunc",][[5]] - pwr_out[pwr_out$model == "ri",][[5]]
+  } else {
+    mispec_dist <- pwr_out[pwr_out$model == "cats",][[5]] - pwr_out[pwr_out$model == "ri",][[5]]
+  }
+
+  # Extract wanted columns from pwr_func_lmer output
+  results <- pwr_out[1:4, c(1,2,5,6,8)]
+
+  # Return results
+  return(list(mispec_dist =  mispec_dist,
+              results = results))
 }
