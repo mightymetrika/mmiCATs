@@ -118,3 +118,17 @@ process_hand <- function(x, process_col,
   return(list(mispec_dist =  mispec_dist,
               results = results))
 }
+
+render_card_grid <- function(new_card_grid) {
+  rep_card_images <- unlist(apply(new_card_grid, 1, function(row) sapply(row, function(card) {
+    shiny::renderImage({
+      list(src = system.file(card$icard, package = "mmiCATs"), contentType = "image/png", width = 200, height = "auto")
+    }, deleteFile = FALSE)
+  })))
+
+  rep_matrix_layout <- matrix(rep_card_images, nrow = 2, byrow = TRUE)
+  card_ui <- apply(rep_matrix_layout, 1, function(row) {
+    shiny::fluidRow(lapply(row, shiny::column, width = floor(12/length(row))))
+  })
+  return(card_ui)
+}
