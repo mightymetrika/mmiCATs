@@ -57,6 +57,8 @@ CloseCATs <- function(){
       # Deal cards
       card_grid <- deal_cards_to_cc_grid(n = 2)
 
+      print(paste0("Print card_grid: ", "/n", card_grid)) ### DEBUG
+
       # Update the reactive value
       if (!cards_dealt()){
         game_cards(card_grid)
@@ -64,13 +66,14 @@ CloseCATs <- function(){
 
       # Rendering the UI for the card grid
       output$card_display <- shiny::renderUI({
-        render_card_grid(game_cards())
+        render_card_grid(card_grid)
       })
 
       # Set reactive value to TRUE since cards have been dealt
       cards_dealt(TRUE)
-      }
-      )
+      print(paste0("Cards dealt value at the end of deal card: ", cards_dealt()))
+
+      })
 
     shiny::observeEvent(input$swap_inside_col, {
       # Extract the game cards grid from the reactive value
@@ -101,12 +104,10 @@ CloseCATs <- function(){
       if (cards_dealt()) {
         shiny::fluidRow(
           shiny::column(4,
-                        shiny::tagList(
-                          #shiny::numericInput("swap_in_col", "Swap Inside Column", value = NULL),
                           shiny::actionButton("swap_inside_col", "Execute Inside Column Swap")
                         )
         )
-        )
+        #)
       }
     })
 
@@ -118,9 +119,6 @@ CloseCATs <- function(){
 
       # If there's no replication card deck, exit early
       if (is.null(cards)) return(NULL)
-
-      # # Generate replication study data
-      # replication_data <- generate_study_data(rep_cards, sample_size = input$sample_size)
 
       computer_results <- process_hand(cards,
                                        process_col = 1,
@@ -169,10 +167,8 @@ CloseCATs <- function(){
                                        var_s_factor = input$var_s_factor,
                                        cov_is_factor = input_cov_is_factor)
 
-      replication_results <- process_replication_study(replication_data, study_results())
-
       # Update reactive value
-      ply_results(replication_results)
+      ply_results(player_results)
       #replication_results(replication_results)
 
       # Display the study results in the UI

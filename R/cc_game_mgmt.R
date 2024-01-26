@@ -119,7 +119,22 @@ process_hand <- function(x, process_col,
               results = results))
 }
 
+#' Render Card Grid in Shiny App
+#'
+#' This function takes a grid of card information, generates image tags for
+#' each card, and organizes them into a responsive grid layout for display in a
+#' Shiny application.
+#'
+#' @param new_card_grid A matrix or data frame where each row represents a card and
+#' each card has a property `icard` pointing to the image file relative to the
+#' `mmiCATs` package's `www` directory. The function expects this parameter to be
+#' structured with named columns where `icard` is one of the column names.
+#'
+#' @return A Shiny UI element (`tagList`) representing a grid of card images.
+#'
+#' @keywords internal
 render_card_grid <- function(new_card_grid) {
+
   rep_card_images <- unlist(apply(new_card_grid, 1, function(row) sapply(row, function(card) {
     shiny::renderImage({
       list(src = system.file(card$icard, package = "mmiCATs"), contentType = "image/png", width = 200, height = "auto")
@@ -128,7 +143,7 @@ render_card_grid <- function(new_card_grid) {
 
   rep_matrix_layout <- matrix(rep_card_images, nrow = 2, byrow = TRUE)
   card_ui <- apply(rep_matrix_layout, 1, function(row) {
-    shiny::fluidRow(lapply(row, shiny::column, width = floor(12/length(row))))
+    shiny::fluidRow(lapply(row, shiny::column, width = floor(10/length(row))))
   })
   return(card_ui)
 }
