@@ -24,20 +24,22 @@ CloseCATs <- function(){
         shiny::numericInput("cor_pred", "Set correlation between predictors", value = NA, min = 0, max = 500),
         shiny::checkboxInput("truncate", "Exclude Outlying Cluster-Specific Beta Estimates", value = FALSE),
         shiny::numericInput("var_s_factor", "Reduction Factor (Random Slope Variance)", value = 1, min = 1, max = 14.75),
-        shiny::numericInput("cov_is_factor", "Reduction Factor (Random Effect Covariance)", value = 14.75, min = 1, max = 14.75)),
-      # Original study
-      shiny::fluidRow(
-        shiny::column(12, shiny::actionButton("deal", "Deal Cards")),
-        shiny::column(12, shiny::actionButton("score", "Score Game"))
-      )
-    ),
+        shiny::numericInput("cov_is_factor", "Reduction Factor (Random Effect Covariance)", value = 14.75, min = 1, max = 14.75),
+        # Action Buttons
+        shiny::fluidRow(
+          shiny::column(12, shiny::actionButton("deal", "Deal Cards")),
+          shiny::column(12, shiny::actionButton("score", "Score Game"))
+        )
+      ),
 
-    shiny::mainPanel(
-      shiny::uiOutput("game_title"),
-      shiny::uiOutput("swap_cards_title"),
-      shiny::uiOutput("results_title"),
+      shiny::mainPanel(
+        shiny::uiOutput("game_title"),
+        shiny::uiOutput("swap_cards_title"),
+        shiny::uiOutput("results_title")
+      )
     )
   )
+
 
   server <- function(input, output, session) {
 
@@ -48,43 +50,50 @@ CloseCATs <- function(){
     ply_results <- shiny::reactiveVal(NULL)
     game_scored <- shiny::reactiveVal(FALSE)
 
+    # Deal Cards
     shiny::observeEvent(input$deal, {
 
-      # Reset reactive values
-      cards_dealt <- shiny::reactiveVal(FALSE)
-      game_scored <- shiny::reactiveVal(FALSE)
+      # Reset the game state
+      cards_dealt(FALSE)
+      game_cards(NULL)
+      comp_results(NULL)
+      ply_results(NULL)
+      game_scored(FALSE)
 
       # Deal cards
       card_grid <- deal_cards_to_cc_grid(n = 2)
 
-      print(paste0("Print card_grid: ", "/n", card_grid)) ### DEBUG
-
       # Update the reactive value
       if (!cards_dealt()){
         game_cards(card_grid)
+        cards_dealt(TRUE)
       }
 
-      # Rendering the UI for the card grid
+      # # Rendering the UI for the card grid
       output$card_display <- shiny::renderUI({
         render_card_grid(card_grid)
       })
 
-      # Set reactive value to TRUE since cards have been dealt
-      cards_dealt(TRUE)
-      print(paste0("Cards dealt value at the end of deal card: ", cards_dealt()))
+    })
 
-      })
+    # Display Card UI
+    output$game_title <- shiny::renderUI({
+      if(cards_dealt()) {
+        shiny::tagList(
+          shiny::tags$h3("Game Cards"),
+          shiny::uiOutput("card_display")
+        )
+      }
+    })
 
+    # Swap Cards
     shiny::observeEvent(input$swap_inside_col, {
       # Extract the game cards grid from the reactive value
       cards <- game_cards()
 
-      # Check for NULL values in user input and exit early if found
-      if (is.null(input$swap_in_col)) return(NULL)
-
       # Swap within the column using the swapper function
       tryCatch({
-        new_card_grid <- cc_swapper(cards, swap_in_col = input$swap_in_col)
+        new_card_grid <- cc_swapper(cards, swap_in_col = 2)
 
         # Update the reactive value to hold the new card grid
         game_cards(new_card_grid)
@@ -99,27 +108,44 @@ CloseCATs <- function(){
       })
     })
 
-    # Render the swap controls only when the replication study has been conducted
+    # Setup Swap UI
     output$swap_controls_ui <- shiny::renderUI({
       if (cards_dealt()) {
         shiny::fluidRow(
           shiny::column(4,
-                          shiny::actionButton("swap_inside_col", "Execute Inside Column Swap")
-                        )
+                        shiny::actionButton("swap_inside_col", "Execute Inside Column Swap")
+          )
         )
-        #)
       }
     })
 
+    # Display Swap UI
+    output$swap_cards_title <- shiny::renderUI({
+      if(cards_dealt()) {
+        shiny::tagList(
+          shiny::tags$h3("Swap Cards"),
+          shiny::uiOutput("swap_controls_ui")
+        )
+      }
+    })
 
-
+    # Score Game
     shiny::observeEvent(input$score, {
-      # Extract the current card deck for replication study from the reactive value
+
+      # Extract the current card deck
       cards <- game_cards()
 
-      # If there's no replication card deck, exit early
+      # If there's no deck, exit early
       if (is.null(cards)) return(NULL)
 
+      # Convert cor_pred from NA to NULL
+      if (is.na(input$cor_pred)){
+        cor_pred <- NULL
+      } else {
+        cor_pred <- input$cor_pred
+      }
+
+      # Process computer results
       computer_results <- process_hand(cards,
                                        process_col = 1,
                                        beta_int = input$beta_int,
@@ -137,14 +163,18 @@ CloseCATs <- function(){
                                        mean_s = input$mean_s,
                                        mean_r = input$mean_r,
                                        var_r = input$var_r,
-                                       cor_pred = input$cor_pred,
+                                       cor_pred = cor_pred,
                                        truncate = input$truncate,
                                        var_s_factor = input$var_s_factor,
-                                       cov_is_factor = input_cov_is_factor)
+                                       cov_is_factor = input$cov_is_factor)
 
-      # Update reactive value
       comp_results(computer_results)
 
+      output$comp_results_summary <- shiny::renderPrint({
+        print(comp_results()$results)
+      })
+
+      # Process player results
       player_results <-   process_hand(cards,
                                        process_col = 2,
                                        beta_int = input$beta_int,
@@ -162,76 +192,55 @@ CloseCATs <- function(){
                                        mean_s = input$mean_s,
                                        mean_r = input$mean_r,
                                        var_r = input$var_r,
-                                       cor_pred = input$cor_pred,
+                                       cor_pred = cor_pred,
                                        truncate = input$truncate,
                                        var_s_factor = input$var_s_factor,
-                                       cov_is_factor = input_cov_is_factor)
+                                       cov_is_factor = input$cov_is_factor)
 
-      # Update reactive value
       ply_results(player_results)
-      #replication_results(replication_results)
-
-      # Display the study results in the UI
-      output$comp_results_summary <- shiny::renderPrint({
-        print(comp_results()$results)
-      })
 
       output$ply_results_summary <- shiny::renderPrint({
         print(ply_results()$results)
       })
 
-      game_scored(TRUE)
-
-      # Display the interpretation and result message
+      # Interpret results
       output$interpretation <- shiny::renderUI({
-        # if (interpretation$result == "win") {
         if (ply_results()$mispec_dist <  comp_results()$mispec_dist) {
           shiny::tags$div(
-            shiny::tags$h1("You Win!", style = "color: green; font-size: 48px;")#,
-            #shiny::tags$p(interpretation$interpretation)
+            shiny::tags$h1("You Win!", style = "color: green; font-size: 48px;")
           )
         } else {
           shiny::tags$div(
-            shiny::tags$h1("You Lose!", style = "color: red; font-size: 48px;")#,
-            #shiny::tags$p(interpretation$interpretation)
+            shiny::tags$h1("You Lose!", style = "color: red; font-size: 48px;")
           )
         }
       })
 
-    })
+      # Change game_scored to TRUE
+      game_scored(TRUE)
 
-    # Original Study Title
-    output$game_title <- shiny::renderUI({
-      if(cards_dealt()) {
-        shiny::tagList(
-          shiny::tags$h3("Game Cards"),
-          shiny::uiOutput("card_display")
-        )
-      }
-    })
-
-    # Swap Cards Title
-    output$swap_cards_title <- shiny::renderUI({
-      if(cards_dealt()) {
-        shiny::tagList(
-          shiny::tags$h3("Swap Cards"),
-          shiny::uiOutput("swap_controls_ui")
-        )
-      }
     })
 
     # Results Title
     output$results_title <- shiny::renderUI({
       if(game_scored()) {
         shiny::tagList(
-          shiny::tags$h3("Results"),
-          shiny::verbatimTextOutput("comp_results_summary"),
-          shiny::verbatimTextOutput("ply_results_summary"),
-          shiny::uiOutput("interpretation")
+          shiny::fluidRow(
+            # Column for Computer Results
+            shiny::column(6,
+                          shiny::tags$h4("Computer Results"),
+                          shiny::verbatimTextOutput("comp_results_summary")
+            ),
+            # Column for Player Results
+            shiny::column(6,
+                          shiny::tags$h4("Player Results"),
+                          shiny::verbatimTextOutput("ply_results_summary")
+            ),
+            shiny::uiOutput("interpretation")
+          )
         )
       }
     })
-
   }
 
   shiny::shinyApp(ui, server)
