@@ -1,3 +1,23 @@
+#' Deal Cards to CloseCATs Game Grid
+#'
+#' This internal function deals cards to a 2 x 2 grid for the CloseCATs game.
+#' The game involves a deck of cards, where cards are dealt to both the computer
+#' and the player. The matrix format of the game grid is such that column 1 is
+#' for the computer, and column 2 is for the player. The first row of cards
+#' contributes to the random slope variance, and the second row contributes to
+#' the covariance between the random slope and the random intercept.
+#'
+#' @param deck A dataframe representing a deck of cards. If not provided, a
+#'    shuffled deck is generated using `mmcards::i_deck()` and
+#'    `mmcards::shuffle_deck()`. The deck should contain at least 2*n cards.
+#' @param n The number of players. It defines the number of columns in the grid.
+#'    Each player, including the computer, will be dealt two cards.
+#'
+#' @return A matrix representing the game grid with dealt cards. Each cell of the
+#'    matrix contains a card dealt to either the computer (column 1) or the player
+#'    (column 2).
+#'
+#' @keywords internal
 deal_cards_to_cc_grid <- function(deck = mmcards::i_deck(deck = mmcards::shuffle_deck(),
                                                          i_path = "www",
                                                          i_names = c("2_of_clubs", "2_of_diamonds", "2_of_hearts", "2_of_spades",
@@ -35,6 +55,27 @@ deal_cards_to_cc_grid <- function(deck = mmcards::i_deck(deck = mmcards::shuffle
   return(cards_matrix)
 }
 
+#' Column Swap in CloseCATs Game Grid
+#'
+#' This internal function performs a column swap in the CloseCATs game grid.
+#' It is designed to allow the player to swap the cards in their column (column 2).
+#' This swap changes the contribution of the cards to the random slope variance
+#' and the covariance between the random slope and the random intercept. The
+#' function modifies the order of cards in the specified column by reversing their
+#' positions.
+#'
+#' @param cards_matrix A matrix representing the current state of the game grid.
+#'    The matrix should have 2 rows and a number of columns equal to the number
+#'    of players (including the computer). Each cell of the matrix contains a card.
+#' @param swap_in_col The column number where the swap should be performed. If
+#'    this parameter is NULL or not equal to 2, no action is taken. The default
+#'    value is NULL. Typically, this parameter should be set to 2 to perform a
+#'    swap for the player's column.
+#'
+#' @return The modified game grid matrix after performing the swap in the specified
+#'    column.
+#'
+#' @keywords internal
 cc_swapper <- function(cards_matrix, swap_in_col = NULL) {
 
   if (!is.null(swap_in_col) && swap_in_col == 2){
@@ -44,6 +85,44 @@ cc_swapper <- function(cards_matrix, swap_in_col = NULL) {
   return(cards_matrix)
 }
 
+#' Process Hand and Calculate Mispecification Distance in CloseCATs Game
+#'
+#' This function processes hands in the CloseCATs game and calculates the
+#' mispecification distance. It performs statistical computations based on the
+#' dealt cards and specified parameters, evaluating the performance of mixed effects
+#' models and cluster adjusted t-statistics models in the context of the game.
+#' The function considers various statistical parameters and model specifications
+#' to compute the results.
+#'
+#' @param x A matrix representing the current hand in the game grid.
+#' @param process_col The column number (1 for computer, 2 for player) to process.
+#' @param beta_int Intercept for the mixed effects model.
+#' @param beta_x1 Coefficient for the first predictor in the mixed effects model.
+#' @param beta_x2 Coefficient for the second predictor in the mixed effects model.
+#' @param mean_x1 Mean of the first predictor.
+#' @param sd_x1 Standard deviation of the first predictor.
+#' @param mean_x2 Mean of the second predictor.
+#' @param sd_x2 Standard deviation of the second predictor.
+#' @param N Number of observations.
+#' @param reps Number of replications for the power analysis.
+#' @param alpha Significance level for the power analysis.
+#' @param n_time Number of time points.
+#' @param mean_i Mean of the random intercept.
+#' @param var_i Variance of the random intercept.
+#' @param mean_s Mean of the random slope.
+#' @param mean_r Mean of the residual.
+#' @param var_r Variance of the residual.
+#' @param cor_pred Correlation predictor, NULL if not specified.
+#' @param truncate Boolean to determine if truncation is applied in the model.
+#' @param var_s_factor Factor to adjust the variance of the random slope.
+#' @param cov_is_factor Factor to adjust the covariance between the random intercept
+#'    and slope.
+#'
+#' @return A list containing two elements: 'mispec_dist', the mispecification
+#'    distance, and 'results', a summary of model results and their statistical
+#'    parameters.
+#'
+#' @keywords internal
 process_hand <- function(x, process_col,
                          beta_int = 0,
                          beta_x1 = 0.25,
@@ -53,6 +132,7 @@ process_hand <- function(x, process_col,
                          mean_x2 = 0,
                          sd_x2 = 4,
                          N = 20,
+                         reps = 1,
                          alpha = 0.05,
                          n_time = 20,
                          mean_i = 0,
@@ -85,7 +165,7 @@ process_hand <- function(x, process_col,
                            distpar = list("x1" = list(mean = mean_x1, sd = sd_x1),
                                           "x2" = list(mean = mean_x2, sd = sd_x2)),
                            N = N,
-                           reps = 1,
+                           reps = reps,
                            alpha = alpha,
                            var_intr = "x1",
                            grp = "ID",
