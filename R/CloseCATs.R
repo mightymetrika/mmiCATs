@@ -1,3 +1,30 @@
+#' CloseCATs Shiny Application
+#'
+#' This function creates and runs a Shiny application for the CloseCATs game.
+#' The application provides a user interface for setting up the game, dealing cards,
+#' swapping cards, and scoring the game based on statistical computations. The
+#' game involves dealing cards to players and the computer, allowing the player
+#' to swap cards in their column, and scoring the game based on the
+#' mispecification distance calculated from the processed hands.
+#'
+#' The UI allows players to input various statistical parameters and preferences
+#' for the game setup. It also provides interactive elements for dealing cards,
+#' swapping cards within a column, and scoring the game based on the calculated
+#' mispecification distance.
+#'
+#' @details
+#' The main components of the Shiny application include:
+#' - A sidebar for inputting game parameters and controls for dealing and scoring.
+#' - A main panel for displaying game cards, swap options, and results.
+#' - Reactive elements that update based on user interaction and game state.
+#'
+#' @examples
+#' # To run the CloseCATs Shiny application:
+#' if(interactive()){
+#'   CloseCATs()
+#' }
+#'
+#' @export
 CloseCATs <- function(){
   ui <- shiny::fluidPage(
     theme = shinythemes::shinytheme("paper"),
@@ -25,6 +52,7 @@ CloseCATs <- function(){
         shiny::checkboxInput("truncate", "Exclude Outlying Cluster-Specific Beta Estimates", value = FALSE),
         shiny::numericInput("var_s_factor", "Reduction Factor (Random Slope Variance)", value = 1, min = 1, max = 14.75),
         shiny::numericInput("cov_is_factor", "Reduction Factor (Random Effect Covariance)", value = 14.75, min = 1, max = 14.75),
+        shiny::numericInput("its", "Iterations", value = 1, min = 1, max = 10, step = 1),
         # Action Buttons
         shiny::fluidRow(
           shiny::column(12, shiny::actionButton("deal", "Deal Cards")),
@@ -156,6 +184,7 @@ CloseCATs <- function(){
                                        mean_x2 = input$mean_x2,
                                        sd_x2 = input$sd_x2,
                                        N = input$N,
+                                       reps = input$its,
                                        alpha = input$alpha_level,
                                        n_time = input$n_time,
                                        mean_i = input$mean_i,
@@ -174,6 +203,10 @@ CloseCATs <- function(){
         print(comp_results()$results)
       })
 
+      output$comp_mispec_dist <- shiny::renderPrint({
+        print(comp_results()$mispec_dist)
+      })
+
       # Process player results
       player_results <-   process_hand(cards,
                                        process_col = 2,
@@ -185,6 +218,7 @@ CloseCATs <- function(){
                                        mean_x2 = input$mean_x2,
                                        sd_x2 = input$sd_x2,
                                        N = input$N,
+                                       reps = input$its,
                                        alpha = input$alpha_level,
                                        n_time = input$n_time,
                                        mean_i = input$mean_i,
@@ -201,6 +235,10 @@ CloseCATs <- function(){
 
       output$ply_results_summary <- shiny::renderPrint({
         print(ply_results()$results)
+      })
+
+      output$ply_mispec_dist <- shiny::renderPrint({
+        print(ply_results()$mispec_dist)
       })
 
       # Interpret results
@@ -229,12 +267,16 @@ CloseCATs <- function(){
             # Column for Computer Results
             shiny::column(6,
                           shiny::tags$h4("Computer Results"),
-                          shiny::verbatimTextOutput("comp_results_summary")
+                          shiny::verbatimTextOutput("comp_results_summary"),
+                          shiny::tags$h5("Mispecification Distance"),
+                          shiny::verbatimTextOutput("comp_mispec_dist")
             ),
             # Column for Player Results
             shiny::column(6,
                           shiny::tags$h4("Player Results"),
-                          shiny::verbatimTextOutput("ply_results_summary")
+                          shiny::verbatimTextOutput("ply_results_summary"),
+                          shiny::tags$h5("Mispecification Distance"),
+                          shiny::verbatimTextOutput("ply_mispec_dist")
             ),
             shiny::uiOutput("interpretation")
           )
