@@ -81,6 +81,14 @@ CloseCATs <- function(){
     # Deal Cards
     shiny::observeEvent(input$deal, {
 
+      # Check iterations
+      shiny::observeEvent(input$its, {
+        if(input$its > 10) {
+          shiny::showNotification("Iterations cannot exceed 10. Resetting to 10.", type = "warning")
+          shiny::updateNumericInput(session, "its", value = 10)
+        }
+      })
+
       # Reset the game state
       cards_dealt(FALSE)
       game_cards(NULL)

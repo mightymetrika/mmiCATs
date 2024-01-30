@@ -125,56 +125,56 @@ fail_drop <- function(drop, fail, clust.mod, ind_variables){
 #' @keywords internal
 process_results <- function(results, ind_variables, ci.level, drop, return.vcv){
   # Combine the results into a matrix
-  b.clust <- do.call(rbind, results)
+  beta_cluster <- do.call(rbind, results)
 
   if(drop){
-    b.clust <- stats::na.omit(b.clust)
-    if(nrow(b.clust) == 0){stop("all clusters were dropped (see help file).")}
+    beta_cluster <- stats::na.omit(beta_cluster)
+    if(nrow(beta_cluster) == 0){stop("All clusters dropped.")}
   }
 
-  G <- nrow(b.clust)
-  if(G == 0){stop("all clusters were dropped (see help file).")}
+  retained_clusters <- nrow(beta_cluster)
+  if(retained_clusters == 0){stop("All clusters dropped.")}
 
   # calculate the avg beta across clusters
-  b.hat <- colMeans(b.clust)
+  beta_avg <- colMeans(beta_cluster)
 
   # sweep out the avg betas
-  b.dev <- sweep(b.clust, MARGIN = 2, STATS = b.hat)
+  beta_dev <- sweep(beta_cluster, MARGIN = 2, STATS = beta_avg)
 
   # calculate VCV matrix
-  vcv.hat <- stats::cov(b.dev)
-  rownames(vcv.hat) <- ind_variables
-  colnames(vcv.hat) <- ind_variables
+  vcv_mat <- stats::cov(beta_dev)
+  rownames(vcv_mat) <- ind_variables
+  colnames(vcv_mat) <- ind_variables
 
   # calculate standard error
-  s.hat <- sqrt(diag(vcv.hat))
+  std_err <- sqrt(diag(vcv_mat))
 
   # calculate t-statistic
-  t.hat <- sqrt(G) * (b.hat / s.hat)
+  t_stat <- sqrt(retained_clusters) * (beta_avg / std_err)
 
-  names(b.hat) <- ind_variables
+  names(beta_avg) <- ind_variables
 
   # compute p-val based on # of clusters
-  p.out <- 2*pmin( stats::pt(t.hat, df = G-1, lower.tail = TRUE), stats::pt(t.hat, df = G-1, lower.tail = FALSE) )
+  p_val <- 2*pmin( stats::pt(t_stat, df = retained_clusters-1, lower.tail = TRUE), stats::pt(t_stat, df = retained_clusters-1, lower.tail = FALSE) )
 
 
   # compute CIs
-  ci.lo <- b.hat - stats::qt((1-ci.level)/2, df=(G-1), lower.tail=FALSE)*(s.hat/sqrt(G))
-  ci.hi <- b.hat + stats::qt((1-ci.level)/2, df=(G-1), lower.tail=FALSE)*(s.hat/sqrt(G))
+  ci_low <- beta_avg - stats::qt((1-ci.level)/2, df=(retained_clusters-1), lower.tail=FALSE)*(std_err/sqrt(retained_clusters))
+  ci_high <- beta_avg + stats::qt((1-ci.level)/2, df=(retained_clusters-1), lower.tail=FALSE)*(std_err/sqrt(retained_clusters))
 
-  out <- matrix(p.out, ncol=1)
+  out <- matrix(p_val, ncol=1)
   rownames(out) <- ind_variables
 
-  out.ci <- cbind(ci.lo, ci.hi)
-  rownames(out.ci) <- ind_variables
-  colnames(out.ci) <- c("CI lower", "CI higher")
+  out_ci <- cbind(ci_low, ci_high)
+  rownames(out_ci) <- ind_variables
+  colnames(out_ci) <- c("CI lower", "CI higher")
 
   # Combine results into a list
   out.list <- list(
     p.values = out,
-    ci = out.ci,
-    vcv.hat = if(return.vcv) vcv.hat,
-    beta.bar = if(return.vcv) b.hat
+    ci = out_ci,
+    vcv.hat = if(return.vcv) vcv_mat,
+    beta.bar = if(return.vcv) beta_avg
   )
 
   return(out.list)
