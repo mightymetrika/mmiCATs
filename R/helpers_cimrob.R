@@ -135,37 +135,49 @@ process_results <- function(results, ind_variables, ci.level, drop, return.vcv){
   retained_clusters <- nrow(beta_cluster)
   if(retained_clusters == 0){stop("All clusters dropped.")}
 
-  # calculate the avg beta across clusters
+  # Compute average coefficient across clusters
   beta_avg <- colMeans(beta_cluster)
 
-  # sweep out the avg betas
+  # Compute each clusters deviation from the average
   beta_dev <- sweep(beta_cluster, MARGIN = 2, STATS = beta_avg)
 
-  # calculate VCV matrix
+  # Compute variance covariance matrix for beta_dev
   vcv_mat <- stats::cov(beta_dev)
+
+  # Name the components of the vcv_mat
   rownames(vcv_mat) <- ind_variables
   colnames(vcv_mat) <- ind_variables
 
-  # calculate standard error
+  # Compute standard error
   std_err <- sqrt(diag(vcv_mat))
 
-  # calculate t-statistic
+  # Compute t-stats
   t_stat <- sqrt(retained_clusters) * (beta_avg / std_err)
 
+  # Set names for beta_avg
   names(beta_avg) <- ind_variables
 
-  # compute p-val based on # of clusters
-  p_val <- 2*pmin( stats::pt(t_stat, df = retained_clusters-1, lower.tail = TRUE), stats::pt(t_stat, df = retained_clusters-1, lower.tail = FALSE) )
+  # Compute p-values based on the number of retained clusters
+  p_val <- 2*pmin( stats::pt(t_stat, df = retained_clusters-1,
+                             lower.tail = TRUE),
+                   stats::pt(t_stat, df = retained_clusters-1,
+                             lower.tail = FALSE) )
 
 
-  # compute CIs
-  ci_low <- beta_avg - stats::qt((1-ci.level)/2, df=(retained_clusters-1), lower.tail=FALSE)*(std_err/sqrt(retained_clusters))
-  ci_high <- beta_avg + stats::qt((1-ci.level)/2, df=(retained_clusters-1), lower.tail=FALSE)*(std_err/sqrt(retained_clusters))
+  # Compute upper and lower confidence intervals based on ci.level and
+  ci_low <- beta_avg - stats::qt((1-ci.level)/2,
+                                 df=(retained_clusters-1),
+                                 lower.tail=FALSE)*(std_err/sqrt(retained_clusters))
+  ci_high <- beta_avg + stats::qt((1-ci.level)/2,
+                                  df=(retained_clusters-1),
+                                  lower.tail=FALSE)*(std_err/sqrt(retained_clusters))
 
+  # Organize output
   out <- matrix(p_val, ncol=1)
-  rownames(out) <- ind_variables
-
   out_ci <- cbind(ci_low, ci_high)
+
+  # Name output
+  rownames(out) <- ind_variables
   rownames(out_ci) <- ind_variables
   colnames(out_ci) <- c("CI lower", "CI higher")
 
