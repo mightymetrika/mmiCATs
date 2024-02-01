@@ -148,7 +148,7 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
         extract_function(...),
         error = function(e) {
           warning(sprintf("Result extraction failed: %s", e$message))
-          return(list(estimate = NA, significant = NA, conf_low = NA, conf_high = NA))
+          return(list(estimate = NA, significant = NA, conf_low = NA, conf_high = NA, mf_success = NA))
         }
       )
     }
@@ -159,7 +159,18 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
       p_value <- tidy_fit[tidy_fit$term == var_intr, "p.value"] < alpha
       conf_low <- tidy_fit[tidy_fit$term == var_intr, "conf.low"]
       conf_high <- tidy_fit[tidy_fit$term == var_intr, "conf.high"]
-      list(estimate = estimate, significant = p_value, conf_low = conf_low, conf_high = conf_high)
+      mf_success <- ifelse(is.na(fit), 0, 1)
+      #list(estimate = estimate, significant = p_value, conf_low = conf_low, conf_high = conf_high, mf_success = mf_success)
+      if(is.null(fit)) {
+        cat_res <- list(estimate = NA, significant = NA, conf_low = NA,
+                        conf_high = NA, mf_success = NA)
+      } else {
+        cat_res <- list(estimate = estimate, significant = p_value,
+                        conf_low = conf_low, conf_high = conf_high,
+                        mf_success = mf_success)
+      }
+
+      return(cat_res)
     }
 
     extract_cats_results <- function(clust_fit, var_intr, alpha) {
@@ -167,8 +178,19 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
       p_value <- clust_fit$p.values[var_intr, ] < alpha
       conf_low <- clust_fit$ci[var_intr,1]
       conf_high <- clust_fit$ci[var_intr,2]
+      mf_success <- ifelse(is.na(clust_fit), 0, 1)
 
-      list(estimate = estimate, significant = p_value, conf_low = conf_low, conf_high = conf_high)
+      if(is.null(clust_fit)) {
+        cat_res <- list(estimate = NA, significant = NA, conf_low = NA,
+                        conf_high = NA, mf_success = NA)
+      } else {
+        cat_res <- list(estimate = estimate, significant = p_value,
+                        conf_low = conf_low, conf_high = conf_high,
+                        mf_success = mf_success)
+      }
+
+      return(cat_res)
+
     }
 
     # Extract results using helper functions
@@ -197,18 +219,21 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
     significant <- sapply(method_results, function(x) unlist(x$significant))
     conf_low <- sapply(method_results, function(x) unlist(x$conf_low))
     conf_high <- sapply(method_results, function(x) unlist(x$conf_high))
+    success_bin <- sapply(method_results, function(x) unlist(x$mf_success))
 
     mean_coef <- mean(estimates, na.rm = TRUE)
     rejection_rate <- mean(significant, na.rm = TRUE) * 100
-    rejection_rate_se <- stats::sd(significant, na.rm = TRUE) / sqrt(length(significant))
+    rejection_rate_se <- stats::sd(significant, na.rm = TRUE) / sqrt(length(!is.na(significant)))
     rmse <- sqrt(mean((estimates - true_coefficient)^2, na.rm = TRUE))
     rrmse <- rmse / abs(true_coefficient)
     coverage <- mean((conf_low <= true_coefficient) & (conf_high >= true_coefficient), na.rm = TRUE) * 100
     avg_ci_width <- mean(conf_high - conf_low, na.rm = TRUE)
+    success_bin <- ifelse(is.list(success_bin), unlist(success_bin), success_bin)
+    success <- sum(success_bin, na.rm = TRUE)
 
     data.frame(model = method, mean_coef = mean_coef, rejection_rate = rejection_rate,
                rejection_rate_se = rejection_rate_se, rmse = rmse, rrmse = rrmse,
-               coverage = coverage, avg_ci_width = avg_ci_width)
+               coverage = coverage, avg_ci_width = avg_ci_width, success = success)
   }
 
   sim_results <- lapply(c("lme", "ri", "cats", "cats_trunc", "cats_robust", "cats_robustbase"),
