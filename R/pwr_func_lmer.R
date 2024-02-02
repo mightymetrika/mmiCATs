@@ -154,40 +154,39 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
     }
 
     extract_lme_results <- function(fit, var_intr, alpha) {
-      tidy_fit <- broom.mixed::tidy(fit, conf.int = TRUE, conf.level = 1 - alpha)
-      estimate <- tidy_fit[tidy_fit$term == var_intr, "estimate"]
-      p_value <- tidy_fit[tidy_fit$term == var_intr, "p.value"] < alpha
-      conf_low <- tidy_fit[tidy_fit$term == var_intr, "conf.low"]
-      conf_high <- tidy_fit[tidy_fit$term == var_intr, "conf.high"]
-      mf_success <- ifelse(is.na(fit), 0, 1)
-      #list(estimate = estimate, significant = p_value, conf_low = conf_low, conf_high = conf_high, mf_success = mf_success)
-      if(is.null(fit)) {
-        cat_res <- list(estimate = NA, significant = NA, conf_low = NA,
-                        conf_high = NA, mf_success = NA)
-      } else {
-        cat_res <- list(estimate = estimate, significant = p_value,
-                        conf_low = conf_low, conf_high = conf_high,
-                        mf_success = mf_success)
+      mf_success <- ifelse(is.null(fit), 0, 1)
+
+      # Extract results only if fit is not NULL
+      if (mf_success) {
+        tidy_fit <- broom.mixed::tidy(fit, conf.int = TRUE, conf.level = 1 - alpha)
+        estimate <- tidy_fit[tidy_fit$term == var_intr, "estimate"]
+        p_value <- tidy_fit[tidy_fit$term == var_intr, "p.value"]
+        conf_low <- tidy_fit[tidy_fit$term == var_intr, "conf.low"]
+        conf_high <- tidy_fit[tidy_fit$term == var_intr, "conf.high"]
       }
+
+      cat_res <- list(
+        estimate = ifelse(mf_success, estimate, NA),
+        significant = ifelse(mf_success, p_value < alpha, NA),
+        conf_low = ifelse(mf_success, conf_low, NA),
+        conf_high = ifelse(mf_success, conf_high, NA),
+        mf_success = mf_success
+      )
 
       return(cat_res)
     }
 
     extract_cats_results <- function(clust_fit, var_intr, alpha) {
-      estimate <- clust_fit$beta.bar[var_intr]
-      p_value <- clust_fit$p.values[var_intr, ] < alpha
-      conf_low <- clust_fit$ci[var_intr,1]
-      conf_high <- clust_fit$ci[var_intr,2]
-      mf_success <- ifelse(is.na(clust_fit), 0, 1)
 
-      if(is.null(clust_fit)) {
-        cat_res <- list(estimate = NA, significant = NA, conf_low = NA,
-                        conf_high = NA, mf_success = NA)
-      } else {
-        cat_res <- list(estimate = estimate, significant = p_value,
-                        conf_low = conf_low, conf_high = conf_high,
-                        mf_success = mf_success)
-      }
+      mf_success <- ifelse(is.null(clust_fit), 0, 1)
+
+      cat_res <- list(
+        estimate = ifelse(mf_success, clust_fit$beta.bar[var_intr], NA),
+        significant = ifelse(mf_success, clust_fit$p.values[var_intr, ] < alpha, NA),
+        conf_low = ifelse(mf_success, clust_fit$ci[var_intr, 1], NA),
+        conf_high = ifelse(mf_success, clust_fit$ci[var_intr, 2], NA),
+        mf_success = mf_success
+      )
 
       return(cat_res)
 
@@ -223,7 +222,7 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
 
     mean_coef <- mean(estimates, na.rm = TRUE)
     rejection_rate <- mean(significant, na.rm = TRUE) * 100
-    rejection_rate_se <- stats::sd(significant, na.rm = TRUE) / sqrt(length(!is.na(significant)))
+    rejection_rate_se <- stats::sd(significant, na.rm = TRUE) / sqrt(sum(!is.na(significant)))
     rmse <- sqrt(mean((estimates - true_coefficient)^2, na.rm = TRUE))
     rrmse <- rmse / abs(true_coefficient)
     coverage <- mean((conf_low <= true_coefficient) & (conf_high >= true_coefficient), na.rm = TRUE) * 100
