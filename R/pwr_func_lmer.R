@@ -227,7 +227,10 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
     rrmse <- rmse / abs(true_coefficient)
     coverage <- mean((conf_low <= true_coefficient) & (conf_high >= true_coefficient), na.rm = TRUE) * 100
     avg_ci_width <- mean(conf_high - conf_low, na.rm = TRUE)
-    success_bin <- ifelse(is.list(success_bin), unlist(success_bin), success_bin)
+
+    if(is.list(success_bin)){
+      success_bin <- unlist(success_bin)
+    }
     success <- sum(success_bin, na.rm = TRUE)
 
     data.frame(model = method, mean_coef = mean_coef, rejection_rate = rejection_rate,
