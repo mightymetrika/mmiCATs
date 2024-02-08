@@ -197,17 +197,62 @@ pwr_func_lmer(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10),
               cor_mat = diag(2),
               corvars = list(c("x1", "x3")))
 #>             model mean_coef rejection_rate rejection_rate_se        rmse
-#> 1             lme -4.999843            100                 0 0.007395759
-#> 2              ri -4.998563            100                 0 0.006039764
-#> 3            cats -5.000869            100                 0 0.006993846
-#> 4      cats_trunc -5.000869            100                 0 0.006993846
-#> 5     cats_robust -5.003207            100                 0 0.005779193
-#> 6 cats_robustbase -5.003256            100                 0 0.005506254
-#>         rrmse coverage avg_ci_width
-#> 1 0.001479152      100   0.05643267
-#> 2 0.001207953      100   0.07709939
-#> 3 0.001398769      100   0.06896953
-#> 4 0.001398769      100   0.06896953
-#> 5 0.001155839      100   0.07201932
-#> 6 0.001101251      100   0.07200100
+#> 1             lme -5.003363            100                 0 0.013598841
+#> 2              ri -5.007275            100                 0 0.008234101
+#> 3            cats -5.003798            100                 0 0.013409778
+#> 4      cats_trunc -5.003798            100                 0 0.013409778
+#> 5     cats_robust -5.003814            100                 0 0.010633658
+#> 6 cats_robustbase -5.003830            100                 0 0.010389763
+#>         rrmse coverage avg_ci_width success
+#> 1 0.002719768      100   0.05576995       5
+#> 2 0.001646820      100   0.07912637       5
+#> 3 0.002681956      100   0.05687827       5
+#> 4 0.002681956      100   0.05687827       5
+#> 5 0.002126732      100   0.05800557       5
+#> 6 0.002077953      100   0.05866324       5
+```
+
+## CloseCATs
+
+When summarizing simulation results, [Esarey and Menger
+(2018)](https://doi.org/10.1017/psrm.2017.42) state, “in our simulations
+an accurate RE model of intra-cluster heterogeneity provides
+betterperformance than any cluster adjustment technique, but the cluster
+adjustment techniques perform perform better in the event of
+misspecification.” Of the “cluster adjustment techniques, the summary
+also mentions that,”Our simulation analysis finds that CATs (based on
+the work of [Ibragimov and Muller
+(2010)](https://doi.org/10.1198/jbes.2009.08046)) are the best choice
+among the options we examine for correcting SEs for clustering in data
+sets with a small number of clusters.”
+
+In practice, mixed effects models are often used to obtain cluster
+adjusted results. However, when the sample size is small, researchers of
+use a random intercept model with no random slope in order to obtain a
+model which is not too complex for the data. But if the true data
+generating process is consistent with a mixed effects model with a
+random slope (and a correlation between the random intercept and random
+slope) then the random intercept model might be a misspecification.
+
+CloseCATs is a card game where:
+
+- Two cards are dealt to the computer and two to the player
+- The card in row 1 represents the random slope variance
+- The card in row 2 represents the random effect covariance
+- The player has an option to switch their row 1 and row 2 card (the
+  computer does not)
+- Data is simulated from a mixed effects model defined by the game setup
+  and the cards
+- Simulated data is fitted to the data generating mixed effects model, a
+  random intercept model, and CATs models
+- A misspecification distance (rmse of CATs - rmse of random intercept)
+  is computed for the computer and the player
+- The lower misspecification distance wins the game
+
+The game was designed to help users get a better understanding of when
+to prefer a CATs model over a random intercept model. To play the game,
+call the CloseCATs() function to launch the ‘shiny’ application.
+
+``` r
+CloseCATs()
 ```
