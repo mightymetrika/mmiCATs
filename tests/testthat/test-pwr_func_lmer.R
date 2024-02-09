@@ -1,28 +1,3 @@
-# betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10)
-# dists = list("x1" = stats::rnorm, "x2" = stats::rbinom, "x3" = stats::rnorm)
-# distpar = list("x1" = list(mean = 0, sd = 1), "x2" = list(size = 1, prob = 0.4), "x3" = list(mean = 1, sd = 2))
-# N = 25
-# reps = 10
-# alpha = 0.05
-# var_intr = "x1"
-# grp = "ID"
-# mod = paste0("out ~ x1 + x2 + x3 + (x3|ID)")
-# catsmod = "out ~ x1 + x2 + x3"
-# r_slope = "x1"
-# r_int = "int"
-# n_time = 4
-# mean_i = 0
-# var_i = 1
-# mean_s = 0
-# var_s = 1
-# cov_is = 0
-# mean_r = 0
-# var_r = 1
-# cor_mat = NULL
-# corvars = NULL
-
-
-
 test_that("pwr_func_lmer works and produces output of the correct length with no
           correlation", {
 
