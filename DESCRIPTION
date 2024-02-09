@@ -1,10 +1,13 @@
 Package: mmiCATs
-Title: What the Package Does (One Line, Title Case)
+Title: Cluster Adjusted t Statistic Web Applications
 Version: 0.0.0.9000
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Authors@R: c(
+    person("Mackson", "Ncube", , "macksonncube.stats@gmail.com", role = c("aut", "cre")),
+    person("mightymetrika, LLC", role = c("cph", "fnd"))
+  )
+Description: Simulation results show that cluster adjusted t statistics (CATs)
+    are a good option for correcting standard errors when the number of clusters
+    is small Esarey and Menger (2018) <doi:10.1017/psrm.2017.42>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

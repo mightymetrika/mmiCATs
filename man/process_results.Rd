@@ -38,4 +38,7 @@ for cluster-robust inference functions. It combines results, computes
 variance-covariance matrix, standard errors, t-statistics, p-values, and
 confidence intervals for each independent variable.
 }
+\details{
+Workflow defined in clusterSEs::cluster.im.glm() function.
+}
 \keyword{internal}

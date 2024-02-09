@@ -102,6 +102,8 @@ fail_drop <- function(drop, fail, clust.mod, ind_variables){
 #' variance-covariance matrix, standard errors, t-statistics, p-values, and
 #' confidence intervals for each independent variable.
 #'
+#' Workflow defined in clusterSEs::cluster.im.glm() function.
+#'
 #' @param results A list of results from cluster-specific model fittings.
 #' @param ind_variables A vector of independent variable names for which the
 #'                      results are computed.

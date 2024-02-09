@@ -196,43 +196,42 @@ pwr_func_lmer(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10),
               var_r = 1,
               cor_mat = diag(2),
               corvars = list(c("x1", "x3")))
-#>             model mean_coef rejection_rate rejection_rate_se        rmse
-#> 1             lme -5.003363            100                 0 0.013598841
-#> 2              ri -5.007275            100                 0 0.008234101
-#> 3            cats -5.003798            100                 0 0.013409778
-#> 4      cats_trunc -5.003798            100                 0 0.013409778
-#> 5     cats_robust -5.003814            100                 0 0.010633658
-#> 6 cats_robustbase -5.003830            100                 0 0.010389763
+#>             model mean_coef rejection_rate rejection_rate_se       rmse
+#> 1             lme -5.007105            100                 0 0.01204045
+#> 2              ri -5.007326            100                 0 0.01525310
+#> 3            cats -5.007325            100                 0 0.01081286
+#> 4      cats_trunc -5.007325            100                 0 0.01081286
+#> 5     cats_robust -5.006722            100                 0 0.01180092
+#> 6 cats_robustbase -5.005960            100                 0 0.01106553
 #>         rrmse coverage avg_ci_width success
-#> 1 0.002719768      100   0.05576995       5
-#> 2 0.001646820      100   0.07912637       5
-#> 3 0.002681956      100   0.05687827       5
-#> 4 0.002681956      100   0.05687827       5
-#> 5 0.002126732      100   0.05800557       5
-#> 6 0.002077953      100   0.05866324       5
+#> 1 0.002408090      100   0.05630442       5
+#> 2 0.003050621      100   0.07726239       5
+#> 3 0.002162572      100   0.06013752       5
+#> 4 0.002162572      100   0.06013752       5
+#> 5 0.002360184      100   0.06192097       5
+#> 6 0.002213107      100   0.06088932       5
 ```
 
 ## CloseCATs
 
 When summarizing simulation results, [Esarey and Menger
 (2018)](https://doi.org/10.1017/psrm.2017.42) state, “in our simulations
-an accurate RE model of intra-cluster heterogeneity provides
-betterperformance than any cluster adjustment technique, but the cluster
-adjustment techniques perform perform better in the event of
-misspecification.” Of the “cluster adjustment techniques, the summary
-also mentions that,”Our simulation analysis finds that CATs (based on
-the work of [Ibragimov and Muller
-(2010)](https://doi.org/10.1198/jbes.2009.08046)) are the best choice
-among the options we examine for correcting SEs for clustering in data
-sets with a small number of clusters.”
+an accurate RE model of intra-cluster heterogeneity provides better
+performance than any cluster adjustment technique, but the cluster
+adjustment techniques perform better in the event of misspecification.”
+Of the cluster adjustment techniques, the summary also mentions that,
+“Our simulation analysis finds that CATs (based on the work of
+[Ibragimov and Muller (2010)](https://doi.org/10.1198/jbes.2009.08046))
+are the best choice among the options we examine for correcting SEs for
+clustering in data sets with a small number of clusters.”
 
 In practice, mixed effects models are often used to obtain cluster
-adjusted results. However, when the sample size is small, researchers of
-use a random intercept model with no random slope in order to obtain a
-model which is not too complex for the data. But if the true data
-generating process is consistent with a mixed effects model with a
-random slope (and a correlation between the random intercept and random
-slope) then the random intercept model might be a misspecification.
+adjusted results. However, when the sample size is small, researchers
+often use a random intercept model (with no random slope) in order to
+obtain a model which is not too complex for the data. But if the true
+data generating process is consistent with a mixed effects model with a
+random slope then the random intercept model might be a
+misspecification.
 
 CloseCATs is a card game where:
 
@@ -246,7 +245,7 @@ CloseCATs is a card game where:
 - Simulated data is fitted to the data generating mixed effects model, a
   random intercept model, and CATs models
 - A misspecification distance (rmse of CATs - rmse of random intercept)
-  is computed for the computer and the player
+  is computed for the computer and for the player
 - The lower misspecification distance wins the game
 
 The game was designed to help users get a better understanding of when
