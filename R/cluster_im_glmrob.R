@@ -117,13 +117,12 @@ cluster_im_glmRob <-function(robmod, dat, cluster, ci.level = 0.95,
 #'
 #' @param engine A character string specifying the engine to be used for model
 #'               fitting. Must be either "robust" or "robustbase".
-#' @param formula An object of class \code{\link[stats]{formula}} (or one that
-#'                can be coerced to that class): a symbolic description of the
-#'                model to be fitted.
+#' @param formula An object of class formula (or one that can be coerced to that
+#'                class): a symbolic description of the model to be fitted.
 #' @param data A dataframe containing the variables in the model.
 #' @param family A description of the error distribution and link function to be
-#'               used in the model (See \code{\link[stats]{family}} for details
-#'               of family functions).
+#'               used in the model (See stats::family for details of family
+#'               functions).
 #' @param method Fitting method to be used. Can vary depending on the selected
 #'               engine.
 #' @param ... Additional arguments to be passed to the underlying fitting
@@ -131,7 +130,6 @@ cluster_im_glmRob <-function(robmod, dat, cluster, ci.level = 0.95,
 #'
 #' @return A fitted model
 #'
-#' @seealso \code{\link[robust]{glmRob}}, \code{\link[robustbase]{glmrob}}
 #'
 #' @keywords internal
 fit_model_g <- function(engine, formula, data, family, method, ...) {

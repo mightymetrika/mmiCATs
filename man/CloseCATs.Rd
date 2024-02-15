@@ -6,6 +6,9 @@
 \usage{
 CloseCATs()
 }
+\value{
+A Shiny app object which can be run to start the application.
+}
 \description{
 This function creates and runs a Shiny application for the CloseCATs game.
 The application provides a user interface for setting up the game, dealing cards,

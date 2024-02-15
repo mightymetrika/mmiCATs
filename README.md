@@ -14,10 +14,16 @@ for cluster adjustment.
 
 The implementations of CATs in ‘mmiCATs’ is based on the
 cluster.im.glm() function from the R package ‘clusterSEs’. For more
-information on CATs see [Esarey and Menger
-(2018)](https://doi.org/10.1017/psrm.2017.42).
+information on CATs see Esarey and Menger (2019).
 
 ## Installation
+
+You can install the released version of ‘mmiCATs’ from
+[CRAN](https://CRAN.R-project.org):
+
+``` r
+install.packages("mmiCATs")
+```
 
 You can install the development version of ‘mmiCATs’ like so:
 
@@ -138,8 +144,7 @@ cluster_im_lmRob(robustbaseout, .form, dat = iris, cluster = .clust,
 #>    2.5253884    0.8027451    0.1158868
 ```
 
-The simulation study in [Esarey and Menger
-(2018)](https://doi.org/10.1017/psrm.2017.42) tested a few different
+The simulation study in Esarey and Menger (2019) tested a few different
 methods for handling clustering. They found that a correctly specified
 mixed effects model tends to perform most efficiently; however, they
 found that CATs can outperform a mispecified mixed effects model. The
@@ -196,34 +201,33 @@ pwr_func_lmer(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10),
               var_r = 1,
               cor_mat = diag(2),
               corvars = list(c("x1", "x3")))
-#>             model mean_coef rejection_rate rejection_rate_se       rmse
-#> 1             lme -5.007105            100                 0 0.01204045
-#> 2              ri -5.007326            100                 0 0.01525310
-#> 3            cats -5.007325            100                 0 0.01081286
-#> 4      cats_trunc -5.007325            100                 0 0.01081286
-#> 5     cats_robust -5.006722            100                 0 0.01180092
-#> 6 cats_robustbase -5.005960            100                 0 0.01106553
+#>             model mean_coef rejection_rate rejection_rate_se        rmse
+#> 1             lme -5.007189            100                 0 0.010810328
+#> 2              ri -5.000001            100                 0 0.013853265
+#> 3            cats -5.006698            100                 0 0.009592995
+#> 4      cats_trunc -5.006698            100                 0 0.009592995
+#> 5     cats_robust -5.008836            100                 0 0.013731247
+#> 6 cats_robustbase -5.008159            100                 0 0.011653423
 #>         rrmse coverage avg_ci_width success
-#> 1 0.002408090      100   0.05630442       5
-#> 2 0.003050621      100   0.07726239       5
-#> 3 0.002162572      100   0.06013752       5
-#> 4 0.002162572      100   0.06013752       5
-#> 5 0.002360184      100   0.06192097       5
-#> 6 0.002213107      100   0.06088932       5
+#> 1 0.002162066      100   0.05650710       5
+#> 2 0.002770653      100   0.08214456       5
+#> 3 0.001918599      100   0.06106792       5
+#> 4 0.001918599      100   0.06106792       5
+#> 5 0.002746249      100   0.06670095       5
+#> 6 0.002330685      100   0.06385641       5
 ```
 
 ## CloseCATs
 
-When summarizing simulation results, [Esarey and Menger
-(2018)](https://doi.org/10.1017/psrm.2017.42) state, “in our simulations
-an accurate RE model of intra-cluster heterogeneity provides better
-performance than any cluster adjustment technique, but the cluster
-adjustment techniques perform better in the event of misspecification.”
-Of the cluster adjustment techniques, the summary also mentions that,
-“Our simulation analysis finds that CATs (based on the work of
-[Ibragimov and Muller (2010)](https://doi.org/10.1198/jbes.2009.08046))
-are the best choice among the options we examine for correcting SEs for
-clustering in data sets with a small number of clusters.”
+When summarizing simulation results, Esarey and Menger (2019) state, “in
+our simulations an accurate RE model of intra-cluster heterogeneity
+provides better performance than any cluster adjustment technique, but
+the cluster adjustment techniques perform better in the event of
+misspecification.” Of the cluster adjustment techniques, the summary
+also mentions that, “Our simulation analysis finds that CATs (based on
+the work of Ibragimov and Muller (2010)) are the best choice among the
+options we examine for correcting SEs for clustering in data sets with a
+small number of clusters.”
 
 In practice, mixed effects models are often used to obtain cluster
 adjusted results. However, when the sample size is small, researchers
@@ -255,3 +259,13 @@ call the CloseCATs() function to launch the ‘shiny’ application.
 ``` r
 CloseCATs()
 ```
+
+# References
+
+Esarey J, Menger A. Practical and Effective Approaches to Dealing With
+Clustered Data. Political Science Research and Methods.
+2019;7(3):541-559. <doi:10.1017/psrm.2017.42>
+
+Rustam Ibragimov & Ulrich K. Muller (2010) t-Statistic Based Correlation
+and Heterogeneity Robust Inference, Journal of Business & Economic
+Statistics, 28:4, 453-468, DOI: 10.1198/jbes.2009.08046

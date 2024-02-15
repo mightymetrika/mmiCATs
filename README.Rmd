@@ -20,9 +20,16 @@ knitr::opts_chunk$set(
 
 The goal of the Mighty Metrika Interface to Cluster Adjusted t-Statistics ('mmiCATs') R package is to provide ‘shiny’ web applications for CATs and to provide research tools for investigating when CATs models should be preferred over other statistical models used for cluster adjustment.
 
-The implementations of CATs in 'mmiCATs' is based on the cluster.im.glm() function from the R package 'clusterSEs'. For more information on CATs see [Esarey and Menger (2018)](https://doi.org/10.1017/psrm.2017.42).
+The implementations of CATs in 'mmiCATs' is based on the cluster.im.glm() function from the R package 'clusterSEs'. For more information on CATs see Esarey and Menger (2019).
 
 ## Installation
+
+You can install the released version of 'mmiCATs' from [CRAN](https://CRAN.R-project.org):
+
+```{r eval=FALSE}
+install.packages("mmiCATs")
+```
+
 
 You can install the development version of 'mmiCATs' like so:
 
@@ -30,6 +37,7 @@ You can install the development version of 'mmiCATs' like so:
 # install.packages("devtools")
 devtools::install_github("mightymetrika/mmiCATs")
 ```
+
 
 ## Shiny Application
 
@@ -76,7 +84,7 @@ cluster_im_lmRob(robustbaseout, .form, dat = iris, cluster = .clust,
 ```
 
 
-The simulation study in [Esarey and Menger (2018)](https://doi.org/10.1017/psrm.2017.42) tested a few different methods for handling clustering. They found that a correctly specified mixed effects model tends to perform most efficiently; however, they found that CATs can outperform a mispecified mixed effects model. The pwr_func_lmer() function can be used to run a simulation where data is generated from a mixed effect model and results are compared between:
+The simulation study in Esarey and Menger (2019) tested a few different methods for handling clustering. They found that a correctly specified mixed effects model tends to perform most efficiently; however, they found that CATs can outperform a mispecified mixed effects model. The pwr_func_lmer() function can be used to run a simulation where data is generated from a mixed effect model and results are compared between:
 
 * The data generating mixed effects model
 * A random intercept model
@@ -129,7 +137,7 @@ pwr_func_lmer(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10),
 
 ## CloseCATs
 
-When summarizing simulation results, [Esarey and Menger (2018)](https://doi.org/10.1017/psrm.2017.42) state, "in our simulations an accurate RE model of intra-cluster heterogeneity provides better performance than any cluster adjustment technique, but the cluster adjustment techniques perform better in the event of misspecification." Of the cluster adjustment techniques, the summary also mentions that, "Our simulation analysis finds that CATs (based on the work of [Ibragimov and Muller (2010)](https://doi.org/10.1198/jbes.2009.08046)) are the best choice among the options we examine for correcting SEs for clustering in data sets with a small number of clusters."
+When summarizing simulation results, Esarey and Menger (2019) state, "in our simulations an accurate RE model of intra-cluster heterogeneity provides better performance than any cluster adjustment technique, but the cluster adjustment techniques perform better in the event of misspecification." Of the cluster adjustment techniques, the summary also mentions that, "Our simulation analysis finds that CATs (based on the work of Ibragimov and Muller (2010)) are the best choice among the options we examine for correcting SEs for clustering in data sets with a small number of clusters."
 
 In practice, mixed effects models are often used to obtain cluster adjusted results. However, when the sample size is small, researchers often use a random intercept model (with no random slope) in order to obtain a model which is not too complex for the data. But if the true data generating process is consistent with a mixed effects model with a random slope then the random intercept model might be a misspecification.
 
@@ -150,3 +158,9 @@ The game was designed to help users get a better understanding of when to prefer
 CloseCATs()
 ```
 
+
+# References
+
+Esarey J, Menger A. Practical and Effective Approaches to Dealing With Clustered Data. Political Science Research and Methods. 2019;7(3):541-559. doi:10.1017/psrm.2017.42
+
+Rustam Ibragimov & Ulrich K. Muller (2010) t-Statistic Based Correlation and Heterogeneity Robust Inference, Journal of Business & Economic Statistics, 28:4, 453-468, DOI: 10.1198/jbes.2009.08046 

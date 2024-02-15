@@ -246,5 +246,3 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
 
   return(final_results)
 }
-
-

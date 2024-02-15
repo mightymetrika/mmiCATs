@@ -18,6 +18,8 @@
 #' - A main panel for displaying game cards, swap options, and results.
 #' - Reactive elements that update based on user interaction and game state.
 #'
+#' @return A Shiny app object which can be run to start the application.
+#'
 #' @examples
 #' # To run the CloseCATs Shiny application:
 #' if(interactive()){
