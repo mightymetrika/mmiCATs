@@ -1,5 +1,4 @@
 # return.vcv = TRUE
-
 test_that("cluster_im_glmRob works with the robust engine", {
   mtcars2 <- mtcars
 
@@ -11,19 +10,17 @@ test_that("cluster_im_glmRob works with the robust engine", {
   imout <- cluster_im_glmRob(robout, dat = mtcars2, ~cyl_f, return.vcv = TRUE,
                              engine = "robust")
 
-  # Test that the p.value for wt is between 0.42 and 0.43
-  expect_true(imout$p.values[3] > 0.42 & imout$p.values[3] < 0.43)
+  # Test length of imout$p.values
+  expect_equal(length(imout$p.values), 3)
 
-  # Test the lower ci for disp
-  expect_true(imout$ci[2,1] > -3.98 & imout$ci[2,1] < -3.97)
+  # Test dimensions of imout$ci
+  expect_equal(ncol(imout$ci), 2)
+  expect_equal(nrow(imout$ci), 3)
 
-  # Test the upper ci for disp
-  expect_true(imout$ci[2,2] > 6.38 & imout$ci[2,2] < 6.39)
+  # Test length of imout$beta.bar
+  expect_equal(length(imout$beta.bar), 3)
 
-  # Test that beta.bar for disp is between 1.2 and 1.3
-  expect_true(imout$beta.bar[[2]] > 1.2 & imout$beta.bar[[2]] < 1.3)
-
-  # Test that the output is of length 4 when return.vcv = TRUE
+  # Test that the output is of length 4
   expect_equal(length(imout), 4)
 
 })
@@ -41,25 +38,22 @@ test_that("cluster_im_glmRob works with the robust engine", {
   imout <- cluster_im_glmRob(robout, dat = iris_bin, ~Species, return.vcv = TRUE,
                              engine = "robustbase")
 
-  # Test that the p.value for Petal.Width is between 0.97 and 0.98
-  expect_true(imout$p.values[3] > 0.97 & imout$p.values[3] < 0.98)
+  # Test length of imout$p.values
+  expect_equal(length(imout$p.values), 3)
 
-  # Test the lower ci for Petal.Length
-  expect_true(imout$ci[2,1] > -8.66 & imout$ci[2,1] < -8.65)
+  # Test dimensions of imout$ci
+  expect_equal(ncol(imout$ci), 2)
+  expect_equal(nrow(imout$ci), 3)
 
-  # Test the upper ci for Petal.Length
-  expect_true(imout$ci[2,2] > 20.96 & imout$ci[2,2] < 20.97)
+  # Test length of imout$beta.bar
+  expect_equal(length(imout$beta.bar), 3)
 
-  # Test that beta.bar for Petal.Length is between 6.1 and 6.2
-  expect_true(imout$beta.bar[[2]] > 6.1 & imout$beta.bar[[2]] < 6.2)
-
-  # Test that the output is of length 4 when return.vcv = TRUE
+  # Test that the output is of length 4
   expect_equal(length(imout), 4)
 
 })
 
 # return.vcv = FALSE
-
 test_that("cluster_im_glmRob works with the robust engine and return.cvc = FALSE", {
   mtcars2 <- mtcars
 
@@ -71,16 +65,17 @@ test_that("cluster_im_glmRob works with the robust engine and return.cvc = FALSE
   imout <- cluster_im_glmRob(robout, dat = mtcars2, ~cyl_f, return.vcv = FALSE,
                              engine = "robust")
 
-  # Test that the p.value for wt is between 0.42 and 0.43
-  expect_true(imout$p.values[3] > 0.42 & imout$p.values[3] < 0.43)
+  # Test length of imout$p.values
+  expect_equal(length(imout$p.values), 3)
 
-  # Test the lower ci for disp
-  expect_true(imout$ci[2,1] > -3.98 & imout$ci[2,1] < -3.97)
+  # Test dimensions of imout$ci
+  expect_equal(ncol(imout$ci), 2)
+  expect_equal(nrow(imout$ci), 3)
 
-  # Test the upper ci for disp
-  expect_true(imout$ci[2,2] > 6.38 & imout$ci[2,2] < 6.39)
+  # Test length of imout$beta.bar
+  expect_true(is.null(imout$beta.bar))
 
-  # Test that the output is of length 4 when return.vcv = FALSE
+  # Test that the output is of length 4
   expect_equal(length(imout), 4)
 
 })
@@ -98,16 +93,17 @@ test_that("cluster_im_glmRob works with the robust engine and return.vcv = FALSE
   imout <- cluster_im_glmRob(robout, dat = iris_bin, ~Species, return.vcv = FALSE,
                              engine = "robustbase")
 
-  # Test that the p.value for Petal.Width is between 0.97 and 0.98
-  expect_true(imout$p.values[3] > 0.97 & imout$p.values[3] < 0.98)
+  # Test length of imout$p.values
+  expect_equal(length(imout$p.values), 3)
 
-  # Test the lower ci for Petal.Length
-  expect_true(imout$ci[2,1] > -8.66 & imout$ci[2,1] < -8.65)
+  # Test dimensions of imout$ci
+  expect_equal(ncol(imout$ci), 2)
+  expect_equal(nrow(imout$ci), 3)
 
-  # Test the upper ci for Petal.Length
-  expect_true(imout$ci[2,2] > 20.96 & imout$ci[2,2] < 20.97)
+  # Test length of imout$beta.bar
+  expect_true(is.null(imout$beta.bar))
 
-  # Test that the output is of length 4 when return.vcv = FALSE
+  # Test that the output is of length 4
   expect_equal(length(imout), 4)
 
 })

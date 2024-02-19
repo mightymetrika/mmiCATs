@@ -20,7 +20,7 @@ Description: Simulation results detailed in Esarey and Menger (2019) <doi:10.101
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 URL: https://github.com/mightymetrika/mmiCATs
 BugReports: https://github.com/mightymetrika/mmiCATs/issues
 Imports: 
