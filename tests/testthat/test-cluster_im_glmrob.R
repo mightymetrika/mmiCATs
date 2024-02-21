@@ -25,7 +25,7 @@ test_that("cluster_im_glmRob works with the robust engine", {
 
 })
 
-test_that("cluster_im_glmRob works with the robust engine", {
+test_that("cluster_im_glmRob works with the robustbase engine", {
   iris_bin <- iris
 
   # Create a binary variable for MPG (e.g., MPG > 20)
@@ -80,7 +80,7 @@ test_that("cluster_im_glmRob works with the robust engine and return.cvc = FALSE
 
 })
 
-test_that("cluster_im_glmRob works with the robust engine and return.vcv = FALSE", {
+test_that("cluster_im_glmRob works with the robustbase engine and return.vcv = FALSE", {
   iris_bin <- iris
 
   # Create a binary variable for MPG (e.g., MPG > 20)
