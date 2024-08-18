@@ -3,5 +3,7 @@
 export(CloseCATs)
 export(cluster_im_glmRob)
 export(cluster_im_lmRob)
+export(kenward_roger)
 export(mmiCATs)
 export(pwr_func_lmer)
+importFrom(lmerTest,lmer)
