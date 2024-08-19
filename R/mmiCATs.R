@@ -35,24 +35,19 @@ mmiCATs <- function(){
     shiny::titlePanel("Set Up CATs Analysis"),
     shiny::sidebarLayout(
       shiny::sidebarPanel(
-        shiny::fileInput("datafile", "Choose CSV File",
-                         multiple = FALSE,
-                         accept = c("text/csv",
-                                    "text/comma-separated-values,text/plain",
-                                    ".csv")),
+        shiny::tags$div(
+          title = "Upload a CSV file with your data. The file should have headers corresponding to variable names.",
+          shiny::fileInput("datafile", "Choose CSV File",
+                           multiple = FALSE,
+                           accept = c("text/csv",
+                                      "text/comma-separated-values,text/plain",
+                                      ".csv"))
+        ),
         shiny::uiOutput("model_input_ui"),
-        shiny::textInput("additional_args", "Additional Arguments (key=value format)"),
-        shiny::numericInput("ci_value", "Confidence Interval", value = 0.95, min = 0, max = 1),
-        shiny::numericInput("round", "Round", value = 2, min = 0, max = 10),
-        shiny::actionButton("fit", "Fit Model"),
         shiny::br(),  # Add a line break
+        shiny::uiOutput("cluster_input_ui"),
         shiny::br(),  # Add a line break
-        shiny::textInput("cluster", "Cluster Variable"),
-        shiny::checkboxInput("drop", "Drop", value = FALSE),
-        shiny::checkboxInput("truncate", "Truncate", value = FALSE),
-        shiny::checkboxInput("return.vcv", "Show Cluster Estimates", value = FALSE),
-        shiny::numericInput("seed_value", "Set seed (optional)", value = NA, min = 1, max = .Machine$integer.max),
-        shiny::actionButton("run_analysis", "Run Analysis")
+        shiny::actionButton("show_citations", "Citations")
       ),
       shiny::mainPanel(
         shiny::uiOutput("variables_title"),  # Placeholder for the title
@@ -61,7 +56,9 @@ mmiCATs <- function(){
         DT::DTOutput("model_summ"),
         DT::DTOutput("glance_model"),
         shiny::uiOutput("CATs_results_header"),
-        shiny::verbatimTextOutput("print_CATs_output")
+        shiny::verbatimTextOutput("print_CATs_output"),
+        shiny::uiOutput("citation_header"),
+        shiny::verbatimTextOutput("citations_output")
       )
     )
   )
@@ -145,11 +142,32 @@ mmiCATs <- function(){
       }
     })
 
-    # Select Engine
+    # Select Engine and enter glm model information
     shiny::observe({
       if (!is.null(uploaded_data())) {
         output$model_input_ui <- shiny::renderUI({
-          shiny::textInput("formula_or_model", "Formula", value = "")
+          shiny::tagList(
+            shiny::tags$div(
+              title = "Enter the formula for your model using R's formula syntax (e.g., response ~ predictor1 + predictor2).",
+              shiny::textInput("formula_or_model", "Formula", value = "")
+            ),
+            shiny::tags$div(
+              title = "Optional: Pass additional arguments to the glm function in key=value format (e.g., family=binomial).",
+              shiny::textInput("additional_args", "Additional Arguments")
+            ),
+            shiny::tags$div(
+              title = "Set the confidence level for interval estimates. Default is 0.95 (95%).",
+              shiny::numericInput("ci_value", "Confidence Interval", value = 0.95, min = 0, max = 1)
+            ),
+            shiny::tags$div(
+              title = "Specify the number of decimal places to round numeric results. Default is 2.",
+              shiny::numericInput("round", "Round", value = 2, min = 0, max = 10)
+            ),
+            shiny::tags$div(
+              title = "Click to fit the GLM model using the specified formula and arguments.",
+              shiny::actionButton("fit", "Fit Model")
+            )
+          )
         })
       }
     })
@@ -219,6 +237,40 @@ mmiCATs <- function(){
       })
     })
 
+    # Enter clustering information UI
+    shiny::observe({
+      if (model_fitted()) {
+        output$cluster_input_ui <- shiny::renderUI({
+          shiny::tagList(
+            shiny::tags$div(
+              title = "Specify the cluster variable for CATs analysis (e.g. ~ City).",
+              shiny::textInput("cluster", "Cluster Variable")
+            ),
+            shiny::tags$div(
+              title = "Check this box to drop clusters with only one observation from the analysis.",
+              shiny::checkboxInput("drop", "Drop", value = FALSE)
+            ),
+            shiny::tags$div(
+              title = "Check this box to truncate extreme values in the variance-covariance matrix.",
+              shiny::checkboxInput("truncate", "Truncate", value = FALSE)
+            ),
+            shiny::tags$div(
+              title = "Check this box to display the cluster-robust variance-covariance matrix.",
+              shiny::checkboxInput("return.vcv", "Show Cluster Estimates", value = FALSE)
+            ),
+            shiny::tags$div(
+              title = "Optional: Set a seed for reproducibility of the analysis.",
+              shiny::numericInput("seed_value", "Set seed (optional)", value = NA, min = 1, max = .Machine$integer.max)
+            ),
+            shiny::tags$div(
+              title = "Click to run the CATs analysis using the specified model and clustering options.",
+              shiny::actionButton("run_analysis", "Run Analysis")
+            )
+          )
+        })
+      }
+    })
+
     output$model_summ_header <- shiny::renderUI({
       if(model_fitted()) {
         shiny::tags$h2("GLM Summary")
@@ -273,6 +325,39 @@ mmiCATs <- function(){
         shiny::tags$h2("Cluster-Adjusted P-values & Confidence Intervals")
       }
     })
+
+    # Initialize citations_text as an empty string
+    citations_text <- shiny::reactiveVal("")
+
+    shiny::observeEvent(input$show_citations, {
+      # Get the formatted citations
+      mmiCATs_citation <- format_citation(utils::citation("mmiCATs"))
+      cluster_ses_citation <- format_citation(utils::citation("clusterSEs"))
+
+      citations <- paste(
+        "Methodology:",
+        "Esarey J, Menger A. Practical and Effective Approaches to Dealing With Clustered Data. Political Science Research and Methods. 2019;7(3):541-559. <doi:10.1017/psrm.2017.42>.",
+        "",
+        "Software Implementing Methodology",
+        cluster_ses_citation,
+        "",
+        "Web Application:",
+        mmiCATs_citation,
+        sep = "\n"
+      )
+      citations_text(citations)
+    })
+
+    # Render the citations output
+    output$citations_output <- shiny::renderText({
+      citations_text()
+    })
+
+    output$citation_header <- shiny::renderUI({
+      shiny::req(citations_text())
+      shiny::tags$h2("Citations")
+    })
+
   }
   shiny::shinyApp(ui = ui, server = server)
 }
