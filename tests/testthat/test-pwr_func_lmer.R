@@ -9,7 +9,7 @@ test_that("pwr_func_lmer works and produces output of the correct length with no
             expect_setequal(names(pwr_out), c("model", "mean_coef",
                                               "rejection_rate", "rejection_rate_se",
                                               "rmse", "rrmse", "coverage", "avg_ci_width", "success"))
-            expect_setequal(pwr_out$model, c("lme", "ri", "cats", "cats_trunc",
+            expect_setequal(pwr_out$model, c("lme", "ri", "lme_kr", "ri_kr", "cats", "cats_trunc",
                                              "cats_robust", "cats_robustbase"))
           })
 
@@ -24,7 +24,7 @@ test_that("pwr_func_lmer works and produces output of the correct length", {
   expect_setequal(names(pwr_out), c("model", "mean_coef",
                                     "rejection_rate", "rejection_rate_se",
                                     "rmse", "rrmse", "coverage", "avg_ci_width", "success"))
-  expect_setequal(pwr_out$model, c("lme", "ri", "cats", "cats_trunc",
+  expect_setequal(pwr_out$model, c("lme", "ri", "lme_kr", "ri_kr", "cats", "cats_trunc",
                                    "cats_robust", "cats_robustbase"))
 
 })
@@ -44,7 +44,7 @@ test_that("pwr_func_lmer works and produces output of the correct length for a
                                     "rejection_rate", "rejection_rate_se",
                                     "rmse", "rrmse", "coverage", "avg_ci_width",
                                     "success"))
-  expect_setequal(pwr_out$model, c("lme", "ri", "cats", "cats_trunc",
+  expect_setequal(pwr_out$model, c("lme", "ri", "lme_kr", "ri_kr", "cats", "cats_trunc",
                                    "cats_robust", "cats_robustbase"))
 
 })
@@ -62,14 +62,14 @@ test_that("pwr_func_lmer works and produces NaN for mean coefficient and 0 succe
             expect_equal(length(pwr_out), 9)
 
             #Check that the mean coefficient for cats is NaN and that success is 0
-            expect_equal(pwr_out[3,2], NaN)
-            expect_equal(pwr_out[3,9], 0)
+            expect_equal(pwr_out[pwr_out$model == "cats",2], NaN)
+            expect_equal(pwr_out[pwr_out$model == "cats",9], 0)
 
             expect_setequal(names(pwr_out), c("model", "mean_coef",
                                               "rejection_rate", "rejection_rate_se",
                                               "rmse", "rrmse", "coverage", "avg_ci_width",
                                               "success"))
-            expect_setequal(pwr_out$model, c("lme", "ri", "cats", "cats_trunc",
+            expect_setequal(pwr_out$model, c("lme", "ri", "lme_kr", "ri_kr", "cats", "cats_trunc",
                                              "cats_robust", "cats_robustbase"))
 
           })
@@ -106,7 +106,7 @@ test_that("xcats model works", {
                                               "rejection_rate", "rejection_rate_se",
                                               "rmse", "rrmse", "coverage", "avg_ci_width",
                                               "success"))
-            expect_setequal(pwr_out$model, c("lme", "ri", "cats", "cats_trunc",
+            expect_setequal(pwr_out$model, c("lme", "ri", "lme_kr", "ri_kr", "cats", "cats_trunc",
                                              "cats_robust", "cats_robustbase"))
           })
 

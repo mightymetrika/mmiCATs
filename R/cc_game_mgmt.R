@@ -192,7 +192,7 @@ process_hand <- function(x, process_col,
   }
 
   # Extract wanted columns from pwr_func_lmer output
-  results <- pwr_out[1:4, c(1,2,5,6,8,9)]
+  results <- pwr_out[, c(1,2,5,6,8,9)]
 
   # Return results
   return(list(mispec_dist =  mispec_dist,

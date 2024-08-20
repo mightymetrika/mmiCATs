@@ -153,12 +153,13 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
       )
     }
 
-    extract_lme_results <- function(fit, var_intr, alpha) {
+    extract_lme_results <- function(fit, var_intr, alpha, ddf.method = "Satterthwaite") {
       mf_success <- ifelse(is.null(fit), 0, 1)
 
       # Extract results only if fit is not NULL
       if (mf_success) {
-        tidy_fit <- broom.mixed::tidy(fit, conf.int = TRUE, conf.level = 1 - alpha)
+        tidy_fit <- broom.mixed::tidy(fit, conf.int = TRUE,
+                                      conf.level = 1 - alpha, ddf.method = ddf.method)
         estimate <- tidy_fit[tidy_fit$term == var_intr, "estimate"]
         p_value <- tidy_fit[tidy_fit$term == var_intr, "p.value"]
         conf_low <- tidy_fit[tidy_fit$term == var_intr, "conf.low"]
@@ -195,6 +196,8 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
     # Extract results using helper functions
     lme_results <- safe_extract_results(extract_lme_results, lmer_fit, var_intr, alpha)
     ri_results <- safe_extract_results(extract_lme_results, ri_fit, var_intr, alpha)
+    lme_kr_results <- safe_extract_results(extract_lme_results, lmer_fit, var_intr, alpha, ddf.method = "Kenward-Roger")
+    ri__kr_results <- safe_extract_results(extract_lme_results, ri_fit, var_intr, alpha, ddf.method = "Kenward-Roger")
     cats_results <- safe_extract_results(extract_cats_results, cats_fit, var_intr, alpha)
     cats_trunc_results <- safe_extract_results(extract_cats_results, cats_fit_trunc, var_intr, alpha)
     cats_rob_results <- safe_extract_results(extract_cats_results, cats_fit_robust_cluster, var_intr, alpha)
@@ -203,6 +206,8 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
     # Combine results
     combined_results <- list(lme = lme_results,
                              ri = ri_results,
+                             lme_kr = lme_kr_results,
+                             ri_kr = ri__kr_results,
                              cats = cats_results,
                              cats_trunc = cats_trunc_results,
                              cats_robust = cats_rob_results,
@@ -238,7 +243,7 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
                coverage = coverage, avg_ci_width = avg_ci_width, success = success)
   }
 
-  sim_results <- lapply(c("lme", "ri", "cats", "cats_trunc", "cats_robust", "cats_robustbase"),
+  sim_results <- lapply(c("lme", "ri", "lme_kr", "ri_kr", "cats", "cats_trunc", "cats_robust", "cats_robustbase"),
                         function(method) compute_method_results(all_results, method, true_coefficient = betas[[var_intr]]))
 
   # Combine results into a single dataframe
