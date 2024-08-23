@@ -127,3 +127,56 @@ sig_null <- function(par_input = "") {
 text_to_vector <- function(text_input) {
   as.numeric(unlist(strsplit(text_input, ",")))
 }
+
+append_KenRCATs <- function(df, input) {
+
+  # Helper function to generate a unique run code
+  generateRunCode <- function() {
+    timestamp <- format(Sys.time(), "%Y%m%d%H%M%S")
+    random_string <- paste(sample(c(letters, LETTERS, 0:9), 5, replace = TRUE), collapse = "")
+    paste0(timestamp, "_", random_string)
+  }
+
+  # Generate a unique code for the simulation run
+  run_code <- generateRunCode()
+
+  # Add the RunCode to the original df
+  df$run_code <- run_code
+
+  # Create a data frame of input parameters
+  params_df <- data.frame(
+    betas = input$betas,
+    dists = input$dists,
+    distpar = input$distpar,
+    N = input$N,
+    reps = input$reps,
+    alpha = input$alpha,
+    var_intr = input$var_intr,
+    grp = input$grp,
+    mod = input$mod,
+    catsmod = input$catsmod,
+    r_slope = input$r_slope,
+    r_int = input$r_int,
+    n_time = input$n_time,
+    mean_i = input$mean_i,
+    var_i = input$var_i,
+    mean_s = input$mean_s,
+    var_s = input$var_s,
+    cov_is = input$cov_is,
+    mean_r = input$mean_r,
+    var_r = input$var_r,
+    cor_mat = if (!is.null(input$cor_mat) && input$cor_mat != "") input$cor_mat else NA,
+    corvars = if (!is.null(input$corvars) && input$corvars != "") input$corvars else NA,
+    stringsAsFactors = FALSE
+  )
+
+  # Repeat the parameters data frame to match the number of rows in df
+  params_df <- params_df[rep(1, nrow(df)), ]
+
+  # Combine with the simulation results
+  params_df <- cbind(df, params_df)
+
+  return(list(res = df,
+              input_params = params_df))
+}
+

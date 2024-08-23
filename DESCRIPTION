@@ -31,8 +31,10 @@ Imports:
     lmerTest,
     MASS,
     mmcards,
+    pool,
     robust,
     robustbase,
+    RPostgres,
     shiny,
     shinythemes
 Suggests: 
