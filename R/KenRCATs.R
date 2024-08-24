@@ -79,9 +79,20 @@ KenRCATs <- function(dbname, datatable, host, port, user, password){
         shiny::uiOutput("paramsUI"),
         shiny::tags$div(
           title = "Click to run simulation with specified arguments.",
-          shiny::actionButton("run", "Run Simulation"),
+          shiny::actionButton("run", "Run Simulation")
+        ),
+        shiny::br(),  # Add a line break
+        shiny::tags$div(
+          title = "Submit simulation results to database.",
           shiny::actionButton("submit", "Submit")
-        )
+        ),
+        shiny::br(),  # Add a line break
+        shiny::tags$div(
+          title = "Download database to csv file.",
+          shiny::downloadButton("downloadBtn", "Download Data")
+        ),
+        shiny::br(),  # Add a line break
+        shiny::actionButton("show_citations", "Citations")
       ),
       shiny::mainPanel(
         shiny::uiOutput("sim_header"),
@@ -90,9 +101,11 @@ KenRCATs <- function(dbname, datatable, host, port, user, password){
         shiny::br(),  # Add a line break
         # Add a header for the responses table
         shiny::div(
-          shiny::h4("All Responses"),
+          shiny::h2("Database"),
           DT::DTOutput("responses")
-        )
+        ),
+        shiny::uiOutput("citation_header"),
+        shiny::verbatimTextOutput("citations_output")
       )
     )
   )
@@ -131,7 +144,7 @@ KenRCATs <- function(dbname, datatable, host, port, user, password){
                            catsmod = input$catsmod,
                            r_slope = input$r_slope,
                            r_int = input$r_int,
-                           n_time = input$n_time,
+                           n_time = text_to_vector(input$n_time),
                            mean_i = input$mean_i,
                            var_i = input$var_i,
                            mean_s = input$mean_s,
@@ -153,7 +166,7 @@ KenRCATs <- function(dbname, datatable, host, port, user, password){
       #Output the results table
       output$sim_output <- DT::renderDT({
         sim_results()
-      }, options = list(pageLength = 5))
+      }, options = list(pageLength = 8))
       sim_complete(TRUE)
 
       })
@@ -187,7 +200,55 @@ KenRCATs <- function(dbname, datatable, host, port, user, password){
       output$responses <- DT::renderDT({
         loadData()
       }, options = list(pageLength = 5))
+    })
 
+    # Download handler for exporting data
+    output$downloadBtn <- shiny::downloadHandler(
+      filename = function() {
+        paste0("Simulation_Results_", Sys.Date(), ".csv")
+      },
+      content = function(file) {
+        # Write the data to a CSV file
+        utils::write.csv(loadData(), file, row.names = FALSE)
+      }
+    )
+
+    # Initialize citations_text as an empty string
+    citations_text <- shiny::reactiveVal("")
+
+    shiny::observeEvent(input$show_citations, {
+      # Get the formatted citations
+      mmiCATs_citation <- format_citation(utils::citation("mmiCATs"))
+      cluster_ses_citation <- format_citation(utils::citation("clusterSEs"))
+
+      citations <- paste(
+        "CATs Methodology:",
+        "Esarey J, Menger A. Practical and Effective Approaches to Dealing With Clustered Data. Political Science Research and Methods. 2019;7(3):541-559. <doi:10.1017/psrm.2017.42>.",
+        "",
+        "Software Implementing CATs Methodology",
+        cluster_ses_citation,
+        "",
+        "Kenward-Roger Methodology:",
+        "Kenward, M. G. and Roger, J. H. (1997), Small Sample Inference for Fixed Effects from Restricted Maximum Likelihood, Biometrics 53: 983-997.",
+        "",
+        "Software Implementing Kenward-Roger",
+        "Kuznetsova A, Brockhoff PB, Christensen RHB (2017). 'lmerTest Package: Tests in Linear Mixed Effects Models.' Journal of Statistical Software, 82(13), 1-26. <doi:10.18637/jss.v082.i13>.",
+        "",
+        "Web Application:",
+        mmiCATs_citation,
+        sep = "\n"
+      )
+      citations_text(citations)
+    })
+
+    # Render the citations output
+    output$citations_output <- shiny::renderText({
+      citations_text()
+    })
+
+    output$citation_header <- shiny::renderUI({
+      shiny::req(citations_text())
+      shiny::tags$h2("Citations")
     })
 
   }

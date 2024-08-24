@@ -110,3 +110,19 @@ test_that("xcats model works", {
                                              "cats_robust", "cats_robustbase"))
           })
 
+
+# n_time <- c(2,5, 4)
+# N <- 3
+# if (length(n_time) == 1) {
+#   times <- rep(n_time, N)
+# } else if (length(n_time) == N) {
+#   times <- n_time
+# } else {
+#   stop("n_time must be either a single integer or a vector of length N")
+# }
+# times
+# n <- sum(times)  # Total number of observations
+# n
+# rep(1:N, times = times)
+
+

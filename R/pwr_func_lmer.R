@@ -69,8 +69,19 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
   ri_formula <- paste0(catsmod, "+ (1|", grp, ")")
 
   simulate <- function() {
-    n <- N * n_time
-    sdata <- data.frame(grp = rep(1:N, each = n_time))
+    # Handle n_time as either an integer or vector
+    if (length(n_time) == 1) {
+      times <- rep(n_time, N)
+    } else if (length(n_time) == N) {
+      times <- n_time
+    } else {
+      stop("n_time must be either a single integer or a vector of length N")
+    }
+
+    # n <- N * n_time # Total number of observations
+    n <- sum(times) # Total number of observations
+    # sdata <- data.frame(grp = rep(1:N, each = n_time))
+    sdata <- data.frame(grp = rep(1:N, times = times))
     names(sdata) <- grp
 
     # Check if cor_mat and corvars are not NULL
@@ -79,7 +90,8 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
       correlated_data <- lapply(corvars, function(cor_group) {
         if (all(sapply(cor_group, function(x) x %in% names(dists) && identical(dists[[x]], stats::rnorm)))) {
           group_means <- sapply(cor_group, function(var) distpar[[var]]$mean)
-          mv_data <- MASS::mvrnorm(N*n_time, mu = group_means, Sigma = cor_mat)
+          # mv_data <- MASS::mvrnorm(N*n_time, mu = group_means, Sigma = cor_mat)
+          mv_data <- MASS::mvrnorm(n, mu = group_means, Sigma = cor_mat)
           colnames(mv_data) <- cor_group
           return(mv_data)
         } else {
@@ -94,7 +106,8 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
     non_correlated_vars <- setdiff(names(dists), unlist(corvars))
     if (!identical(non_correlated_vars, character(0))){
       non_correlated_data <- Map(function(var, params) {
-        do.call(dists[[var]], c(list(N*n_time), params))
+        # do.call(dists[[var]], c(list(N*n_time), params))
+        do.call(dists[[var]], c(list(n), params))
       }, var = non_correlated_vars, params = distpar[non_correlated_vars])
       sdata <- cbind(sdata, non_correlated_data)
     }
@@ -105,8 +118,10 @@ pwr_func_lmer <- function(betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10
     REff <- MASS::mvrnorm(N, mu = c(mean_i, mean_s), Sigma = rbind(c(var_i, cov_is), c(cov_is, var_s)))  # Using N instead of n_pers
     colnames(REff) <- c(r_int, r_slope)
 
-    sdata[["rand_int"]] <- rep(REff[, r_int], each = n_time)
-    sdata[["rand_slope"]] <- rep(REff[, r_slope], each = n_time)
+    # sdata[["rand_int"]] <- rep(REff[, r_int], each = n_time)
+    # sdata[["rand_slope"]] <- rep(REff[, r_slope], each = n_time)
+    sdata[["rand_int"]] <- rep(REff[, r_int], times = times)
+    sdata[["rand_slope"]] <- rep(REff[, r_slope], times = times)
 
     # Model outcome with Gaussian error term
     linear_combination <- betas[[r_int]] + sdata[["rand_int"]] + (betas[[r_slope]] + sdata[["rand_slope"]]) * sdata[[r_slope]]

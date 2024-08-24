@@ -49,8 +49,8 @@ getUIParams <- function() {
       shiny::textInput("r_int", "Random Intercept", 'int')
     ),
     shiny::tags$div(
-      title = "Number of time points per group.",
-      shiny::numericInput("n_time", "Number of Time Points", 20)
+      title = "Number of observations per group. Enter an integer or a comma-separated list of N integers.",
+      shiny::textInput("n_time", "Observations per Group", "20")
     ),
     shiny::tags$div(
       title = "Mean for the random intercept.",
