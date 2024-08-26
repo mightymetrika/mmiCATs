@@ -1,3 +1,15 @@
+#' Generate UI Parameters for KenRCATs Shiny App
+#'
+#' This internal function creates a list of UI elements for the KenRCATs() 'shiny'
+#' application. It generates input fields for various parameters used in the power
+#' analysis simulation.
+#'
+#' @return A shiny::tagList containing UI elements.
+#'
+#' @note This function is intended for internal use within the KenRCATs() 'shiny'
+#' application.
+#'
+#' @keywords internal
 getUIParams <- function() {
   shiny::tagList(
     shiny::tags$div(
@@ -17,8 +29,8 @@ getUIParams <- function() {
       shiny::numericInput("N", "Number of Groups (N)", 25)
     ),
     shiny::tags$div(
-      title = "Integer specifying the number of replications for the simulation.",
-      shiny::numericInput("reps", "Number of Replications", 100)
+      title = "Number of observations per group. Enter an integer or a comma-separated list of N integers.",
+      shiny::textInput("n_time", "Observations per Group", "20")
     ),
     shiny::tags$div(
       title = "Significance level for hypothesis testing.",
@@ -33,24 +45,24 @@ getUIParams <- function() {
       shiny::textInput("grp", "Grouping Variable", 'ID')
     ),
     shiny::tags$div(
-      title = "Formula for the mixed-effects model.",
-      shiny::textInput("mod", "Mixed-Effects Model Formula", 'out ~ x1 + x2 + x3 + (1|ID)')
+      title = "Enter 'linear', leave blank for no time trend, or provide a custom function (e.g., function(n) sqrt(seq_len(n)))",
+      shiny::textInput("time_index", "Time Index Variable", "")
     ),
     shiny::tags$div(
-      title = "Formula for the CATs model.",
+      title = "Formula for fitting mixed-effects model to simulated data.",
+      shiny::textInput("mod", "Mixed-Effects Model Formula", 'out ~ x1 + x2 + x3 + (x3|ID)')
+    ),
+    shiny::tags$div(
+      title = "Formula for fiiting the CATs model to simulated data.",
       shiny::textInput("catsmod", "CATs Model Formula", 'out ~ x1 + x2 + x3')
     ),
     shiny::tags$div(
-      title = "Name of the random slope variable.",
-      shiny::textInput("r_slope", "Random Slope Variable", 'x1')
+      title = "Name of the random slope variable for simulating data.",
+      shiny::textInput("r_slope", "Random Slope Variable", 'x3')
     ),
     shiny::tags$div(
       title = "Name of the random intercept.",
       shiny::textInput("r_int", "Random Intercept", 'int')
-    ),
-    shiny::tags$div(
-      title = "Number of observations per group. Enter an integer or a comma-separated list of N integers.",
-      shiny::textInput("n_time", "Observations per Group", "20")
     ),
     shiny::tags$div(
       title = "Mean for the random intercept.",
@@ -87,16 +99,29 @@ getUIParams <- function() {
     shiny::tags$div(
       title = "List of vectors, each vector containing names of correlated variables.",
       shiny::textInput("corvars", "Correlated Variables", "")
+    ),
+    shiny::tags$div(
+      title = "Integer specifying the number of replications for the simulation.",
+      shiny::numericInput("reps", "Number of Replications", 20)
     )
   )
 }
 
+#' Parse String Input to List
+#'
+#' @param input_string A string representation of a list.
+#' @return A parsed list object.
+#' @keywords internal
 parse_list_input <- function(input_string) {
   parsed <- eval(parse(text = paste0("list(", input_string, ")")))
   return(parsed)
 }
 
-# Handle null values for text to vector
+#' Handle Null Values for Text to Vector Conversion
+#'
+#' @param par_input A string input, default is "".
+#' @return NULL if input is NA or empty, otherwise a vector.
+#' @keywords internal
 vec_null <- function(par_input = "") {
   if (is.na(par_input) || par_input == "") {
     return(NULL)
@@ -105,6 +130,11 @@ vec_null <- function(par_input = "") {
   }
 }
 
+#' Handle Null Values for List Input
+#'
+#' @param par_input A string input, default is "".
+#' @return NULL if input is NA or empty, otherwise a parsed list.
+#' @keywords internal
 list_null <- function(par_input = "") {
   if (is.na(par_input) || par_input == "") {
     return(NULL)
@@ -114,7 +144,11 @@ list_null <- function(par_input = "") {
 }
 
 
-# Handle null values for sigma matrix
+#' Handle Null Values for Sigma Matrix
+#'
+#' @param par_input A string input, default is "".
+#' @return NULL if input is NA or empty, otherwise an evaluated expression.
+#' @keywords internal
 sig_null <- function(par_input = "") {
   if (is.na(par_input) || par_input == "") {
     return(NULL)
@@ -123,11 +157,26 @@ sig_null <- function(par_input = "") {
   }
 }
 
-# Helper function to
+#' Convert Text Input to Vector
+#'
+#' @param text_input A string input to be converted to a vector.
+#' @return A vector parsed from the input string.
+#' @keywords internal
 text_to_vector <- function(text_input) {
-  as.numeric(unlist(strsplit(text_input, ",")))
+  # Check if the input is a simple comma-separated string
+  if (!grepl("^[^,]+$", text_input) && !grepl("[()]", text_input)) {
+    text_input <- paste0("c(", text_input, ")")
+  }
+  eval(parse(text = text_input))
 }
 
+#' Append KenRCATs Results with Input Parameters
+#'
+#' @param df A data frame containing simulation results.
+#' @param input A list of input parameters from the Shiny app.
+#' @return A list containing two data frames: the original results and the results
+#' with appended input parameters.
+#' @keywords internal
 append_KenRCATs <- function(df, input) {
 
   # Helper function to generate a unique run code
@@ -167,6 +216,7 @@ append_KenRCATs <- function(df, input) {
     var_r = input$var_r,
     cor_mat = if (!is.null(input$cor_mat) && input$cor_mat != "") input$cor_mat else NA,
     corvars = if (!is.null(input$corvars) && input$corvars != "") input$corvars else NA,
+    time_index = if (!is.null(input$time_index) && input$time_index != "" && input$time_index != "NA") input$time_index else NA,
     stringsAsFactors = FALSE
   )
 

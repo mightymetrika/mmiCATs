@@ -1,0 +1,45 @@
+-- Table: public.kenrcats_data
+
+-- DROP TABLE IF EXISTS public.kenrcats_data;
+
+CREATE TABLE IF NOT EXISTS public.kenrcats_data
+(
+    model text COLLATE pg_catalog."default",
+    mean_coef real,
+    rejection_rate real,
+    rejection_rate_se real,
+    rmse real,
+    rrmse real,
+    coverage real,
+    avg_ci_width real,
+    success integer,
+    run_code text COLLATE pg_catalog."default",
+    betas text COLLATE pg_catalog."default",
+    dists text COLLATE pg_catalog."default",
+    distpar text COLLATE pg_catalog."default",
+    n integer,
+    reps integer,
+    alpha real,
+    var_intr text COLLATE pg_catalog."default",
+    grp text COLLATE pg_catalog."default",
+    mod text COLLATE pg_catalog."default",
+    catsmod text COLLATE pg_catalog."default",
+    r_slope text COLLATE pg_catalog."default",
+    r_int text COLLATE pg_catalog."default",
+    n_time text COLLATE pg_catalog."default",
+    mean_i real,
+    var_i real,
+    mean_s real,
+    var_s real,
+    cov_is real,
+    mean_r real,
+    var_r real,
+    cor_mat text COLLATE pg_catalog."default",
+    corvars text COLLATE pg_catalog."default",
+    time_index text COLLATE pg_catalog."default"
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.kenrcats_data
+    OWNER to postgres;

@@ -3,7 +3,7 @@ test_that("pwr_func_lmer works and produces output of the correct length with no
 
             set.seed(235)
 
-            pwr_out <- suppressWarnings(pwr_func_lmer(reps = 5))
+            pwr_out <- suppressWarnings(pwr_func_lmer(reps = 2))
 
             expect_equal(length(pwr_out), 9)
             expect_setequal(names(pwr_out), c("model", "mean_coef",
@@ -18,7 +18,7 @@ test_that("pwr_func_lmer works and produces output of the correct length", {
 
   set.seed(475)
 
-  pwr_out <- suppressWarnings(pwr_func_lmer(reps = 5, cor_mat = diag(2), corvars = list(c("x1", "x3"))))
+  pwr_out <- suppressWarnings(pwr_func_lmer(reps = 2, cor_mat = diag(2), corvars = list(c("x1", "x3"))))
 
   expect_equal(length(pwr_out), 9)
   expect_setequal(names(pwr_out), c("model", "mean_coef",
@@ -36,7 +36,7 @@ test_that("pwr_func_lmer works and produces output of the correct length for a
   set.seed(345)
 
   pwr_out <- suppressWarnings(pwr_func_lmer(betas = list("int" = 0, "x1" = -0.25, "x2" = 2, "x3" = 10),
-                                            reps = 5, cor_mat = matrix(data = c(1,0.2, 0.13, 1), nrow =2, ncol =2),
+                                            reps = 2, cor_mat = matrix(data = c(1,0.2, 0.13, 1), nrow =2, ncol =2),
                                             corvars = list(c("x1", "x3"))))
 
   expect_equal(length(pwr_out), 9)
@@ -56,7 +56,7 @@ test_that("pwr_func_lmer works and produces NaN for mean coefficient and 0 succe
 
             pwr_out <- suppressWarnings(pwr_func_lmer(betas = list("int" = 0, "x1" = -0.25, "x2" = 2, "x3" = 10),
                                                       n_time = 5,
-                                                      reps = 5, cor_mat = matrix(data = c(1,0.2, 0.13, 1), nrow =2, ncol =2),
+                                                      reps = 2, cor_mat = matrix(data = c(1,0.2, 0.13, 1), nrow =2, ncol =2),
                                                       corvars = list(c("x1", "x3"))))
 
             expect_equal(length(pwr_out), 9)
@@ -73,6 +73,17 @@ test_that("pwr_func_lmer works and produces NaN for mean coefficient and 0 succe
                                              "cats_robust", "cats_robustbase"))
 
           })
+
+test_that("pwr_func_lmer throws error when non-normally distributed variable is
+          included in corvars", {
+
+            set.seed(345)
+            testthat::expect_error(pwr_func_lmer(betas = list("int" = 0, "x1" = -0.25, "x2" = 2, "x3" = 10),
+                                                 n_time = 5,
+                                                 reps = 2,
+                                                 cor_mat = matrix(data = c(1,0.2, 0.13, 1), nrow =2, ncol =2),
+                                                 corvars = list(c("x1", "x2"))))
+             })
 
 test_that("xcats model works", {
 
@@ -110,19 +121,74 @@ test_that("xcats model works", {
                                              "cats_robust", "cats_robustbase"))
           })
 
+test_that("pwr_func_lmer works with linear time index", {
+  set.seed(123)
 
-# n_time <- c(2,5, 4)
-# N <- 3
-# if (length(n_time) == 1) {
-#   times <- rep(n_time, N)
-# } else if (length(n_time) == N) {
-#   times <- n_time
-# } else {
-#   stop("n_time must be either a single integer or a vector of length N")
-# }
-# times
-# n <- sum(times)  # Total number of observations
-# n
-# rep(1:N, times = times)
+  pwr_out <- suppressWarnings(pwr_func_lmer(
+    betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10, "time" = 0.5),
+    reps = 2,
+    n_time = 10,
+    time_index = "linear"
+  ))
 
+  expect_equal(length(pwr_out), 9)
+  expect_setequal(names(pwr_out), c("model", "mean_coef", "rejection_rate", "rejection_rate_se",
+                                    "rmse", "rrmse", "coverage", "avg_ci_width", "success"))
+  expect_setequal(pwr_out$model, c("lme", "ri", "lme_kr", "ri_kr", "cats", "cats_trunc",
+                                   "cats_robust", "cats_robustbase"))
+})
 
+test_that("pwr_func_lmer works with custom time index function", {
+  set.seed(456)
+
+  custom_time <- function(n) sqrt(seq_len(n))
+
+  pwr_out <- suppressWarnings(pwr_func_lmer(
+    betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10, "time" = 1),
+    reps = 2,
+    n_time = 15,
+    time_index = custom_time
+  ))
+
+  expect_equal(length(pwr_out), 9)
+  expect_setequal(names(pwr_out), c("model", "mean_coef", "rejection_rate", "rejection_rate_se",
+                                    "rmse", "rrmse", "coverage", "avg_ci_width", "success"))
+  expect_setequal(pwr_out$model, c("lme", "ri", "lme_kr", "ri_kr", "cats", "cats_trunc",
+                                   "cats_robust", "cats_robustbase"))
+})
+
+test_that("pwr_func_lmer handles different n_time values with linear time index", {
+  set.seed(789)
+
+  pwr_out <- suppressWarnings(pwr_func_lmer(
+    betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10, "time" = 0.3),
+    reps = 2,
+    N = 3,
+    n_time = c(5, 10, 15),
+    time_index = "linear"
+  ))
+
+  expect_equal(length(pwr_out), 9)
+  expect_setequal(names(pwr_out), c("model", "mean_coef", "rejection_rate", "rejection_rate_se",
+                                    "rmse", "rrmse", "coverage", "avg_ci_width", "success"))
+  expect_setequal(pwr_out$model, c("lme", "ri", "lme_kr", "ri_kr", "cats", "cats_trunc",
+                                   "cats_robust", "cats_robustbase"))
+})
+
+test_that("pwr_func_lmer works with linear time index and time as random slope", {
+  set.seed(123)
+
+  pwr_out <- suppressWarnings(pwr_func_lmer(
+    betas = list("int" = 0, "x1" = -5, "x2" = 2, "x3" = 10, "time" = 0.5),
+    reps = 2,
+    n_time = 10,
+    r_slope = "time",
+    time_index = "linear"
+  ))
+
+  expect_equal(length(pwr_out), 9)
+  expect_setequal(names(pwr_out), c("model", "mean_coef", "rejection_rate", "rejection_rate_se",
+                                    "rmse", "rrmse", "coverage", "avg_ci_width", "success"))
+  expect_setequal(pwr_out$model, c("lme", "ri", "lme_kr", "ri_kr", "cats", "cats_trunc",
+                                   "cats_robust", "cats_robustbase"))
+})

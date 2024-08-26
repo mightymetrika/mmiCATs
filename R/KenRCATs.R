@@ -1,3 +1,44 @@
+#' Launch KenRCATs Shiny Application
+#'
+#' This function launches a 'shiny' application for conducting power analysis
+#' simulations using CATs (Clustered Adjusted t-statistics) and Kenward-Roger
+#' methods. The app allows users to input simulation parameters, run simulations,
+#' view results, and manage data in a PostgreSQL database.
+#'
+#' @param dbname Character string specifying the name of the PostgreSQL database.
+#' @param datatable Character string specifying the name of the table in the database.
+#' @param host Character string specifying the host name or IP address of the database server.
+#' @param port Integer specifying the port number on which the database is running.
+#' @param user Character string specifying the username for database connection.
+#' @param password Character string specifying the password for database connection.
+#'
+#' @return A 'shiny' app object.
+#'
+#' @details
+#' The KenRCATs function sets up a Shiny application with the following features:
+#' \itemize{
+#'   \item Input fields for various simulation parameters
+#'   \item Ability to run power analysis simulations
+#'   \item Display of simulation results
+#'   \item Option to submit results to a PostgreSQL database
+#'   \item Functionality to download data from the database
+#'   \item Display of relevant citations
+#' }
+#'
+#'
+#' @examples
+#' if(interactive()){
+#'   KenRCATs(
+#'     dbname = "your_database_name",
+#'     datatable = "your_table_name",
+#'     host = "localhost",
+#'     port = 5432,
+#'     user = "your_username",
+#'     password = "your_password"
+#'   )
+#' }
+#'
+#' @export
 KenRCATs <- function(dbname, datatable, host, port, user, password){
 
   # Helper function to save data to the database
@@ -153,7 +194,10 @@ KenRCATs <- function(dbname, datatable, host, port, user, password){
                            mean_r = input$mean_r,
                            var_r = input$var_r,
                            cor_mat = sig_null(input$cor_mat),
-                           corvars = list_null(input$corvars)
+                           corvars = list_null(input$corvars),
+                           time_index = if(input$time_index == "" |
+                                           input$time_index == "NA" |
+                                           is.na(input$time_index)) NULL else input$time_index
       )
 
       # Append inputs to the results

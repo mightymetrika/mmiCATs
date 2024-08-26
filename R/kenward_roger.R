@@ -1,17 +1,20 @@
 #' Kenward-Roger Analysis Shiny Application
 #'
-#' A Shiny application that allows users to upload a dataset, modify variable types, and fit a mixed-effects model
-#' using the Kenward-Roger approximation for small sample inference.
+#' A Shiny application that allows users to upload a dataset, modify variable types,
+#' and fit a mixed-effects model using the Kenward-Roger approximation for small
+#' sample inference.
 #'
-#' The application provides an interactive interface for setting up and running a mixed-effects model analysis
-#' with the Kenward-Roger method for estimating the degrees of freedom in linear mixed-effects models.
+#' The application provides an interactive interface for setting up and running
+#' a mixed-effects model analysis with the Kenward-Roger method for estimating
+#' the degrees of freedom in linear mixed-effects models.
 #'
 #' @references
-#' Kenward, M. G., & Roger, J. H. (1997). Small Sample Inference for Fixed Effects from Restricted Maximum Likelihood.
-#' Biometrics, 53, 983-997.
+#' Kenward, M. G., & Roger, J. H. (1997). Small Sample Inference for Fixed Effects
+#' from Restricted Maximum Likelihood. Biometrics, 53, 983-997.
 #'
-#' Kuznetsova, A., Brockhoff, P. B., & Christensen, R. H. B. (2017). lmerTest Package: Tests in Linear Mixed Effects Models.
-#' Journal of Statistical Software, 82(13), 1-26. <doi: 10.18637/jss.v082.i13>.
+#' Kuznetsova, A., Brockhoff, P. B., & Christensen, R. H. B. (2017). lmerTest
+#' Package: Tests in Linear Mixed Effects Models. Journal of Statistical Software,
+#' 82(13), 1-26. <doi: 10.18637/jss.v082.i13>.
 #'
 #' @return A Shiny application object.
 #'

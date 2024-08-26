@@ -14,7 +14,7 @@ pwr_func_lmer(
   alpha = 0.05,
   var_intr = "x1",
   grp = "ID",
-  mod = paste0("out ~ x1 + x2 + x3 + (1|", grp, ")"),
+  mod = paste0("out ~ x1 + x2 + x3 + (x3|", grp, ")"),
   catsmod = "out ~ x1 + x2 + x3",
   r_slope = "x1",
   r_int = "int",
@@ -27,7 +27,8 @@ pwr_func_lmer(
   mean_r = 0,
   var_r = 1,
   cor_mat = NULL,
-  corvars = NULL
+  corvars = NULL,
+  time_index = NULL
 )
 }
 \arguments{
@@ -46,39 +47,46 @@ predictor.}
 \item{alpha}{Numeric value specifying the significance level for hypothesis
 testing.}
 
-\item{var_intr}{Name of the variable of interest (for power calculations) as
-a string.}
+\item{var_intr}{Character string specifying the name of the variable of interest
+(for power calculations).}
 
-\item{grp}{Name of the grouping variable as a string.}
+\item{grp}{Character string specifying the name of the grouping variable.}
 
-\item{mod}{Formula for the mixed-effects model.}
+\item{mod}{Formula for fitting mixed-effects model to simulated data.}
 
 \item{catsmod}{Formula for the CATs model.}
 
-\item{r_slope}{Name of the random slope variable as a string.}
+\item{r_slope}{Character string specifying the name of the random slope variable.
+This is the random slope when simulating data.}
 
-\item{r_int}{Name of the random intercept as a string.}
+\item{r_int}{Character string specifying the name of the random intercept.}
 
-\item{n_time}{Integer specifying the number of time points per group.}
+\item{n_time}{Integer or vector specifying the number of time points per group.
+If a vector, its length must equal N.}
 
-\item{mean_i}{Mean for the random intercept.}
+\item{mean_i}{Numeric value specifying the mean for the random intercept.}
 
-\item{var_i}{Variance for the random intercept.}
+\item{var_i}{Numeric value specifying the variance for the random intercept.}
 
-\item{mean_s}{Mean for the random slope.}
+\item{mean_s}{Numeric value specifying the mean for the random slope.}
 
-\item{var_s}{Variance for the random slope.}
+\item{var_s}{Numeric value specifying the variance for the random slope.}
 
-\item{cov_is}{Covariance between the random intercept and slope.}
+\item{cov_is}{Numeric value specifying the covariance between the random intercept and slope.}
 
-\item{mean_r}{Mean for the residual error.}
+\item{mean_r}{Numeric value specifying the mean for the residual error.}
 
-\item{var_r}{Variance for the residual error.}
+\item{var_r}{Numeric value specifying the variance for the residual error.}
 
 \item{cor_mat}{Correlation matrix for correlated predictors, if any.}
 
 \item{corvars}{List of vectors, each vector containing names of correlated
 variables.}
+
+\item{time_index}{Either "linear" for a linear time trend, a custom function,
+or a character string that evaluates to a function for
+generating time values. If specified, 'time' should be
+included in \code{betas} but not in \code{dists}.}
 }
 \value{
 A dataframe summarizing the results of the power analysis, including
@@ -93,6 +101,7 @@ of power, rejection rate, root mean square error (RMSE), relative RMSE, coverage
 probability, and average confidence interval width.
 }
 \examples{
+# Basic usage with default parameters
 pwr_func_lmer(reps = 2)
 
 }
