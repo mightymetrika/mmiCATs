@@ -1,0 +1,888 @@
+#' Study 1 Method Names
+#'
+#' Returns the method names supported by `pwr_func_study1()`.
+#'
+#' @return A character vector of method names.
+#'
+#' @keywords internal
+study1_method_names <- function() {
+  c(
+    "ri",
+    "cr2",
+    "cats",
+    "cats_trunc",
+    "cats_robust",
+    "cats_robustbase"
+  )
+}
+
+#' Validate Study 1 Simulation Inputs
+#'
+#' @param n_clusters Number of clusters.
+#' @param cluster_size Number of observations per cluster.
+#' @param beta True slope.
+#' @param intercept Fixed intercept.
+#' @param random_intercept_sd Standard deviation of the random intercept.
+#' @param residual_sd Standard deviation of the residual error.
+#' @param x_sd Standard deviation of the predictor.
+#' @param contamination Contamination condition.
+#' @param contamination_prop Proportion contaminated within each cluster.
+#' @param contamination_size Size of the outcome contamination.
+#' @param leverage_size Size of the contaminated predictor values.
+#' @param reps Number of simulation replications.
+#' @param alpha Significance level.
+#' @param methods Methods to fit.
+#' @param seed Optional random-number seed.
+#' @param keep_replicates Whether to retain replicate-level results.
+#'
+#' @return `NULL`, invisibly. An error is raised for invalid inputs.
+#'
+#' @keywords internal
+study1_validate_inputs <- function(n_clusters,
+                                   cluster_size,
+                                   beta,
+                                   intercept,
+                                   random_intercept_sd,
+                                   residual_sd,
+                                   x_sd,
+                                   contamination,
+                                   contamination_prop,
+                                   contamination_size,
+                                   leverage_size,
+                                   reps,
+                                   alpha,
+                                   methods,
+                                   seed,
+                                   keep_replicates) {
+  study1_check_integer(n_clusters, "n_clusters", lower = 3L)
+  study1_check_integer(cluster_size, "cluster_size", lower = 5L)
+  study1_check_integer(reps, "reps", lower = 1L)
+
+  study1_check_numeric(beta, "beta")
+  study1_check_numeric(intercept, "intercept")
+  study1_check_numeric(random_intercept_sd, "random_intercept_sd",
+                       lower = 0, lower_open = TRUE)
+  study1_check_numeric(residual_sd, "residual_sd",
+                       lower = 0, lower_open = TRUE)
+  study1_check_numeric(x_sd, "x_sd", lower = 0, lower_open = TRUE)
+  study1_check_numeric(contamination_prop, "contamination_prop",
+                       lower = 0, upper = 1)
+  study1_check_numeric(contamination_size, "contamination_size",
+                       lower = 0, lower_open = TRUE)
+  study1_check_numeric(leverage_size, "leverage_size",
+                       lower = 0, lower_open = TRUE)
+  study1_check_numeric(alpha, "alpha", lower = 0, upper = 1,
+                       lower_open = TRUE, upper_open = TRUE)
+
+  valid_contamination <- c("none", "vertical", "bad_leverage")
+  if (length(contamination) != 1L ||
+      !is.character(contamination) ||
+      !(contamination %in% valid_contamination)) {
+    stop(
+      "contamination must be 'none', 'vertical', or 'bad_leverage'.",
+      call. = FALSE
+    )
+  }
+
+  valid_methods <- study1_method_names()
+  if (!is.character(methods) || length(methods) == 0L ||
+      anyNA(methods) || any(!methods %in% valid_methods)) {
+    stop(
+      paste0(
+        "methods must contain one or more of: ",
+        paste(valid_methods, collapse = ", "),
+        "."
+      ),
+      call. = FALSE
+    )
+  }
+
+  if (anyDuplicated(methods)) {
+    stop("methods must not contain duplicate values.", call. = FALSE)
+  }
+
+  if ("ri" %in% methods &&
+      !requireNamespace("pbkrtest", quietly = TRUE)) {
+    stop(
+      paste0(
+        "Package 'pbkrtest' is required when methods includes 'ri'. ",
+        "Install it before running the random-intercept benchmark."
+      ),
+      call. = FALSE
+    )
+  }
+
+  if (!is.null(seed)) {
+    study1_check_integer(seed, "seed", lower = 0L,
+                         upper = .Machine$integer.max)
+  }
+
+  if (!is.logical(keep_replicates) || length(keep_replicates) != 1L ||
+      is.na(keep_replicates)) {
+    stop("keep_replicates must be TRUE or FALSE.", call. = FALSE)
+  }
+
+  invisible(NULL)
+}
+
+#' Check a Numeric Scalar
+#'
+#' @param x Object to check.
+#' @param name Argument name.
+#' @param lower Optional lower bound.
+#' @param upper Optional upper bound.
+#' @param lower_open Whether the lower bound is open.
+#' @param upper_open Whether the upper bound is open.
+#'
+#' @return `NULL`, invisibly.
+#'
+#' @keywords internal
+study1_check_numeric <- function(x,
+                                 name,
+                                 lower = -Inf,
+                                 upper = Inf,
+                                 lower_open = FALSE,
+                                 upper_open = FALSE) {
+  valid <- is.numeric(x) && length(x) == 1L && !is.na(x) && is.finite(x)
+
+  if (valid) {
+    valid_lower <- if (lower_open) x > lower else x >= lower
+    valid_upper <- if (upper_open) x < upper else x <= upper
+    valid <- valid_lower && valid_upper
+  }
+
+  if (!valid) {
+    stop(paste0(name, " is not valid."), call. = FALSE)
+  }
+
+  invisible(NULL)
+}
+
+#' Check an Integer Scalar
+#'
+#' @inheritParams study1_check_numeric
+#'
+#' @return `NULL`, invisibly.
+#'
+#' @keywords internal
+study1_check_integer <- function(x,
+                                 name,
+                                 lower = -Inf,
+                                 upper = Inf) {
+  study1_check_numeric(x, name, lower = lower, upper = upper)
+
+  if (x != floor(x)) {
+    stop(paste0(name, " must be an integer."), call. = FALSE)
+  }
+
+  invisible(NULL)
+}
+
+#' Simulate One Study 1 Data Set
+#'
+#' Generates data from a constant-slope random-intercept model and then applies
+#' the requested observation-level contamination within every cluster.
+#'
+#' @param n_clusters Number of clusters.
+#' @param cluster_size Number of observations per cluster.
+#' @param beta True slope.
+#' @param intercept Fixed intercept.
+#' @param random_intercept_sd Standard deviation of the random intercept.
+#' @param residual_sd Standard deviation of the residual error.
+#' @param x_sd Standard deviation of the predictor.
+#' @param contamination Contamination condition.
+#' @param contamination_prop Proportion contaminated within each cluster.
+#' @param contamination_size Size of the outcome contamination in residual
+#'   standard deviation units.
+#' @param leverage_size Absolute size of contaminated predictor values in
+#'   predictor standard deviation units.
+#'
+#' @return A data frame containing the simulated data.
+#'
+#' @keywords internal
+study1_simulate_data <- function(n_clusters,
+                                 cluster_size,
+                                 beta,
+                                 intercept,
+                                 random_intercept_sd,
+                                 residual_sd,
+                                 x_sd,
+                                 contamination,
+                                 contamination_prop,
+                                 contamination_size,
+                                 leverage_size) {
+  cluster <- factor(
+    rep(seq_len(n_clusters), each = cluster_size),
+    levels = seq_len(n_clusters)
+  )
+  n_obs <- length(cluster)
+
+  x <- stats::rnorm(n_obs, mean = 0, sd = x_sd)
+  random_intercept <- stats::rnorm(
+    n_clusters,
+    mean = 0,
+    sd = random_intercept_sd
+  )
+  random_intercept <- rep(random_intercept, each = cluster_size)
+  residual <- stats::rnorm(n_obs, mean = 0, sd = residual_sd)
+
+  out <- intercept + beta * x + random_intercept + residual
+
+  dat <- data.frame(
+    cluster = cluster,
+    x = x,
+    out = out,
+    x_clean = x,
+    out_clean = out,
+    contaminated = FALSE
+  )
+
+  study1_apply_contamination(
+    dat = dat,
+    contamination = contamination,
+    contamination_prop = contamination_prop,
+    contamination_size = contamination_size,
+    leverage_size = leverage_size,
+    residual_sd = residual_sd,
+    x_sd = x_sd
+  )
+}
+
+#' Apply Study 1 Contamination
+#'
+#' @param dat Clean simulated data.
+#' @param contamination Contamination condition.
+#' @param contamination_prop Proportion contaminated within each cluster.
+#' @param contamination_size Size of the outcome contamination.
+#' @param leverage_size Size of contaminated predictor values.
+#' @param residual_sd Standard deviation of the residual error.
+#' @param x_sd Standard deviation of the predictor.
+#'
+#' @return The data with the requested contamination applied.
+#'
+#' @keywords internal
+study1_apply_contamination <- function(dat,
+                                       contamination,
+                                       contamination_prop,
+                                       contamination_size,
+                                       leverage_size,
+                                       residual_sd,
+                                       x_sd) {
+  if (contamination == "none" || contamination_prop == 0) {
+    return(dat)
+  }
+
+  cluster_indices <- split(seq_len(nrow(dat)), dat$cluster)
+  cluster_size <- length(cluster_indices[[1L]])
+  n_contaminated <- max(
+    1L,
+    as.integer(floor(cluster_size * contamination_prop + 0.5))
+  )
+  n_contaminated <- min(n_contaminated, cluster_size)
+
+  contaminated_index <- unlist(
+    lapply(
+      cluster_indices,
+      function(index) sample(index, size = n_contaminated, replace = FALSE)
+    ),
+    use.names = FALSE
+  )
+
+  contamination_sign <- sample(
+    c(-1, 1),
+    size = length(contaminated_index),
+    replace = TRUE
+  )
+
+  dat$contaminated[contaminated_index] <- TRUE
+
+  if (contamination == "vertical") {
+    dat$out[contaminated_index] <-
+      dat$out[contaminated_index] +
+      contamination_sign * contamination_size * residual_sd
+  }
+
+  if (contamination == "bad_leverage") {
+    dat$x[contaminated_index] <-
+      contamination_sign * leverage_size * x_sd
+    dat$out[contaminated_index] <-
+      dat$out_clean[contaminated_index] -
+      contamination_sign * contamination_size * residual_sd
+  }
+
+  dat
+}
+
+#' Capture a Study 1 Model Fit
+#'
+#' @param fit_function A zero-argument function that fits and extracts one method.
+#'
+#' @return A list containing the value, warning text, error text, and runtime.
+#'
+#' @keywords internal
+study1_capture_fit <- function(fit_function) {
+  warning_messages <- character(0)
+  error_message <- NA_character_
+  start_time <- proc.time()[["elapsed"]]
+
+  value <- withCallingHandlers(
+    tryCatch(
+      fit_function(),
+      error = function(e) {
+        error_message <<- conditionMessage(e)
+        NULL
+      }
+    ),
+    warning = function(w) {
+      warning_messages <<- c(warning_messages, conditionMessage(w))
+      invokeRestart("muffleWarning")
+    }
+  )
+
+  runtime <- proc.time()[["elapsed"]] - start_time
+
+  list(
+    value = value,
+    warning = study1_collapse_messages(warning_messages),
+    error = error_message,
+    runtime = unname(runtime)
+  )
+}
+
+#' Collapse Warning or Error Messages
+#'
+#' @param messages Character vector of messages.
+#'
+#' @return A single character value or `NA_character_`.
+#'
+#' @keywords internal
+study1_collapse_messages <- function(messages) {
+  messages <- unique(messages[!is.na(messages) & nzchar(messages)])
+
+  if (length(messages) == 0L) {
+    return(NA_character_)
+  }
+
+  paste(messages, collapse = " | ")
+}
+
+#' Derive a Method-Specific Seed
+#'
+#' @param replicate_seed Seed for the replication.
+#' @param method_index Position of the method in the requested method vector.
+#'
+#' @return An integer seed.
+#'
+#' @keywords internal
+study1_method_seed <- function(replicate_seed, method_index) {
+  max_seed <- .Machine$integer.max - 1
+  seed <- (as.double(replicate_seed) + as.double(method_index) * 104729) %%
+    max_seed
+  as.integer(seed + 1)
+}
+
+#' Fit One Study 1 Method
+#'
+#' @param dat Simulated data.
+#' @param method Method name.
+#' @param beta True slope.
+#' @param alpha Significance level.
+#' @param replicate_id Replication number.
+#' @param method_seed Method-specific seed.
+#'
+#' @return A one-row data frame of replicate-level results.
+#'
+#' @keywords internal
+study1_fit_method <- function(dat,
+                              method,
+                              beta,
+                              alpha,
+                              replicate_id,
+                              method_seed) {
+  set.seed(method_seed)
+
+  captured <- study1_capture_fit(function() {
+    switch(
+      method,
+      "ri" = study1_fit_ri(dat = dat, alpha = alpha),
+      "cr2" = study1_fit_cr2(dat = dat, alpha = alpha),
+      "cats" = study1_fit_cats(
+        dat = dat,
+        alpha = alpha,
+        truncate = FALSE
+      ),
+      "cats_trunc" = study1_fit_cats(
+        dat = dat,
+        alpha = alpha,
+        truncate = TRUE
+      ),
+      "cats_robust" = study1_fit_robust_cats(
+        dat = dat,
+        alpha = alpha,
+        engine = "robust"
+      ),
+      "cats_robustbase" = study1_fit_robust_cats(
+        dat = dat,
+        alpha = alpha,
+        engine = "robustbase"
+      ),
+      stop("Unknown Study 1 method.", call. = FALSE)
+    )
+  })
+
+  if (is.null(captured$value)) {
+    return(study1_empty_result(
+      replicate_id = replicate_id,
+      method = method,
+      beta = beta,
+      warning = captured$warning,
+      error = captured$error,
+      runtime = captured$runtime
+    ))
+  }
+
+  result <- captured$value
+  complete_result <- all(is.finite(c(
+    result$estimate,
+    result$std_error,
+    result$df,
+    result$p_value,
+    result$conf_low,
+    result$conf_high,
+    result$retained_clusters
+  )))
+  converged <- result$converged
+  convergence_ok <- is.na(converged) || isTRUE(converged)
+  fit_success <- complete_result && convergence_ok
+
+  data.frame(
+    replicate = replicate_id,
+    method = method,
+    true_beta = beta,
+    estimate = result$estimate,
+    std_error = result$std_error,
+    df = result$df,
+    p_value = result$p_value,
+    conf_low = result$conf_low,
+    conf_high = result$conf_high,
+    reject = if (fit_success) result$p_value < alpha else NA,
+    cover = if (fit_success) {
+      result$conf_low <= beta && result$conf_high >= beta
+    } else {
+      NA
+    },
+    fit_success = fit_success,
+    converged = converged,
+    singular = result$singular,
+    retained_clusters = result$retained_clusters,
+    warning = study1_collapse_messages(c(
+      captured$warning,
+      result$warning
+    )),
+    error = captured$error,
+    runtime_sec = captured$runtime,
+    stringsAsFactors = FALSE
+  )
+}
+
+#' Create an Empty Study 1 Result
+#'
+#' @param replicate_id Replication number.
+#' @param method Method name.
+#' @param beta True slope.
+#' @param warning Warning text.
+#' @param error Error text.
+#' @param runtime Runtime in seconds.
+#'
+#' @return A one-row data frame.
+#'
+#' @keywords internal
+study1_empty_result <- function(replicate_id,
+                                method,
+                                beta,
+                                warning,
+                                error,
+                                runtime) {
+  data.frame(
+    replicate = replicate_id,
+    method = method,
+    true_beta = beta,
+    estimate = NA_real_,
+    std_error = NA_real_,
+    df = NA_real_,
+    p_value = NA_real_,
+    conf_low = NA_real_,
+    conf_high = NA_real_,
+    reject = NA,
+    cover = NA,
+    fit_success = FALSE,
+    converged = NA,
+    singular = NA,
+    retained_clusters = NA_integer_,
+    warning = warning,
+    error = error,
+    runtime_sec = runtime,
+    stringsAsFactors = FALSE
+  )
+}
+
+#' Fit the Random-Intercept Benchmark
+#'
+#' @param dat Simulated data.
+#' @param alpha Significance level.
+#'
+#' @return A standardized result list.
+#'
+#' @keywords internal
+study1_fit_ri <- function(dat, alpha) {
+  if (!requireNamespace("pbkrtest", quietly = TRUE)) {
+    stop(
+      "Package 'pbkrtest' is required for Kenward-Roger inference.",
+      call. = FALSE
+    )
+  }
+
+  fit <- lmerTest::lmer(
+    out ~ x + (1 | cluster),
+    data = dat,
+    REML = TRUE
+  )
+
+  fit_summary <- summary(fit, ddf = "Kenward-Roger")
+  coefficient_table <- stats::coef(fit_summary)
+  coefficient_row <- coefficient_table["x", , drop = FALSE]
+
+  estimate <- unname(coefficient_row[1L, "Estimate"])
+  std_error <- unname(coefficient_row[1L, "Std. Error"])
+  df <- unname(coefficient_row[1L, "df"])
+  p_value <- unname(coefficient_row[1L, "Pr(>|t|)"])
+  critical_value <- stats::qt(1 - alpha / 2, df = df)
+
+  convergence_messages <- fit@optinfo$conv$lme4$messages
+  converged <- is.null(convergence_messages)
+
+  list(
+    estimate = estimate,
+    std_error = std_error,
+    df = df,
+    p_value = p_value,
+    conf_low = estimate - critical_value * std_error,
+    conf_high = estimate + critical_value * std_error,
+    converged = converged,
+    singular = lme4::isSingular(fit, tol = 1e-4),
+    retained_clusters = nlevels(dat$cluster),
+    warning = study1_collapse_messages(convergence_messages)
+  )
+}
+
+#' Fit the CR2 Benchmark
+#'
+#' @param dat Simulated data.
+#' @param alpha Significance level.
+#'
+#' @return A standardized result list.
+#'
+#' @keywords internal
+study1_fit_cr2 <- function(dat, alpha) {
+  fit <- stats::lm(out ~ x, data = dat)
+
+  coefficient_test <- clubSandwich::coef_test(
+    fit,
+    vcov = "CR2",
+    cluster = dat$cluster,
+    test = "Satterthwaite",
+    coefs = "x"
+  )
+  confidence_interval <- clubSandwich::conf_int(
+    fit,
+    vcov = "CR2",
+    cluster = dat$cluster,
+    level = 1 - alpha,
+    test = "Satterthwaite",
+    coefs = "x"
+  )
+
+  list(
+    estimate = unname(coefficient_test$beta[1L]),
+    std_error = unname(coefficient_test$SE[1L]),
+    df = unname(coefficient_test$df_Satt[1L]),
+    p_value = unname(coefficient_test$p_Satt[1L]),
+    conf_low = unname(confidence_interval$CI_L[1L]),
+    conf_high = unname(confidence_interval$CI_U[1L]),
+    converged = NA,
+    singular = NA,
+    retained_clusters = nlevels(dat$cluster),
+    warning = NA_character_
+  )
+}
+
+#' Fit an Ordinary CATs Method
+#'
+#' @param dat Simulated data.
+#' @param alpha Significance level.
+#' @param truncate Whether to drop outlying cluster-specific estimates.
+#'
+#' @return A standardized result list.
+#'
+#' @keywords internal
+study1_fit_cats <- function(dat, alpha, truncate) {
+  fit <- stats::glm(
+    out ~ x,
+    data = dat,
+    family = stats::gaussian()
+  )
+
+  cats_fit <- clusterSEs::cluster.im.glm(
+    mod = fit,
+    dat = dat,
+    cluster = ~ cluster,
+    ci.level = 1 - alpha,
+    report = FALSE,
+    drop = TRUE,
+    truncate = truncate,
+    return.vcv = TRUE
+  )
+
+  study1_extract_cats(
+    cats_fit = cats_fit,
+    alpha = alpha,
+    n_clusters = nlevels(dat$cluster)
+  )
+}
+
+#' Fit a Robust CATs Method
+#'
+#' @param dat Simulated data.
+#' @param alpha Significance level.
+#' @param engine Robust regression engine.
+#'
+#' @return A standardized result list.
+#'
+#' @keywords internal
+study1_fit_robust_cats <- function(dat, alpha, engine) {
+  formula <- out ~ x
+
+  robust_fit <- switch(
+    engine,
+    "robust" = robust::lmRob(formula = formula, data = dat),
+    "robustbase" = robustbase::lmrob(formula = formula, data = dat),
+    stop("Unknown robust engine.", call. = FALSE)
+  )
+
+  cats_fit <- cluster_im_lmRob(
+    robmod = robust_fit,
+    formula = formula,
+    dat = dat,
+    cluster = ~ cluster,
+    ci.level = 1 - alpha,
+    drop = TRUE,
+    return.vcv = TRUE,
+    engine = engine
+  )
+
+  study1_extract_cats(
+    cats_fit = cats_fit,
+    alpha = alpha,
+    n_clusters = nlevels(dat$cluster)
+  )
+}
+
+#' Extract a CATs Result
+#'
+#' @param cats_fit CATs output.
+#' @param alpha Significance level.
+#' @param n_clusters Maximum number of clusters.
+#'
+#' @return A standardized result list.
+#'
+#' @keywords internal
+study1_extract_cats <- function(cats_fit, alpha, n_clusters) {
+  estimate <- unname(cats_fit$beta.bar["x"])
+  p_value <- unname(cats_fit$p.values["x", 1L])
+  conf_low <- unname(cats_fit$ci["x", 1L])
+  conf_high <- unname(cats_fit$ci["x", 2L])
+  coefficient_variance <- unname(cats_fit$vcv.hat["x", "x"])
+
+  retained_clusters <- study1_infer_retained_clusters(
+    coefficient_variance = coefficient_variance,
+    conf_low = conf_low,
+    conf_high = conf_high,
+    alpha = alpha,
+    n_clusters = n_clusters
+  )
+
+  list(
+    estimate = estimate,
+    std_error = sqrt(coefficient_variance / retained_clusters),
+    df = retained_clusters - 1,
+    p_value = p_value,
+    conf_low = conf_low,
+    conf_high = conf_high,
+    converged = NA,
+    singular = NA,
+    retained_clusters = retained_clusters,
+    warning = NA_character_
+  )
+}
+
+#' Infer the Number of Retained CATs Clusters
+#'
+#' The CATs functions return the cross-cluster coefficient variance and
+#' confidence interval but not the number of retained clusters. This helper
+#' recovers the retained count by matching the reported confidence interval to
+#' the CATs confidence interval formula.
+#'
+#' @param coefficient_variance Cross-cluster coefficient variance.
+#' @param conf_low Lower confidence limit.
+#' @param conf_high Upper confidence limit.
+#' @param alpha Significance level.
+#' @param n_clusters Maximum number of clusters.
+#'
+#' @return The inferred number of retained clusters.
+#'
+#' @keywords internal
+study1_infer_retained_clusters <- function(coefficient_variance,
+                                           conf_low,
+                                           conf_high,
+                                           alpha,
+                                           n_clusters) {
+  if (!is.finite(coefficient_variance) || coefficient_variance < 0 ||
+      !is.finite(conf_low) || !is.finite(conf_high)) {
+    return(NA_integer_)
+  }
+
+  if (coefficient_variance == 0) {
+    return(as.integer(n_clusters))
+  }
+
+  candidate_clusters <- seq.int(2L, n_clusters)
+  target_half_width <- (conf_high - conf_low) / 2
+  candidate_half_width <- stats::qt(
+    1 - alpha / 2,
+    df = candidate_clusters - 1
+  ) * sqrt(coefficient_variance / candidate_clusters)
+
+  as.integer(candidate_clusters[
+    which.min(abs(candidate_half_width - target_half_width))
+  ])
+}
+
+#' Summarize Study 1 Replicate Results
+#'
+#' @param replicate_results Replicate-level results.
+#' @param methods Ordered method names.
+#' @param reps Number of requested replications.
+#'
+#' @return A data frame of method-level simulation summaries.
+#'
+#' @keywords internal
+study1_summarize_results <- function(replicate_results, methods, reps) {
+  summaries <- lapply(methods, function(method) {
+    method_results <- replicate_results[
+      replicate_results$method == method,
+      ,
+      drop = FALSE
+    ]
+    successful <- method_results$fit_success %in% TRUE
+    successful_results <- method_results[successful, , drop = FALSE]
+    n_success <- nrow(successful_results)
+
+    rejection <- successful_results$reject
+    coverage <- successful_results$cover
+    rejection_prop <- study1_mean_or_na(rejection)
+    coverage_prop <- study1_mean_or_na(coverage)
+
+    singular_values <- successful_results$singular
+    singular_values <- singular_values[!is.na(singular_values)]
+
+    data.frame(
+      model = method,
+      mean_coef = study1_mean_or_na(successful_results$estimate),
+      bias = study1_mean_or_na(
+        successful_results$estimate - successful_results$true_beta
+      ),
+      rejection_rate = 100 * rejection_prop,
+      rejection_rate_se = 100 * study1_binomial_mcse(
+        rejection_prop,
+        n_success
+      ),
+      rmse = study1_rmse_or_na(
+        successful_results$estimate,
+        successful_results$true_beta
+      ),
+      coverage = 100 * coverage_prop,
+      coverage_se = 100 * study1_binomial_mcse(
+        coverage_prop,
+        n_success
+      ),
+      avg_ci_width = study1_mean_or_na(
+        successful_results$conf_high - successful_results$conf_low
+      ),
+      success = n_success,
+      failure_rate = 100 * (reps - n_success) / reps,
+      singular_rate = if (length(singular_values) == 0L) {
+        NA_real_
+      } else {
+        100 * mean(singular_values)
+      },
+      mean_retained_clusters = study1_mean_or_na(
+        successful_results$retained_clusters
+      ),
+      mean_runtime_sec = study1_mean_or_na(method_results$runtime_sec),
+      stringsAsFactors = FALSE
+    )
+  })
+
+  do.call(rbind, summaries)
+}
+
+#' Calculate a Mean or Return Missing
+#'
+#' @param x Numeric or logical vector.
+#'
+#' @return A scalar numeric value.
+#'
+#' @keywords internal
+study1_mean_or_na <- function(x) {
+  x <- x[!is.na(x)]
+
+  if (length(x) == 0L) {
+    return(NA_real_)
+  }
+
+  mean(x)
+}
+
+#' Calculate RMSE or Return Missing
+#'
+#' @param estimate Estimated coefficients.
+#' @param truth True coefficients.
+#'
+#' @return A scalar numeric value.
+#'
+#' @keywords internal
+study1_rmse_or_na <- function(estimate, truth) {
+  valid <- is.finite(estimate) & is.finite(truth)
+
+  if (!any(valid)) {
+    return(NA_real_)
+  }
+
+  sqrt(mean((estimate[valid] - truth[valid])^2))
+}
+
+#' Calculate a Binomial Monte Carlo Standard Error
+#'
+#' @param proportion Estimated probability.
+#' @param n Number of successful replications.
+#'
+#' @return A scalar numeric value.
+#'
+#' @keywords internal
+study1_binomial_mcse <- function(proportion, n) {
+  if (!is.finite(proportion) || n <= 0L) {
+    return(NA_real_)
+  }
+
+  sqrt(proportion * (1 - proportion) / n)
+}
