@@ -1,0 +1,11 @@
+"variable","compared_rows","missing_old","missing_new","exact_match_rate","maximum_absolute_difference","mean_absolute_difference"
+"estimate",1500,0,0,100,0,0
+"std_error",1500,0,0,91.5333333333333,6.93889390390723e-18,4.60279962292513e-19
+"df",1500,0,0,100,0,0
+"p_value",1500,0,0,73.1333333333333,3.33066907387547e-16,1.99595301309376e-17
+"conf_low",1500,0,0,73.8,5.55111512312578e-17,4.76008121808036e-18
+"conf_high",1500,0,0,68.6666666666667,5.55111512312578e-17,4.68144042050274e-18
+"reject",1500,0,0,100,,
+"cover",1500,0,0,100,,
+"fit_success",1500,0,0,100,,
+"retained_clusters",1500,0,0,100,0,0

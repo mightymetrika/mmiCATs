@@ -1,0 +1,7 @@
+"condition_id","candidate_id","model","reps","fit_success_rate","failure_rate","error_rep_rate","singular_rate","cluster_warning_rep_rate","cluster_error_rep_rate","dropped_cluster_rep_rate","mean_cluster_warning_count","maximum_cluster_warning_count","mean_cluster_error_count","mean_dropped_cluster_count","template_warning_rate","mean_retained_clusters","mean_runtime_sec"
+"BLR001","BLR01","ri",250,100,0,0,0,,,,,,,,0,20,0.32296
+"BLR001","BLR01","cr2",250,100,0,0,,,,,,,,,0,20,0.0926800000000001
+"BLR001","BLR01","cats",250,100,0,0,,,,,,,,,0,20,0.0575599999999991
+"BLR001","BLR01","cats_trunc",250,100,0,0,,,,,,,,,0,20,0.0575200000000005
+"BLR001","BLR01","cats_robust",250,100,0,0,,2,0,0,0.02,1,0,0,2.4,20,0.12356
+"BLR001","BLR01","cats_robustbase",250,100,0,0,,4.8,0,0,0.056,2,0,0,0,20,0.247360000000001

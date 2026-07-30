@@ -1,0 +1,4 @@
+"condition_id","candidate_id","leverage_size","contamination_size","average_nonrobust_type1_error","minimum_nonrobust_type1_error","maximum_nonrobust_type1_error","average_nonrobust_coverage","minimum_nonrobust_coverage","average_nonrobust_bias","average_nonrobust_absolute_bias","average_nonrobust_rmse","maximum_nonrobust_failure_rate","distance_from_30","stable","within_type1_ceiling","eligible","recommended"
+"BLF001","BL01",4,0.25,13.4666666666667,9.6,17.2,86.5333333333333,82.8,-0.0266642562386977,0.0266642562386977,0.0401977028680041,0,16.5333333333333,TRUE,TRUE,TRUE,FALSE
+"BLR001","BLR01",4,0.375,27.0666666666667,16,32.8,72.9333333333333,67.2,-0.0410463700648889,0.0410463700648889,0.050915136020826,0,2.93333333333333,TRUE,TRUE,TRUE,TRUE
+"BLF002","BL02",4,0.5,44.6666666666667,29.6,54,55.3333333333333,46,-0.0554284892645994,0.0554284892645994,0.063098777270241,0,14.6666666666667,TRUE,TRUE,TRUE,FALSE

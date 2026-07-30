@@ -1,0 +1,273 @@
+"source","message","count"
+"cluster_warning","S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2517
+"cluster_warning","Max iteration for refinement reached.",1375
+"cluster_warning","Max iteration for final coefficients reached.",246
+"cluster_warning","M-step did NOT converge. Returning unconverged SM-estimate",109
+"overall_warning_field","Cluster :",67921
+"overall_warning_field","Cluster 4: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",114
+"overall_warning_field","Cluster 6: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",111
+"overall_warning_field","Cluster 5: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",107
+"overall_warning_field","Cluster 1: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",105
+"overall_warning_field","Cluster 2: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",105
+"overall_warning_field","Cluster 9: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",104
+"overall_warning_field","Cluster 8: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",99
+"overall_warning_field","Cluster 7: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",95
+"overall_warning_field","Cluster 10: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",94
+"overall_warning_field","Cluster 16: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",88
+"overall_warning_field","Cluster 3: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",84
+"overall_warning_field","Cluster 19: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",75
+"overall_warning_field","Cluster 20: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",73
+"overall_warning_field","Cluster 15: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",72
+"overall_warning_field","Cluster 3: Max iteration for refinement reached.",71
+"overall_warning_field","Cluster 6: Max iteration for refinement reached.",69
+"overall_warning_field","Cluster 17: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",67
+"overall_warning_field","Cluster 1: Max iteration for refinement reached.",66
+"overall_warning_field","Cluster 11: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",66
+"overall_warning_field","Cluster 18: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",62
+"overall_warning_field","Cluster 10: Max iteration for refinement reached.",60
+"overall_warning_field","Cluster 9: Max iteration for refinement reached.",57
+"overall_warning_field","Cluster 13: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",56
+"overall_warning_field","Cluster 12: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",53
+"overall_warning_field","Cluster 2: Max iteration for refinement reached.",53
+"overall_warning_field","Cluster 37: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",52
+"overall_warning_field","Cluster 5: Max iteration for refinement reached.",52
+"overall_warning_field","Cluster 8: Max iteration for refinement reached.",51
+"overall_warning_field","Cluster 4: Max iteration for refinement reached.",49
+"overall_warning_field","Cluster 7: Max iteration for refinement reached.",47
+"overall_warning_field","Cluster 17: Max iteration for refinement reached.",45
+"overall_warning_field","Cluster 14: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",44
+"overall_warning_field","Cluster 13: Max iteration for refinement reached.",42
+"overall_warning_field","Cluster 34: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",42
+"overall_warning_field","Cluster 15: Max iteration for refinement reached.",40
+"overall_warning_field","Cluster 33: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",40
+"overall_warning_field","Cluster 19: Max iteration for refinement reached.",39
+"overall_warning_field","Cluster 14: Max iteration for refinement reached.",38
+"overall_warning_field","Cluster 29: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",38
+"overall_warning_field","Cluster 18: Max iteration for refinement reached.",36
+"overall_warning_field","Cluster 16: Max iteration for refinement reached.",35
+"overall_warning_field","Cluster 25: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",35
+"overall_warning_field","Cluster 38: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",35
+"overall_warning_field","Cluster 27: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",34
+"overall_warning_field","Cluster 20: Max iteration for refinement reached.",32
+"overall_warning_field","Cluster 28: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",31
+"overall_warning_field","Cluster 21: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",30
+"overall_warning_field","Cluster 26: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",30
+"overall_warning_field","Cluster 30: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",30
+"overall_warning_field","Cluster 12: Max iteration for refinement reached.",29
+"overall_warning_field","Cluster 23: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",29
+"overall_warning_field","Cluster 31: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",29
+"overall_warning_field","Cluster 26: Max iteration for refinement reached.",27
+"overall_warning_field","Cluster 22: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",25
+"overall_warning_field","Cluster 29: Max iteration for refinement reached.",25
+"overall_warning_field","Cluster 35: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",25
+"overall_warning_field","Cluster 37: Max iteration for refinement reached.",25
+"overall_warning_field","Cluster 40: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",25
+"overall_warning_field","Cluster 11: Max iteration for refinement reached.",23
+"overall_warning_field","Cluster 36: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",23
+"overall_warning_field","Cluster 39: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",22
+"overall_warning_field","Cluster 24: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",21
+"overall_warning_field","Cluster 21: Max iteration for refinement reached.",20
+"overall_warning_field","Cluster 24: Max iteration for refinement reached.",19
+"overall_warning_field","Cluster 32: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",19
+"overall_warning_field","Cluster 40: Max iteration for refinement reached.",19
+"overall_warning_field","Cluster 27: Max iteration for refinement reached.",18
+"overall_warning_field","Cluster 36: Max iteration for refinement reached.",18
+"overall_warning_field","Cluster 30: Max iteration for refinement reached.",17
+"overall_warning_field","Cluster 23: Max iteration for refinement reached.",16
+"overall_warning_field","Cluster 25: Max iteration for refinement reached.",16
+"overall_warning_field","Cluster 28: Max iteration for refinement reached.",16
+"overall_warning_field","Cluster 32: Max iteration for refinement reached.",16
+"overall_warning_field","Cluster 33: Max iteration for refinement reached.",15
+"overall_warning_field","Cluster 34: Max iteration for refinement reached.",15
+"overall_warning_field","Cluster 38: Max iteration for refinement reached.",15
+"overall_warning_field","Cluster 19: Max iteration for final coefficients reached.",14
+"overall_warning_field","Cluster 22: Max iteration for refinement reached.",14
+"overall_warning_field","Cluster 39: Max iteration for refinement reached.",14
+"overall_warning_field","Cluster 5: Max iteration for final coefficients reached.",14
+"overall_warning_field","Cluster 6: Max iteration for final coefficients reached.",14
+"overall_warning_field","Cluster 7: Max iteration for final coefficients reached.",14
+"overall_warning_field","Cluster 3: Max iteration for final coefficients reached.",13
+"overall_warning_field","Cluster 31: Max iteration for refinement reached.",13
+"overall_warning_field","Cluster 1: Max iteration for final coefficients reached.",12
+"overall_warning_field","Cluster 35: Max iteration for refinement reached.",11
+"overall_warning_field","Cluster 2: Max iteration for final coefficients reached.",10
+"overall_warning_field","Cluster 40: Max iteration for final coefficients reached.",10
+"overall_warning_field","Cluster 9: Max iteration for final coefficients reached.",10
+"overall_warning_field","Cluster 10: Max iteration for final coefficients reached.",8
+"overall_warning_field","Cluster 13: Max iteration for final coefficients reached.",8
+"overall_warning_field","Cluster 14: Max iteration for final coefficients reached.",8
+"overall_warning_field","Cluster 18: Max iteration for final coefficients reached.",8
+"overall_warning_field","Cluster 19: M-step did NOT converge. Returning unconverged SM-estimate",7
+"overall_warning_field","Cluster 4: M-step did NOT converge. Returning unconverged SM-estimate",7
+"overall_warning_field","Cluster 15: Max iteration for final coefficients reached.",6
+"overall_warning_field","Cluster 16: Max iteration for final coefficients reached.",6
+"overall_warning_field","Cluster 20: Max iteration for final coefficients reached.",6
+"overall_warning_field","Cluster 21: Max iteration for final coefficients reached.",6
+"overall_warning_field","Cluster 31: Max iteration for final coefficients reached.",6
+"overall_warning_field","Cluster 4: Max iteration for final coefficients reached.",6
+"overall_warning_field","Cluster 1: M-step did NOT converge. Returning unconverged SM-estimate",5
+"overall_warning_field","Cluster 10: M-step did NOT converge. Returning unconverged SM-estimate",5
+"overall_warning_field","Cluster 11: Max iteration for final coefficients reached.",5
+"overall_warning_field","Cluster 12: Max iteration for final coefficients reached.",5
+"overall_warning_field","Cluster 2: M-step did NOT converge. Returning unconverged SM-estimate",5
+"overall_warning_field","Cluster 33: Max iteration for final coefficients reached.",5
+"overall_warning_field","Cluster 35: Max iteration for final coefficients reached.",5
+"overall_warning_field","Cluster 6: M-step did NOT converge. Returning unconverged SM-estimate",5
+"overall_warning_field","Cluster 8: M-step did NOT converge. Returning unconverged SM-estimate",5
+"overall_warning_field","Cluster 9: M-step did NOT converge. Returning unconverged SM-estimate",5
+"overall_warning_field","Cluster 14: M-step did NOT converge. Returning unconverged SM-estimate",4
+"overall_warning_field","Cluster 17: Max iteration for final coefficients reached.",4
+"overall_warning_field","Cluster 24: Max iteration for final coefficients reached.",4
+"overall_warning_field","Cluster 29: Max iteration for final coefficients reached.",4
+"overall_warning_field","Cluster 34: Max iteration for final coefficients reached.",4
+"overall_warning_field","Cluster 37: M-step did NOT converge. Returning unconverged SM-estimate",4
+"overall_warning_field","Cluster 7: M-step did NOT converge. Returning unconverged SM-estimate",4
+"overall_warning_field","Cluster 8: Max iteration for final coefficients reached.",4
+"overall_warning_field","Cluster 1: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 9: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",3
+"overall_warning_field","Cluster 11: M-step did NOT converge. Returning unconverged SM-estimate",3
+"overall_warning_field","Cluster 12: M-step did NOT converge. Returning unconverged SM-estimate",3
+"overall_warning_field","Cluster 15: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 31: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",3
+"overall_warning_field","Cluster 16: M-step did NOT converge. Returning unconverged SM-estimate",3
+"overall_warning_field","Cluster 20: M-step did NOT converge. Returning unconverged SM-estimate",3
+"overall_warning_field","Cluster 22: Max iteration for final coefficients reached.",3
+"overall_warning_field","Cluster 26: M-step did NOT converge. Returning unconverged SM-estimate",3
+"overall_warning_field","Cluster 27: Max iteration for final coefficients reached.",3
+"overall_warning_field","Cluster 29: M-step did NOT converge. Returning unconverged SM-estimate",3
+"overall_warning_field","Cluster 3: M-step did NOT converge. Returning unconverged SM-estimate",3
+"overall_warning_field","Cluster 33: M-step did NOT converge. Returning unconverged SM-estimate",3
+"overall_warning_field","Cluster 40: M-step did NOT converge. Returning unconverged SM-estimate",3
+"overall_warning_field","Cluster 5: M-step did NOT converge. Returning unconverged SM-estimate",3
+"overall_warning_field","Cluster 1: Max iteration for refinement reached. | Cluster 24: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 1: Max iteration for refinement reached. | Cluster 4: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 1: Max iteration for refinement reached. | Cluster 5: Max iteration for final coefficients reached.",2
+"overall_warning_field","Cluster 1: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 18: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 10: Max iteration for refinement reached. | Cluster 31: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 10: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 28: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 11: Max iteration for refinement reached. | Cluster 17: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 11: Max iteration for refinement reached. | Cluster 18: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 11: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 20: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 11: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 33: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 11: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 36: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 11: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 39: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 12: Max iteration for refinement reached. | Cluster 18: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 12: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 21: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 12: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 36: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 13: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 25: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 14: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 16: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 14: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 36: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 15: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 27: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 16: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 19: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 17: M-step did NOT converge. Returning unconverged SM-estimate",2
+"overall_warning_field","Cluster 17: Max iteration for refinement reached. | Cluster 33: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 17: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 19: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 19: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 22: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 19: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 25: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 19: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 39: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 19: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 40: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 2: Max iteration for refinement reached. | Cluster 10: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 2: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 16: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 2: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 34: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 20: Max iteration for refinement reached. | Cluster 23: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 21: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 22: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 21: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 35: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 22: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 28: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 23: Max iteration for final coefficients reached.",2
+"overall_warning_field","Cluster 23: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 29: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 23: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 37: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 25: Max iteration for final coefficients reached.",2
+"overall_warning_field","Cluster 25: Max iteration for refinement reached. | Cluster 30: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 26: Max iteration for final coefficients reached.",2
+"overall_warning_field","Cluster 26: Max iteration for refinement reached. | Cluster 31: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 27: M-step did NOT converge. Returning unconverged SM-estimate",2
+"overall_warning_field","Cluster 28: M-step did NOT converge. Returning unconverged SM-estimate",2
+"overall_warning_field","Cluster 29: Max iteration for refinement reached. | Cluster 39: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 29: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 33: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 3: Max iteration for refinement reached. | Cluster 5: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 3: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 13: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 3: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 29: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 3: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 38: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 3: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 4: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 3: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 8: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 31: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 35: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 35: M-step did NOT converge. Returning unconverged SM-estimate",2
+"overall_warning_field","Cluster 35: Max iteration for refinement reached. | Cluster 36: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 36: Max iteration for final coefficients reached.",2
+"overall_warning_field","Cluster 37: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 40: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 4: Max iteration for refinement reached. | Cluster 18: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 4: Max iteration for refinement reached. | Cluster 29: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 4: Max iteration for refinement reached. | Cluster 9: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 4: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 7: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 5: Max iteration for final coefficients reached. | Cluster 9: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 5: Max iteration for refinement reached. | Cluster 31: Max iteration for final coefficients reached.",2
+"overall_warning_field","Cluster 5: Max iteration for refinement reached. | Cluster 7: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 6: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 14: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 6: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 15: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 6: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 18: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 6: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 19: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 7: Max iteration for refinement reached. | Cluster 15: Max iteration for refinement reached.",2
+"overall_warning_field","Cluster 7: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 20: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 7: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 9: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 8: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 11: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 8: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 18: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",2
+"overall_warning_field","Cluster 12: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 13: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 13: M-step did NOT converge. Returning unconverged SM-estimate",1
+"overall_warning_field","Cluster 13: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 14: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 13: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 16: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 13: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 17: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 14: M-step did NOT converge. Returning unconverged SM-estimate | Cluster 39: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 15: M-step did NOT converge. Returning unconverged SM-estimate",1
+"overall_warning_field","Cluster 15: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 22: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 15: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 29: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 16: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 32: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 17: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 26: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 18: M-step did NOT converge. Returning unconverged SM-estimate",1
+"overall_warning_field","Cluster 18: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 32: M-step did NOT converge. Returning unconverged SM-estimate",1
+"overall_warning_field","Cluster 2: Max iteration for refinement reached. | Cluster 29: Max iteration for refinement reached.",1
+"overall_warning_field","Cluster 21: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 28: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 22: M-step did NOT converge. Returning unconverged SM-estimate",1
+"overall_warning_field","Cluster 23: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 40: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 24: M-step did NOT converge. Returning unconverged SM-estimate",1
+"overall_warning_field","Cluster 25: M-step did NOT converge. Returning unconverged SM-estimate",1
+"overall_warning_field","Cluster 27: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 36: M-step did NOT converge. Returning unconverged SM-estimate",1
+"overall_warning_field","Cluster 28: Max iteration for final coefficients reached.",1
+"overall_warning_field","Cluster 29: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 31: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 3: Max iteration for refinement reached. | Cluster 10: Max iteration for refinement reached.",1
+"overall_warning_field","Cluster 30: Max iteration for final coefficients reached.",1
+"overall_warning_field","Cluster 30: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 35: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 31: M-step did NOT converge. Returning unconverged SM-estimate",1
+"overall_warning_field","Cluster 32: M-step did NOT converge. Returning unconverged SM-estimate",1
+"overall_warning_field","Cluster 35: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 38: M-step did NOT converge. Returning unconverged SM-estimate",1
+"overall_warning_field","Cluster 38: M-step did NOT converge. Returning unconverged SM-estimate",1
+"overall_warning_field","Cluster 39: Max iteration for final coefficients reached.",1
+"overall_warning_field","Cluster 4: Max iteration for refinement reached. | Cluster 27: Max iteration for final coefficients reached.",1
+"overall_warning_field","Cluster 4: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 21: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 4: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 30: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 4: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 34: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 4: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 8: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 5: Max iteration for refinement reached. | Cluster 15: Max iteration for refinement reached.",1
+"overall_warning_field","Cluster 6: M-step did NOT converge. Returning unconverged SM-estimate | Cluster 14: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 6: M-step did NOT converge. Returning unconverged SM-estimate | Cluster 25: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 6: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 23: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 6: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 36: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 7: Max iteration for final coefficients reached. | Cluster 12: Max iteration for final coefficients reached.",1
+"overall_warning_field","Cluster 8: Max iteration for final coefficients reached. | Cluster 36: Max iteration for refinement reached.",1
+"overall_warning_field","Cluster 8: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 10: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 8: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 22: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Cluster 9: Max iteration for refinement reached. | Cluster 23: Max iteration for refinement reached.",1
+"overall_warning_field","Cluster 9: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged | Cluster 31: S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",1
+"overall_warning_field","Model failed to converge with max|grad| = 0.00204948 (tol = 0.002, component 1)
+  See ?lme4::convergence and ?lme4::troubleshooting.",1
+"overall_warning_field","Model failed to converge with max|grad| = 0.00207641 (tol = 0.002, component 1)
+  See ?lme4::convergence and ?lme4::troubleshooting.",1
+"overall_warning_field","Model failed to converge with max|grad| = 0.00208784 (tol = 0.002, component 1)
+  See ?lme4::convergence and ?lme4::troubleshooting.",1
+"overall_warning_field","Model failed to converge with max|grad| = 0.00209189 (tol = 0.002, component 1)
+  See ?lme4::convergence and ?lme4::troubleshooting.",1
+"overall_warning_field","Model failed to converge with max|grad| = 0.00209605 (tol = 0.002, component 1)
+  See ?lme4::convergence and ?lme4::troubleshooting.",1
+"overall_warning_field","Model failed to converge with max|grad| = 0.00212069 (tol = 0.002, component 1)
+  See ?lme4::convergence and ?lme4::troubleshooting.",1
+"overall_warning_field","Model failed to converge with max|grad| = 0.00314992 (tol = 0.002, component 1)
+  See ?lme4::convergence and ?lme4::troubleshooting.",1
+"robust_template_warning","Max iteration for refinement reached.",171
+"robust_template_warning","S refinements did not converge (to refine.tol=1e-07) in 200 (= k.max) steps | initial estim. 'init' not converged -- will be return()ed basically unchanged",19

@@ -14,9 +14,12 @@ study1_fit_robust_cats(dat, alpha, engine)
 \item{engine}{Robust regression engine.}
 }
 \value{
-A standardized result list.
+A standardized result list with cluster-specific diagnostics.
 }
 \description{
-Fit a Robust CATs Method
+Fits robust regression separately in every cluster and applies the CATs
+calculation to the retained cluster-specific coefficients. Cluster-level
+warnings and errors are recorded without changing the public
+\code{cluster_im_lmRob()} function.
 }
 \keyword{internal}

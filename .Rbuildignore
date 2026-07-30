@@ -5,3 +5,4 @@
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
 ^createtable_public\.kenrcats_data\.txt$
+^data-raw$

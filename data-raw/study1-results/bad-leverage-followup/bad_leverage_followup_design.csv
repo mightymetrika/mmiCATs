@@ -1,0 +1,4 @@
+"condition_id","candidate_id","n_clusters","cluster_size","beta","intercept","random_intercept_sd","residual_sd","x_sd","contamination","contamination_prop","contamination_size","leverage_size","reps","alpha","method_set","condition_seed"
+"BLF001","BL01",20,40,0,0,1,1,1,"bad_leverage",0.05,0.25,4,250,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260802
+"BLF002","BL02",20,40,0,0,1,1,1,"bad_leverage",0.05,0.5,4,250,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260802
+"BLF003","BL03",20,40,0,0,1,1,1,"bad_leverage",0.05,0.75,4,250,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260802

@@ -1,0 +1,4 @@
+"condition_id","candidate_id","n_clusters","cluster_size","beta","intercept","random_intercept_sd","residual_sd","x_sd","contamination","contamination_prop","contamination_size","leverage_size","reps","alpha","method_set","condition_seed","status","condition_error","started_at","completed_at","elapsed_sec"
+"BLF001","BL01",20,40,0,0,1,1,1,"bad_leverage",0.05,0.25,4,250,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260802,"complete",,"2026-07-29 11:19:24.606528","2026-07-29 11:23:28.81558",244.209051847458
+"BLF002","BL02",20,40,0,0,1,1,1,"bad_leverage",0.05,0.5,4,250,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260802,"complete",,"2026-07-29 11:23:28.888079","2026-07-29 11:27:40.52015",251.632071018219
+"BLF003","BL03",20,40,0,0,1,1,1,"bad_leverage",0.05,0.75,4,250,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260802,"complete",,"2026-07-29 11:27:40.58771","2026-07-29 11:31:48.1984",247.610690116882

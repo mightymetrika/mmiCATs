@@ -1,0 +1,19 @@
+"condition_id","n_clusters","cluster_size","beta","intercept","random_intercept_sd","residual_sd","x_sd","contamination","contamination_prop","contamination_size","leverage_size","reps","alpha","method_set","condition_seed","status","condition_error","started_at","completed_at","elapsed_sec"
+"001",10,40,0,0,1,1,1,"none",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260729,"complete",,"2026-07-28 15:47:12.425072","2026-07-28 15:47:18.204611",5.77953910827637
+"002",10,40,0,0,1,1,1,"vertical",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260730,"complete",,"2026-07-28 15:47:18.218955","2026-07-28 15:47:23.548825",5.32986998558044
+"003",10,40,0,0,1,1,1,"bad_leverage",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260731,"complete",,"2026-07-28 15:47:23.557038","2026-07-28 15:47:28.660281",5.10324287414551
+"004",10,40,0.2,0,1,1,1,"none",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260732,"complete",,"2026-07-28 15:47:28.670993","2026-07-28 15:47:33.749625",5.07863187789917
+"005",10,40,0.2,0,1,1,1,"vertical",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260733,"complete",,"2026-07-28 15:47:33.758055","2026-07-28 15:47:38.859966",5.10191106796265
+"006",10,40,0.2,0,1,1,1,"bad_leverage",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260734,"complete",,"2026-07-28 15:47:38.867848","2026-07-28 15:47:43.907414",5.03956604003906
+"007",20,40,0,0,1,1,1,"none",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260735,"complete",,"2026-07-28 15:47:43.915336","2026-07-28 15:47:51.113321",7.19798517227173
+"008",20,40,0,0,1,1,1,"vertical",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260736,"complete",,"2026-07-28 15:47:51.121125","2026-07-28 15:48:00.323117",9.20199203491211
+"009",20,40,0,0,1,1,1,"bad_leverage",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260737,"complete",,"2026-07-28 15:48:00.916342","2026-07-28 15:48:07.866373",6.950031042099
+"010",20,40,0.2,0,1,1,1,"none",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260738,"complete",,"2026-07-28 15:48:07.874168","2026-07-28 15:48:14.582769",6.7086009979248
+"011",20,40,0.2,0,1,1,1,"vertical",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260739,"complete",,"2026-07-28 15:48:14.590854","2026-07-28 15:48:21.389819",6.7989649772644
+"012",20,40,0.2,0,1,1,1,"bad_leverage",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260740,"complete",,"2026-07-28 15:48:21.39768","2026-07-28 15:48:29.896216",8.49853587150574
+"013",40,40,0,0,1,1,1,"none",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260741,"complete",,"2026-07-28 15:48:29.906114","2026-07-28 15:48:40.657652",10.7515377998352
+"014",40,40,0,0,1,1,1,"vertical",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260742,"complete",,"2026-07-28 15:48:40.664932","2026-07-28 15:48:51.370183",10.7052509784698
+"015",40,40,0,0,1,1,1,"bad_leverage",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260743,"complete",,"2026-07-28 15:48:51.380619","2026-07-28 15:49:02.307359",10.9267399311066
+"016",40,40,0.2,0,1,1,1,"none",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260744,"complete",,"2026-07-28 15:49:02.314655","2026-07-28 15:49:13.79118",11.4765248298645
+"017",40,40,0.2,0,1,1,1,"vertical",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260745,"complete",,"2026-07-28 15:49:13.798775","2026-07-28 15:49:23.749978",9.95120310783386
+"018",40,40,0.2,0,1,1,1,"bad_leverage",0.05,10,10,5,0.05,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase",20260746,"complete",,"2026-07-28 15:49:23.757373","2026-07-28 15:49:34.136532",10.3791589736938

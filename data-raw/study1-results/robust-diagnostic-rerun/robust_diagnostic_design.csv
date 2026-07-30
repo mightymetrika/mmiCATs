@@ -1,0 +1,4 @@
+"condition_id","original_condition_id","condition_label","n_clusters","cluster_size","beta","intercept","random_intercept_sd","residual_sd","x_sd","contamination","contamination_prop","contamination_size","leverage_size","reps","alpha","condition_seed"
+"DR001","PC001","clean_null",20,40,0,0,1,1,1,"none",0.05,1,1,250,0.05,20260802
+"DR002","PC007","vertical_6",20,40,0,0,1,1,1,"vertical",0.05,6,1,250,0.05,20260802
+"DR003","PC010","bad_leverage_4_1",20,40,0,0,1,1,1,"bad_leverage",0.05,1,4,250,0.05,20260802

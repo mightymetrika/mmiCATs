@@ -49,7 +49,9 @@
 #'
 #' Rejection rates, coverage rates, failure rates, and singularity rates are
 #' reported as percentages. Their Monte Carlo standard errors are reported in
-#' percentage points.
+#' percentage points. When replicate-level results are retained, robust CATs
+#' rows also include cluster-level warning, error, and dropping counts and a
+#' list column containing the cluster-specific coefficients and diagnostics.
 #'
 #' @references
 #' Esarey, J., and Menger, A. (2019). Practical and effective approaches to
@@ -199,3 +201,4 @@ pwr_func_study1 <- function(
     settings = settings
   )
 }
+

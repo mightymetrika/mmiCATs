@@ -381,6 +381,25 @@ study1_method_seed <- function(replicate_seed, method_index) {
   as.integer(seed + 1)
 }
 
+#' Return a Result Component or a Default
+#'
+#' @param result Standardized method result.
+#' @param name Component name.
+#' @param default Default value.
+#'
+#' @return The requested component or the supplied default.
+#'
+#' @keywords internal
+study1_result_component <- function(result, name, default) {
+  value <- result[[name]]
+
+  if (is.null(value)) {
+    return(default)
+  }
+
+  value
+}
+
 #' Fit One Study 1 Method
 #'
 #' @param dat Simulated data.
@@ -480,7 +499,55 @@ study1_fit_method <- function(dat,
       result$warning
     )),
     error = captured$error,
+    template_warning = study1_result_component(
+      result,
+      "template_warning",
+      NA_character_
+    ),
+    cluster_warning_count = study1_result_component(
+      result,
+      "cluster_warning_count",
+      NA_integer_
+    ),
+    cluster_error_count = study1_result_component(
+      result,
+      "cluster_error_count",
+      NA_integer_
+    ),
+    dropped_cluster_count = study1_result_component(
+      result,
+      "dropped_cluster_count",
+      NA_integer_
+    ),
+    cluster_warning_ids = study1_result_component(
+      result,
+      "cluster_warning_ids",
+      NA_character_
+    ),
+    cluster_error_ids = study1_result_component(
+      result,
+      "cluster_error_ids",
+      NA_character_
+    ),
+    dropped_cluster_ids = study1_result_component(
+      result,
+      "dropped_cluster_ids",
+      NA_character_
+    ),
     runtime_sec = captured$runtime,
+    cluster_diagnostics = I(list(study1_result_component(
+      result,
+      "cluster_diagnostics",
+      data.frame(
+        cluster = character(0),
+        intercept = numeric(0),
+        x = numeric(0),
+        retained = logical(0),
+        warning = character(0),
+        error = character(0),
+        stringsAsFactors = FALSE
+      )
+    ))),
     stringsAsFactors = FALSE
   )
 }
@@ -521,7 +588,23 @@ study1_empty_result <- function(replicate_id,
     retained_clusters = NA_integer_,
     warning = warning,
     error = error,
+    template_warning = NA_character_,
+    cluster_warning_count = NA_integer_,
+    cluster_error_count = NA_integer_,
+    dropped_cluster_count = NA_integer_,
+    cluster_warning_ids = NA_character_,
+    cluster_error_ids = NA_character_,
+    dropped_cluster_ids = NA_character_,
     runtime_sec = runtime,
+    cluster_diagnostics = I(list(data.frame(
+      cluster = character(0),
+      intercept = numeric(0),
+      x = numeric(0),
+      retained = logical(0),
+      warning = character(0),
+      error = character(0),
+      stringsAsFactors = FALSE
+    ))),
     stringsAsFactors = FALSE
   )
 }
@@ -650,40 +733,228 @@ study1_fit_cats <- function(dat, alpha, truncate) {
   )
 }
 
+#' Fit One Robust Linear Model for Study 1
+#'
+#' @param formula Model formula.
+#' @param data Data used to fit the model.
+#' @param engine Robust regression engine.
+#'
+#' @return A fitted robust linear model.
+#'
+#' @keywords internal
+study1_fit_robust_model <- function(formula, data, engine) {
+  switch(
+    engine,
+    "robust" = robust::lmRob(formula = formula, data = data),
+    "robustbase" = robustbase::lmrob(formula = formula, data = data),
+    stop("Unknown robust engine.", call. = FALSE)
+  )
+}
+
+#' Fit One Cluster-Specific Robust Model
+#'
+#' Fits a robust linear model in one cluster while retaining warnings and
+#' errors. A cluster is retained when both requested coefficients are present
+#' and finite. Warnings do not cause an otherwise usable estimate to be
+#' dropped.
+#'
+#' @param cluster_id Cluster identifier.
+#' @param dat Complete simulated data.
+#' @param formula Model formula.
+#' @param engine Robust regression engine.
+#' @param fit_function Function used to fit the robust model.
+#'
+#' @return A one-row data frame containing the cluster-specific coefficients
+#'   and diagnostics.
+#'
+#' @keywords internal
+study1_fit_robust_cluster <- function(
+    cluster_id,
+    dat,
+    formula,
+    engine,
+    fit_function = study1_fit_robust_model) {
+  cluster_label <- as.character(cluster_id)
+  cluster_dat <- dat[
+    as.character(dat$cluster) == cluster_label,
+    ,
+    drop = FALSE
+  ]
+
+  captured <- study1_capture_fit(function() {
+    fit <- fit_function(
+      formula = formula,
+      data = cluster_dat,
+      engine = engine
+    )
+    coefficients <- stats::coef(fit)
+    required_coefficients <- c("(Intercept)", "x")
+
+    if (!all(required_coefficients %in% names(coefficients))) {
+      stop(
+        "Cluster-specific fit did not return all required coefficients.",
+        call. = FALSE
+      )
+    }
+
+    coefficients <- coefficients[required_coefficients]
+
+    if (any(!is.finite(coefficients))) {
+      stop(
+        "Cluster-specific fit returned non-finite coefficients.",
+        call. = FALSE
+      )
+    }
+
+    coefficients
+  })
+
+  retained <- !is.null(captured$value)
+
+  data.frame(
+    cluster = cluster_label,
+    intercept = if (retained) {
+      unname(captured$value["(Intercept)"])
+    } else {
+      NA_real_
+    },
+    x = if (retained) {
+      unname(captured$value["x"])
+    } else {
+      NA_real_
+    },
+    retained = retained,
+    warning = captured$warning,
+    error = captured$error,
+    stringsAsFactors = FALSE
+  )
+}
+
 #' Fit a Robust CATs Method
+#'
+#' Fits robust regression separately in every cluster and applies the CATs
+#' calculation to the retained cluster-specific coefficients. Cluster-level
+#' warnings and errors are recorded without changing the public
+#' `cluster_im_lmRob()` function.
 #'
 #' @param dat Simulated data.
 #' @param alpha Significance level.
 #' @param engine Robust regression engine.
 #'
-#' @return A standardized result list.
+#' @return A standardized result list with cluster-specific diagnostics.
 #'
 #' @keywords internal
 study1_fit_robust_cats <- function(dat, alpha, engine) {
   formula <- out ~ x
 
-  robust_fit <- switch(
-    engine,
-    "robust" = robust::lmRob(formula = formula, data = dat),
-    "robustbase" = robustbase::lmrob(formula = formula, data = dat),
-    stop("Unknown robust engine.", call. = FALSE)
+  # Preserve the existing robust CATs random-number sequence by fitting the
+  # full-data model before the cluster-specific models. This fit is used only
+  # as a template and its warnings are reported separately.
+  template_fit <- study1_capture_fit(function() {
+    study1_fit_robust_model(
+      formula = formula,
+      data = dat,
+      engine = engine
+    )
+  })
+
+  if (is.null(template_fit$value)) {
+    stop(
+      paste(
+        "The full-data robust model failed:",
+        template_fit$error
+      ),
+      call. = FALSE
+    )
+  }
+
+  cluster_ids <- unique(as.character(dat$cluster))
+  cluster_diagnostics <- do.call(
+    rbind,
+    lapply(cluster_ids, function(cluster_id) {
+      study1_fit_robust_cluster(
+        cluster_id = cluster_id,
+        dat = dat,
+        formula = formula,
+        engine = engine
+      )
+    })
+  )
+  rownames(cluster_diagnostics) <- NULL
+
+  retained <- cluster_diagnostics$retained %in% TRUE
+  retained_clusters <- sum(retained)
+
+  if (retained_clusters < 2L) {
+    stop(
+      "Fewer than two cluster-specific robust estimates were retained.",
+      call. = FALSE
+    )
+  }
+
+  beta_cluster <- as.matrix(
+    cluster_diagnostics[
+      retained,
+      c("intercept", "x"),
+      drop = FALSE
+    ]
+  )
+  colnames(beta_cluster) <- c("(Intercept)", "x")
+
+  beta_average <- colMeans(beta_cluster)
+  coefficient_vcv <- stats::cov(beta_cluster)
+  coefficient_variance <- unname(coefficient_vcv["x", "x"])
+  std_error <- sqrt(coefficient_variance / retained_clusters)
+  estimate <- unname(beta_average["x"])
+  df <- retained_clusters - 1L
+  t_statistic <- estimate / std_error
+  p_value <- 2 * stats::pt(
+    abs(t_statistic),
+    df = df,
+    lower.tail = FALSE
+  )
+  critical_value <- stats::qt(1 - alpha / 2, df = df)
+
+  warning_index <- !is.na(cluster_diagnostics$warning) &
+    nzchar(cluster_diagnostics$warning)
+  error_index <- !is.na(cluster_diagnostics$error) &
+    nzchar(cluster_diagnostics$error)
+  dropped_index <- !retained
+
+  cluster_warning <- study1_collapse_messages(
+    paste0(
+      "Cluster ",
+      cluster_diagnostics$cluster[warning_index],
+      ": ",
+      cluster_diagnostics$warning[warning_index]
+    )
   )
 
-  cats_fit <- cluster_im_lmRob(
-    robmod = robust_fit,
-    formula = formula,
-    dat = dat,
-    cluster = ~ cluster,
-    ci.level = 1 - alpha,
-    drop = TRUE,
-    return.vcv = TRUE,
-    engine = engine
-  )
-
-  study1_extract_cats(
-    cats_fit = cats_fit,
-    alpha = alpha,
-    n_clusters = nlevels(dat$cluster)
+  list(
+    estimate = estimate,
+    std_error = std_error,
+    df = df,
+    p_value = p_value,
+    conf_low = estimate - critical_value * std_error,
+    conf_high = estimate + critical_value * std_error,
+    converged = NA,
+    singular = NA,
+    retained_clusters = retained_clusters,
+    warning = cluster_warning,
+    template_warning = template_fit$warning,
+    cluster_warning_count = sum(warning_index),
+    cluster_error_count = sum(error_index),
+    dropped_cluster_count = sum(dropped_index),
+    cluster_warning_ids = study1_collapse_messages(
+      cluster_diagnostics$cluster[warning_index]
+    ),
+    cluster_error_ids = study1_collapse_messages(
+      cluster_diagnostics$cluster[error_index]
+    ),
+    dropped_cluster_ids = study1_collapse_messages(
+      cluster_diagnostics$cluster[dropped_index]
+    ),
+    cluster_diagnostics = cluster_diagnostics
   )
 }
 
@@ -886,3 +1157,4 @@ study1_binomial_mcse <- function(proportion, n) {
 
   sqrt(proportion * (1 - proportion) / n)
 }
+
