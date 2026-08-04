@@ -1,7 +1,0 @@
-"condition_id","condition_label","method","reps","fit_success_rate","warning_rep_rate","error_rep_rate","dropped_rep_rate","mean_cluster_warning_count","mean_cluster_error_count","mean_dropped_cluster_count","max_cluster_warning_count","max_cluster_error_count","max_dropped_cluster_count","template_warning_rate","cluster_warning_ids","cluster_error_ids","dropped_cluster_ids"
-"DR001","clean_null","cats_robust",250,100,4,0,0,0.04,0,0,1,0,0,1.2,"5 | 9 | 8 | 4 | 10 | 6 | 18 | 11",,
-"DR001","clean_null","cats_robustbase",250,100,6.8,0,0,0.068,0,0,1,0,0,0,"16 | 6 | 2 | 12 | 1 | 17 | 18 | 20 | 7 | 3 | 8 | 19",,
-"DR002","vertical_6","cats_robust",250,100,2.8,0,0,0.032,0,0,2,0,0,0,"7 | 5 | 15 | 8 | 12 | 19 | 2",,
-"DR002","vertical_6","cats_robustbase",250,100,4.8,0,0,0.048,0,0,1,0,0,0,"19 | 20 | 4 | 9 | 7 | 8 | 5 | 15 | 16",,
-"DR003","bad_leverage_4_1","cats_robust",250,100,2.8,0,0,0.028,0,0,1,0,0,0.4,"18 | 11 | 7 | 14 | 2",,
-"DR003","bad_leverage_4_1","cats_robustbase",250,100,5.6,0,0,0.064,0,0,2,0,0,0,"7 | 18 | 20 | 20 | 4 | 15 | 16 | 10 | 14 | 12 | 18 | 1",,

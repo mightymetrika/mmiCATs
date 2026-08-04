@@ -1,4 +1,0 @@
-"condition_id","candidate_id","reps","estimate_exact_match_rate","maximum_absolute_estimate_difference","rejection_exact_match_rate","coverage_exact_match_rate","maximum_absolute_p_value_difference","mean_retained_cluster_difference","minimum_truncated_retained_clusters"
-"BLF001","BL01",250,100,0,100,100,0,0,20
-"BLF002","BL02",250,100,0,100,100,0,0,20
-"BLF003","BL03",250,100,0,100,100,0,0,20

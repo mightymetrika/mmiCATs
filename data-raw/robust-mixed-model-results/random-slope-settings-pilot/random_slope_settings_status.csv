@@ -1,0 +1,13 @@
+"condition_id","n_clusters","cluster_size","random_slope_sd","contamination","contamination_label","beta","status","error","elapsed_sec"
+"RMM011",10,40,0.05,"none","Clean",0,"complete",,88.2575888633728
+"RMM013",10,40,0.05,"vertical","Vertical outliers",0,"complete",,87.2307639122009
+"RMM015",10,40,0.1,"none","Clean",0,"complete",,108.251508951187
+"RMM017",10,40,0.1,"vertical","Vertical outliers",0,"complete",,111.803144931793
+"RMM019",20,40,0.05,"none","Clean",0,"complete",,183.517731904984
+"RMM021",20,40,0.05,"vertical","Vertical outliers",0,"complete",,176.924902915955
+"RMM023",20,40,0.1,"none","Clean",0,"complete",,207.006180047989
+"RMM025",20,40,0.1,"vertical","Vertical outliers",0,"complete",,186.367707967758
+"RMM027",40,40,0.05,"none","Clean",0,"complete",,411.897403001785
+"RMM029",40,40,0.05,"vertical","Vertical outliers",0,"complete",,387.998682975769
+"RMM031",40,40,0.1,"none","Clean",0,"complete",,481.373873949051
+"RMM033",40,40,0.1,"vertical","Vertical outliers",0,"complete",,441.137789011002

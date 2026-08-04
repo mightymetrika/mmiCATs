@@ -1,0 +1,34 @@
+"condition_id","study","n_clusters","cluster_size","beta","random_slope_sd","contamination","contamination_label","model","model_label","reps","condition_seed"
+"RMM001","Study 1",10,40,0,0,"none","Clean","study1_robust_ri","Study 1 robust random intercept",5,20260920
+"RMM002","Study 1",10,40,0,0,"vertical","Vertical outliers","study1_robust_ri","Study 1 robust random intercept",5,20260920
+"RMM003","Study 1",10,40,0,0,"bad_leverage","Bad leverage","study1_robust_ri","Study 1 robust random intercept",5,20260920
+"RMM004","Study 1",20,40,0,0,"none","Clean","study1_robust_ri","Study 1 robust random intercept",5,20260921
+"RMM005","Study 1",20,40,0,0,"vertical","Vertical outliers","study1_robust_ri","Study 1 robust random intercept",5,20260921
+"RMM006","Study 1",20,40,0,0,"bad_leverage","Bad leverage","study1_robust_ri","Study 1 robust random intercept",5,20260921
+"RMM007","Study 1",40,40,0,0,"none","Clean","study1_robust_ri","Study 1 robust random intercept",5,20260922
+"RMM008","Study 1",40,40,0,0,"vertical","Vertical outliers","study1_robust_ri","Study 1 robust random intercept",5,20260922
+"RMM009","Study 1",40,40,0,0,"bad_leverage","Bad leverage","study1_robust_ri","Study 1 robust random intercept",5,20260922
+"RMM010","Study 2",10,40,0,0.05,"none","Clean","study2_robust_ri","Study 2 robust random intercept",5,20260923
+"RMM011","Study 2",10,40,0,0.05,"none","Clean","study2_robust_rs","Study 2 robust random slope",5,20260923
+"RMM012","Study 2",10,40,0,0.05,"vertical","Vertical outliers","study2_robust_ri","Study 2 robust random intercept",5,20260923
+"RMM013","Study 2",10,40,0,0.05,"vertical","Vertical outliers","study2_robust_rs","Study 2 robust random slope",5,20260923
+"RMM014","Study 2",10,40,0,0.1,"none","Clean","study2_robust_ri","Study 2 robust random intercept",5,20260923
+"RMM015","Study 2",10,40,0,0.1,"none","Clean","study2_robust_rs","Study 2 robust random slope",5,20260923
+"RMM016","Study 2",10,40,0,0.1,"vertical","Vertical outliers","study2_robust_ri","Study 2 robust random intercept",5,20260923
+"RMM017","Study 2",10,40,0,0.1,"vertical","Vertical outliers","study2_robust_rs","Study 2 robust random slope",5,20260923
+"RMM018","Study 2",20,40,0,0.05,"none","Clean","study2_robust_ri","Study 2 robust random intercept",5,20260924
+"RMM019","Study 2",20,40,0,0.05,"none","Clean","study2_robust_rs","Study 2 robust random slope",5,20260924
+"RMM020","Study 2",20,40,0,0.05,"vertical","Vertical outliers","study2_robust_ri","Study 2 robust random intercept",5,20260924
+"RMM021","Study 2",20,40,0,0.05,"vertical","Vertical outliers","study2_robust_rs","Study 2 robust random slope",5,20260924
+"RMM022","Study 2",20,40,0,0.1,"none","Clean","study2_robust_ri","Study 2 robust random intercept",5,20260924
+"RMM023","Study 2",20,40,0,0.1,"none","Clean","study2_robust_rs","Study 2 robust random slope",5,20260924
+"RMM024","Study 2",20,40,0,0.1,"vertical","Vertical outliers","study2_robust_ri","Study 2 robust random intercept",5,20260924
+"RMM025","Study 2",20,40,0,0.1,"vertical","Vertical outliers","study2_robust_rs","Study 2 robust random slope",5,20260924
+"RMM026","Study 2",40,40,0,0.05,"none","Clean","study2_robust_ri","Study 2 robust random intercept",5,20260925
+"RMM027","Study 2",40,40,0,0.05,"none","Clean","study2_robust_rs","Study 2 robust random slope",5,20260925
+"RMM028","Study 2",40,40,0,0.05,"vertical","Vertical outliers","study2_robust_ri","Study 2 robust random intercept",5,20260925
+"RMM029","Study 2",40,40,0,0.05,"vertical","Vertical outliers","study2_robust_rs","Study 2 robust random slope",5,20260925
+"RMM030","Study 2",40,40,0,0.1,"none","Clean","study2_robust_ri","Study 2 robust random intercept",5,20260925
+"RMM031","Study 2",40,40,0,0.1,"none","Clean","study2_robust_rs","Study 2 robust random slope",5,20260925
+"RMM032","Study 2",40,40,0,0.1,"vertical","Vertical outliers","study2_robust_ri","Study 2 robust random intercept",5,20260925
+"RMM033","Study 2",40,40,0,0.1,"vertical","Vertical outliers","study2_robust_rs","Study 2 robust random slope",5,20260925

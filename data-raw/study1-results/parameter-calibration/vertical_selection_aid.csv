@@ -1,5 +1,0 @@
-"candidate_id","contamination_size","mean_nonrobust_rmse_ratio","minimum_nonrobust_rmse_ratio","mean_nonrobust_ci_width_ratio","minimum_nonrobust_ci_width_ratio","maximum_nonrobust_failure_rate","maximum_nonrobust_absolute_bias","maximum_nonrobust_rejection_rate","minimum_nonrobust_coverage","stable","meaningful_precision_change","screening_candidate"
-"V01",4,1.28554278265588,1.22858799588927,1.29689228325156,1.20075220251483,0,0.00221161783218957,4.4,95.6,TRUE,FALSE,FALSE
-"V02",6,1.58312031724837,1.45395188351788,1.5887237703812,1.40642187326822,0,0.00284118190840542,3.6,96.4,TRUE,TRUE,TRUE
-"V03",8,1.92598982239924,1.7180645947133,1.92277113688827,1.65031758748502,0,0.00347787144716129,3.6,96.4,TRUE,TRUE,TRUE
-"V04",10,2.29397668024196,2.00567646436552,2.28046556906234,1.91781924280682,0,0.00412908215746093,2.8,97.2,TRUE,TRUE,TRUE

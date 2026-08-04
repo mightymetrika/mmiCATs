@@ -1,0 +1,5 @@
+"check","passed","details"
+"all_conditions_completed",TRUE,"33 of 33 conditions complete"
+"replicate_dimensions_correct",TRUE,"165 replicate fits; expected 165"
+"all_models_returned_inference",TRUE,"165 of 165 fits returned complete inference"
+"all_convergence_codes_available",TRUE,"165 of 165 fits returned convergence codes"

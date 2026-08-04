@@ -1,0 +1,4 @@
+"study","model","model_label","projected_full_seconds","projected_full_hours","projected_full_days"
+"Study 1","study1_robust_ri","Study 1 robust random intercept",1231512,342.086666666667,14.2536111111111
+"Study 2","study2_robust_ri","Study 2 robust random intercept",1676088,465.58,19.3991666666667
+"Study 2","study2_robust_rs","Study 2 robust random slope",3592552,997.931111111111,41.580462962963

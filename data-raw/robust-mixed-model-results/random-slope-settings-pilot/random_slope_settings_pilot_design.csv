@@ -1,0 +1,13 @@
+"condition_id","n_clusters","cluster_size","random_slope_sd","contamination","contamination_label","beta"
+"RMM011",10,40,0.05,"none","Clean",0
+"RMM013",10,40,0.05,"vertical","Vertical outliers",0
+"RMM015",10,40,0.1,"none","Clean",0
+"RMM017",10,40,0.1,"vertical","Vertical outliers",0
+"RMM019",20,40,0.05,"none","Clean",0
+"RMM021",20,40,0.05,"vertical","Vertical outliers",0
+"RMM023",20,40,0.1,"none","Clean",0
+"RMM025",20,40,0.1,"vertical","Vertical outliers",0
+"RMM027",40,40,0.05,"none","Clean",0
+"RMM029",40,40,0.05,"vertical","Vertical outliers",0
+"RMM031",40,40,0.1,"none","Clean",0
+"RMM033",40,40,0.1,"vertical","Vertical outliers",0

@@ -1,0 +1,13 @@
+"n_clusters","random_slope_sd","contamination","contamination_label","rsen_boundary_rsea_boundary","rsen_boundary_rsea_positive","rsen_positive_rsea_boundary","rsen_positive_rsea_positive"
+10,0.05,"none","Clean",4,0,1,0
+20,0.05,"none","Clean",4,0,1,0
+40,0.05,"none","Clean",5,0,0,0
+10,0.1,"none","Clean",3,0,0,2
+20,0.1,"none","Clean",4,0,1,0
+40,0.1,"none","Clean",4,0,0,1
+10,0.05,"vertical","Vertical outliers",5,0,0,0
+20,0.05,"vertical","Vertical outliers",5,0,0,0
+40,0.05,"vertical","Vertical outliers",5,0,0,0
+10,0.1,"vertical","Vertical outliers",1,1,3,0
+20,0.1,"vertical","Vertical outliers",4,0,1,0
+40,0.1,"vertical","Vertical outliers",4,0,1,0
