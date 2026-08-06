@@ -1,0 +1,19 @@
+"comparison","quantity","reference_value","observed_value","absolute_difference","tolerance","passed"
+"Mutation: population_variance","estimate",0.25,0.25,0,1e-12,TRUE
+"Mutation: population_variance","std_error",0.0645497224367903,0.0559016994374947,0.00864802299929553,1e-12,FALSE
+"Mutation: population_variance","df",3,3,0,1e-12,TRUE
+"Mutation: population_variance","p_value",0.030466291662171,0.0208351511961848,0.00963114046598614,1e-12,FALSE
+"Mutation: population_variance","conf_low",0.0445739743239479,0.0720958431660645,0.0275218688421166,1e-12,FALSE
+"Mutation: population_variance","conf_high",0.455426025676052,0.427904156833935,0.0275218688421166,1e-12,FALSE
+"Mutation: omit_sqrt_g","estimate",0.25,0.25,0,1e-12,TRUE
+"Mutation: omit_sqrt_g","std_error",0.0645497224367903,0.129099444873581,0.0645497224367903,1e-12,FALSE
+"Mutation: omit_sqrt_g","df",3,3,0,1e-12,TRUE
+"Mutation: omit_sqrt_g","p_value",0.030466291662171,0.148220146212128,0.117753854549957,1e-12,FALSE
+"Mutation: omit_sqrt_g","conf_low",0.0445739743239479,-0.160852051352104,0.205426025676052,1e-12,FALSE
+"Mutation: omit_sqrt_g","conf_high",0.455426025676052,0.660852051352104,0.205426025676052,1e-12,FALSE
+"Mutation: wrong_df","estimate",0.25,0.25,0,1e-12,TRUE
+"Mutation: wrong_df","std_error",0.0645497224367903,0.0645497224367903,0,1e-12,TRUE
+"Mutation: wrong_df","df",3,4,1,1e-12,FALSE
+"Mutation: wrong_df","p_value",0.030466291662171,0.0179479131888732,0.0125183784732978,1e-12,FALSE
+"Mutation: wrong_df","conf_low",0.0445739743239479,0.0707812390984975,0.0262072647745495,1e-12,FALSE
+"Mutation: wrong_df","conf_high",0.455426025676052,0.429218760901503,0.0262072647745495,1e-12,FALSE

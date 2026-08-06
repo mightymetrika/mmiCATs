@@ -1,4 +1,0 @@
-"method","method_label","projected_full_seconds","projected_full_hours","projected_full_days"
-"lmer_kr","Conventional random slope (KR)",30239.9999999991,8.39999999999975,0.34999999999999
-"rlmer_RSEa","Robust random slope (RSEa)",2241120,622.533333333333,25.9388888888889
-"rlmer_RSEn","Robust random slope (RSEn)",3592552,997.931111111111,41.580462962963

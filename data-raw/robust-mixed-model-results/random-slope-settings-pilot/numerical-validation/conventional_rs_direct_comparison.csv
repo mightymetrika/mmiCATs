@@ -1,7 +1,0 @@
-"quantity","helper_value","direct_value","tolerance","difference","passed"
-"estimate",-0.0877585752153685,-0.0877585752153685,1e-08,0,TRUE
-"std_error",0.0554781269620996,0.0554781269620996,1e-08,0,TRUE
-"df",8.31132931613072,8.31132931613072,1e-06,0,TRUE
-"statistic",-1.58185901400964,-1.58185901400964,1e-08,0,TRUE
-"p_value",0.150926324829027,0.150926324829027,1e-08,0,TRUE
-"boundary_fit",1,1,0,0,TRUE
