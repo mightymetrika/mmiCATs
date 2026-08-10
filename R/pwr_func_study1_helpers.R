@@ -1023,7 +1023,13 @@ study1_infer_retained_clusters <- function(coefficient_variance,
   }
 
   if (coefficient_variance == 0) {
-    return(as.integer(n_clusters))
+    stop(
+      paste(
+        "The retained cluster count cannot be inferred when the",
+        "cross-cluster coefficient variance is zero."
+      ),
+      call. = FALSE
+    )
   }
 
   candidate_clusters <- seq.int(2L, n_clusters)
@@ -1157,4 +1163,3 @@ study1_binomial_mcse <- function(proportion, n) {
 
   sqrt(proportion * (1 - proportion) / n)
 }
-

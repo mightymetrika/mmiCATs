@@ -18,11 +18,11 @@ model fits, otherwise stops execution with an error message.}
 in the model.}
 }
 \value{
-If \code{fail} is TRUE and \code{drop} is FALSE, the function stops with an
-error message.
-If \code{fail} is TRUE and \code{drop} is TRUE, it returns \code{NA}.
-If \code{fail} is FALSE, it returns the coefficients for the independent
-variables in \code{clust.mod}.
+If a cluster fit fails, is rank deficient, omits a requested
+coefficient, or returns a nonfinite requested coefficient, the
+function stops when \code{drop} is FALSE and returns a named missing-value
+vector when \code{drop} is TRUE. Otherwise, it returns the requested
+coefficients from \code{clust.mod}.
 }
 \description{
 This internal function is designed to handle failures in cluster-specific model

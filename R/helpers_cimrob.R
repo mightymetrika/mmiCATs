@@ -30,9 +30,11 @@
 info <- function(formula = NULL, cluster, dat, robmod){
 
   # Get variables in model
-  variables <- ifelse(inherits(robmod, "lmRob") | inherits(robmod, "lmrob"),
-                      all.vars(stats::as.formula(formula)),
-                      all.vars(robmod$formula))
+  variables <- if (inherits(robmod, "lmRob") | inherits(robmod, "lmrob")) {
+    all.vars(stats::as.formula(formula))
+  } else {
+    all.vars(robmod$formula)
+  }
 
   # Get clustering variable
   clust.name <- all.vars(cluster)
@@ -69,30 +71,105 @@ info <- function(formula = NULL, cluster, dat, robmod){
 #' @param ind_variables A character vector of independent variable names expected
 #'                      in the model.
 #'
-#' @return If `fail` is TRUE and `drop` is FALSE, the function stops with an
-#'         error message.
-#'         If `fail` is TRUE and `drop` is TRUE, it returns `NA`.
-#'         If `fail` is FALSE, it returns the coefficients for the independent
-#'         variables in `clust.mod`.
+#' @return If a cluster fit fails, is rank deficient, omits a requested
+#'         coefficient, or returns a nonfinite requested coefficient, the
+#'         function stops when `drop` is FALSE and returns a named missing-value
+#'         vector when `drop` is TRUE. Otherwise, it returns the requested
+#'         coefficients from `clust.mod`.
 #'
 #' @keywords internal
 fail_drop <- function(drop, fail, clust.mod, ind_variables){
-  # Check for failure in model fitting
-  if (fail == T) {
-    if (drop == F) {
-      stop("Cluster-specific model returned error (try drop = TRUE)", call. = FALSE)
+  missing_result <- stats::setNames(
+    rep(NA_real_, length(ind_variables)),
+    ind_variables
+  )
+
+  handle_failure <- function(message) {
+    if (!isTRUE(drop)) {
+      stop(message, call. = FALSE)
     }
-    return(NA) # If drop is TRUE and model fitting failed, return NA
+
+    missing_result
   }
 
-  # At this point, we know the model fitting did not fail
-  # Check if the number of coefficients matches the number of independent variables
-  if (length(rownames(summary(clust.mod)$coefficients)) != length(ind_variables)) {
-    stop("Cluster-specific model(s) dropped variables; ensure that all variables vary within clusters", call. = FALSE)
+  # Check for failure in model fitting
+  if (isTRUE(fail)) {
+    return(handle_failure(
+      "Cluster-specific model returned error (try drop = TRUE)"
+    ))
   }
 
-  # Return the coefficients for the independent variables
-  stats::coefficients(clust.mod)[ind_variables]
+  coefficients <- stats::coefficients(clust.mod)
+
+  # Check that all requested coefficients were returned.
+  if (!all(ind_variables %in% names(coefficients))) {
+    return(handle_failure(
+      paste(
+        "Cluster-specific model(s) dropped variables;",
+        "ensure that all variables vary within clusters"
+      )
+    ))
+  }
+
+  requested_coefficients <- coefficients[ind_variables]
+
+  # Treat aliased coefficients as dropped variables.
+  if (any(is.na(requested_coefficients))) {
+    return(handle_failure(
+      paste(
+        "Cluster-specific model(s) dropped variables;",
+        "ensure that all variables vary within clusters"
+      )
+    ))
+  }
+
+  # Use the fitted rank when available to detect rank-deficient cluster models.
+  model_rank <- tryCatch(
+    clust.mod$rank,
+    error = function(e) NULL
+  )
+  rank_available <- !is.null(model_rank) &&
+    length(model_rank) == 1L &&
+    is.finite(model_rank)
+
+  if (rank_available &&
+      model_rank < length(ind_variables)) {
+    return(handle_failure(
+      paste(
+        "Cluster-specific model(s) dropped variables;",
+        "ensure that all variables vary within clusters"
+      )
+    ))
+  }
+
+  # Fall back to the model matrix when a fitted rank is unavailable.
+  if (!rank_available) {
+    model_matrix <- tryCatch(
+      stats::model.matrix(clust.mod),
+      error = function(e) NULL
+    )
+
+    if (!is.null(model_matrix) &&
+        base::qr(model_matrix)$rank < ncol(model_matrix)) {
+      return(handle_failure(
+        paste(
+          "Cluster-specific model(s) dropped variables;",
+          "ensure that all variables vary within clusters"
+        )
+      ))
+    }
+  }
+
+  if (any(!is.finite(requested_coefficients))) {
+    return(handle_failure(
+      paste(
+        "Cluster-specific model(s) returned non-finite coefficients",
+        "(try drop = TRUE)"
+      )
+    ))
+  }
+
+  requested_coefficients
 }
 
 #' Process Cluster-Adjusted Robust Inference Results
@@ -129,13 +206,37 @@ process_results <- function(results, ind_variables, ci.level, drop, return.vcv){
   # Combine the results into a matrix
   beta_cluster <- do.call(rbind, results)
 
-  if(drop){
+  if (any(is.infinite(beta_cluster) | is.nan(beta_cluster))) {
+    stop(
+      "Cluster-specific model(s) returned non-finite coefficients.",
+      call. = FALSE
+    )
+  }
+
+  if (isTRUE(drop)) {
     beta_cluster <- stats::na.omit(beta_cluster)
-    if(nrow(beta_cluster) == 0){stop("All clusters dropped.")}
+  } else if (anyNA(beta_cluster)) {
+    stop(
+      paste(
+        "Cluster-specific model(s) returned missing coefficients",
+        "(try drop = TRUE)"
+      ),
+      call. = FALSE
+    )
   }
 
   retained_clusters <- nrow(beta_cluster)
-  if(retained_clusters == 0){stop("All clusters dropped.")}
+
+  if (retained_clusters == 0L) {
+    stop("All clusters dropped.", call. = FALSE)
+  }
+
+  if (retained_clusters < 2L) {
+    stop(
+      "Fewer than two cluster-specific estimates were retained.",
+      call. = FALSE
+    )
+  }
 
   # Compute average coefficient across clusters
   beta_avg <- colMeans(beta_cluster)
@@ -193,4 +294,3 @@ process_results <- function(results, ind_variables, ci.level, drop, return.vcv){
 
   return(out.list)
 }
-

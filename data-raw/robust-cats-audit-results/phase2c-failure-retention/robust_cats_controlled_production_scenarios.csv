@@ -1,0 +1,6 @@
+"scenario","returned_value","returned_error","estimate","std_error","df","retained_clusters","warning_count","error_count","dropped_count","error"
+"warning_retained",TRUE,FALSE,0.3,0.0707106781186548,4,5,1,0,0,
+"one_error_dropped",TRUE,FALSE,0.3,0.0912870929175277,3,4,0,1,1,
+"exactly_two_retained",TRUE,FALSE,0.3,0.2,1,2,0,3,3,
+"one_retained",FALSE,TRUE,,,,,,,,"Fewer than two cluster-specific robust estimates were retained."
+"zero_retained",FALSE,TRUE,,,,,,,,"Fewer than two cluster-specific robust estimates were retained."

@@ -1,0 +1,3 @@
+"scenario","actual_retained_clusters","inferred_retained_clusters","coefficient_variance","production_returned","production_error","counts_match"
+"truncation_nonzero_retained_slope_variance",4,4,0.0166666666666667,TRUE,,TRUE
+"truncation_zero_retained_slope_variance",4,4,1.02716263700653e-33,TRUE,,TRUE

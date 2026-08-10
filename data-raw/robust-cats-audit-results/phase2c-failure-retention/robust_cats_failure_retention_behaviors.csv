@@ -1,0 +1,10 @@
+"category","scenario","implementation","returned_value","returned_error","finite_inference","retained_clusters","notes"
+"Public result processing","exactly_two_retained","mmiCATs::process_results",TRUE,FALSE,TRUE,2,
+"Public result processing","one_retained","mmiCATs::process_results",FALSE,TRUE,FALSE,1,
+"Public result processing","all_dropped","mmiCATs::process_results",FALSE,TRUE,,0,"All clusters dropped."
+"Public result processing","nonfinite_coefficient","mmiCATs::process_results",FALSE,TRUE,FALSE,3,
+"Omitted coefficient behavior","one_cluster_has_constant_x","clusterSEs::cluster.im.glm",FALSE,TRUE,,,"cluster-specific model(s) dropped variables; ensure that all variables vary within clusters"
+"Omitted coefficient behavior","one_cluster_has_constant_x","cluster_im_lmRob:robust",TRUE,FALSE,TRUE,,
+"Omitted coefficient behavior","one_cluster_has_constant_x","study1_fit_robust_cats:robust",TRUE,FALSE,TRUE,3,
+"Omitted coefficient behavior","one_cluster_has_constant_x","cluster_im_lmRob:robustbase",TRUE,FALSE,TRUE,,
+"Omitted coefficient behavior","one_cluster_has_constant_x","study1_fit_robust_cats:robustbase",TRUE,FALSE,TRUE,3,
