@@ -1,6 +1,0 @@
-"issue_id","issue","status"
-"A-02","drop = TRUE does not consistently drop clusters with omitted coefficients.","reproduced or unresolved"
-"A-03","Public result processing does not explicitly reject fewer than two retained clusters.","not reproduced"
-"A-04","Retained-cluster inference is ambiguous when the cross-cluster focal variance is zero.","not reproduced"
-"A-07","info() uses ifelse() for a vector-valued formula-variable result.","not reproduced"
-"A-11","Public robust helpers do not explicitly reject nonfinite cluster coefficients.","not reproduced"

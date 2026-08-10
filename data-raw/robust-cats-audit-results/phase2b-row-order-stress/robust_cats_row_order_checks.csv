@@ -1,7 +1,0 @@
-"check","passed","details"
-"all_fits_returned_results",TRUE,"120 of 120 fit pairs successful"
-"exact_repeat_is_exact",TRUE,"Maximum exact-repeat difference: 0"
-"no_retained_cluster_changes",TRUE,"0 retained-cluster changes"
-"no_rejection_changes",TRUE,"0 rejection changes"
-"no_ci_decision_changes",TRUE,"0 confidence-interval decision changes"
-"all_pairs_within_provisional_tolerance",FALSE,"119 of 120 pairs within abs = 1e-05 and rel = 1e-05"

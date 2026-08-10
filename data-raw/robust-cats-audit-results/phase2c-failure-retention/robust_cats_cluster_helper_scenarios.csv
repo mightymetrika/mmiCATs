@@ -1,6 +1,0 @@
-"scenario","retained","intercept","x","warning","error"
-"ok",TRUE,0.724292904726935,-0.082927661783588,,
-"warning",TRUE,0.724292904726935,-0.082927661783588,"Synthetic cluster fitting warning.",
-"error",FALSE,,,,"Synthetic cluster fitting error."
-"missing_x",FALSE,,,,"Cluster-specific fit did not return all required coefficients."
-"nonfinite_x",FALSE,,,,"Cluster-specific fit returned non-finite coefficients."

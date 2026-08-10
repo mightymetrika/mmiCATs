@@ -994,10 +994,16 @@ add_check(
     ) &&
       length(
         fail_drop_failed_drop$value
-      ) == 1L &&
-      is.na(
+      ) == 2L &&
+      identical(
+        names(
+          fail_drop_failed_drop$value
+        ),
+        c("(Intercept)", "x")
+      ) &&
+      all(is.na(
         fail_drop_failed_drop$value
-      )
+      ))
   ),
   readiness_required = TRUE,
   details = fail_drop_failed_drop$error
