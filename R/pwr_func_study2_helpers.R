@@ -625,6 +625,11 @@ study2_fit_method <- function(dat,
       "template_warning",
       NA_character_
     ),
+    template_error = study1_result_component(
+      result,
+      "template_error",
+      NA_character_
+    ),
     cluster_warning_count = study1_result_component(
       result,
       "cluster_warning_count",
@@ -720,6 +725,7 @@ study2_empty_result <- function(replicate_id,
     optimizer_code = NA_real_,
     error = error,
     template_warning = NA_character_,
+    template_error = NA_character_,
     cluster_warning_count = NA_integer_,
     cluster_error_count = NA_integer_,
     dropped_cluster_count = NA_integer_,

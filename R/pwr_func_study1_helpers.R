@@ -504,6 +504,11 @@ study1_fit_method <- function(dat,
       "template_warning",
       NA_character_
     ),
+    template_error = study1_result_component(
+      result,
+      "template_error",
+      NA_character_
+    ),
     cluster_warning_count = study1_result_component(
       result,
       "cluster_warning_count",
@@ -589,6 +594,7 @@ study1_empty_result <- function(replicate_id,
     warning = warning,
     error = error,
     template_warning = NA_character_,
+    template_error = NA_character_,
     cluster_warning_count = NA_integer_,
     cluster_error_count = NA_integer_,
     dropped_cluster_count = NA_integer_,
@@ -641,8 +647,10 @@ study1_fit_ri <- function(dat, alpha) {
   p_value <- unname(coefficient_row[1L, "Pr(>|t|)"])
   critical_value <- stats::qt(1 - alpha / 2, df = df)
 
-  convergence_messages <- fit@optinfo$conv$lme4$messages
-  converged <- is.null(convergence_messages)
+  convergence <- study2_classify_convergence(
+    messages = fit@optinfo$conv$lme4$messages,
+    optimizer_code = fit@optinfo$conv$opt
+  )
 
   list(
     estimate = estimate,
@@ -651,10 +659,10 @@ study1_fit_ri <- function(dat, alpha) {
     p_value = p_value,
     conf_low = estimate - critical_value * std_error,
     conf_high = estimate + critical_value * std_error,
-    converged = converged,
+    converged = convergence$converged,
     singular = lme4::isSingular(fit, tol = 1e-4),
     retained_clusters = nlevels(dat$cluster),
-    warning = study1_collapse_messages(convergence_messages)
+    warning = study1_collapse_messages(convergence$all_messages)
   )
 }
 
@@ -840,33 +848,30 @@ study1_fit_robust_cluster <- function(
 #' @param dat Simulated data.
 #' @param alpha Significance level.
 #' @param engine Robust regression engine.
+#' @param fit_function Function used for the full-data template and
+#'   cluster-specific robust fits.
 #'
 #' @return A standardized result list with cluster-specific diagnostics.
 #'
 #' @keywords internal
-study1_fit_robust_cats <- function(dat, alpha, engine) {
+study1_fit_robust_cats <- function(
+    dat,
+    alpha,
+    engine,
+    fit_function = study1_fit_robust_model) {
   formula <- out ~ x
 
   # Preserve the existing robust CATs random-number sequence by fitting the
-  # full-data model before the cluster-specific models. This fit is used only
-  # as a template and its warnings are reported separately.
+  # full-data model before the cluster-specific models. The template estimates
+  # are not used for CATs inference, so a template failure is recorded but does
+  # not block otherwise viable cluster-specific fits.
   template_fit <- study1_capture_fit(function() {
-    study1_fit_robust_model(
+    fit_function(
       formula = formula,
       data = dat,
       engine = engine
     )
   })
-
-  if (is.null(template_fit$value)) {
-    stop(
-      paste(
-        "The full-data robust model failed:",
-        template_fit$error
-      ),
-      call. = FALSE
-    )
-  }
 
   cluster_ids <- unique(as.character(dat$cluster))
   cluster_diagnostics <- do.call(
@@ -876,7 +881,8 @@ study1_fit_robust_cats <- function(dat, alpha, engine) {
         cluster_id = cluster_id,
         dat = dat,
         formula = formula,
-        engine = engine
+        engine = engine,
+        fit_function = fit_function
       )
     })
   )
@@ -942,6 +948,7 @@ study1_fit_robust_cats <- function(dat, alpha, engine) {
     retained_clusters = retained_clusters,
     warning = cluster_warning,
     template_warning = template_fit$warning,
+    template_error = template_fit$error,
     cluster_warning_count = sum(warning_index),
     cluster_error_count = sum(error_index),
     dropped_cluster_count = sum(dropped_index),

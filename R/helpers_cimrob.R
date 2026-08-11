@@ -29,18 +29,53 @@
 #' @keywords internal
 info <- function(formula = NULL, cluster, dat, robmod){
 
-  # Get variables in model
-  variables <- if (inherits(robmod, "lmRob") | inherits(robmod, "lmrob")) {
-    all.vars(stats::as.formula(formula))
+  # Get the fitted model formula.
+  model_formula <- if (inherits(robmod, "lmRob") | inherits(robmod, "lmrob")) {
+    stats::as.formula(formula)
   } else {
-    all.vars(robmod$formula)
+    robmod$formula
   }
+
+  # Get variables in model
+  variables <- all.vars(model_formula)
 
   # Get clustering variable
   clust.name <- all.vars(cluster)
 
-  # Filter to observations actively used in the model
-  dat <- dat[which(rownames(dat) %in% rownames(robmod$model)),]
+  # Reconstruct the observations that are usable for this formula from the
+  # supplied data. Using the current data rather than matching the fitted
+  # model's row names prevents silent misalignment after rows are reordered or
+  # row names are reset. The row-count check guards against supplying data that
+  # do not reproduce the observations used by the fitted model.
+  active_model_frame <- stats::model.frame(
+    formula = model_formula,
+    data = dat,
+    na.action = stats::na.omit
+  )
+
+  if (nrow(active_model_frame) != nrow(robmod$model)) {
+    stop(
+      paste(
+        "dat does not reproduce the number of usable observations",
+        "in the fitted robust model."
+      ),
+      call. = FALSE
+    )
+  }
+
+  active_rows <- match(
+    rownames(active_model_frame),
+    rownames(dat)
+  )
+
+  if (anyNA(active_rows)) {
+    stop(
+      "Could not align usable model observations with dat.",
+      call. = FALSE
+    )
+  }
+
+  dat <- dat[active_rows, , drop = FALSE]
 
   # Get cluster index
   clust <- as.vector(dat[[clust.name]])

@@ -4,7 +4,12 @@
 \alias{study1_fit_robust_cats}
 \title{Fit a Robust CATs Method}
 \usage{
-study1_fit_robust_cats(dat, alpha, engine)
+study1_fit_robust_cats(
+  dat,
+  alpha,
+  engine,
+  fit_function = study1_fit_robust_model
+)
 }
 \arguments{
 \item{dat}{Simulated data.}
@@ -12,6 +17,9 @@ study1_fit_robust_cats(dat, alpha, engine)
 \item{alpha}{Significance level.}
 
 \item{engine}{Robust regression engine.}
+
+\item{fit_function}{Function used for the full-data template and
+cluster-specific robust fits.}
 }
 \value{
 A standardized result list with cluster-specific diagnostics.
