@@ -13,7 +13,9 @@ study2_method_names <- function() {
     "cats",
     "cats_trunc",
     "cats_robust",
-    "cats_robustbase"
+    "cats_robustbase",
+    "robust_ri",
+    "robust_rs"
   )
 }
 
@@ -144,6 +146,10 @@ study2_validate_inputs <- function(n_clusters,
       ),
       call. = FALSE
     )
+  }
+
+  if (any(c("robust_ri", "robust_rs") %in% methods)) {
+    study_require_robustlmm()
   }
 
   if (!is.null(seed)) {
@@ -551,6 +557,16 @@ study2_fit_method <- function(dat,
         dat = dat,
         alpha = alpha,
         engine = "robustbase"
+      ),
+      "robust_ri" = study_fit_robust_mixed(
+        dat = dat,
+        alpha = alpha,
+        model = "ri"
+      ),
+      "robust_rs" = study_fit_robust_mixed(
+        dat = dat,
+        alpha = alpha,
+        model = "rs"
       ),
       stop("Unknown Study 2 method.", call. = FALSE)
     )

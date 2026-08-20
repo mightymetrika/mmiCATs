@@ -1,0 +1,6 @@
+"source","path","expected_md5","observed_md5","matched"
+"robust_mixed_models","C:/Users/macks/Desktop/mmiCATs/R/robust_mixed_models.R","a3f55f48736df665fa8ce45706dd9c49","a3f55f48736df665fa8ce45706dd9c49",TRUE
+"pwr_func_study1","C:/Users/macks/Desktop/mmiCATs/R/pwr_func_study1.R","483c16ba66b163f122c1783f6120dd9e","483c16ba66b163f122c1783f6120dd9e",TRUE
+"pwr_func_study1_helpers","C:/Users/macks/Desktop/mmiCATs/R/pwr_func_study1_helpers.R","4061bd490e77184ba9f79fcd5ab95384","4061bd490e77184ba9f79fcd5ab95384",TRUE
+"pwr_func_study2","C:/Users/macks/Desktop/mmiCATs/R/pwr_func_study2.R","2ca209d83733efc9169363b48686e405","2ca209d83733efc9169363b48686e405",TRUE
+"pwr_func_study2_helpers","C:/Users/macks/Desktop/mmiCATs/R/pwr_func_study2_helpers.R","dd5f484c1855bf55dc8af72f770fb8d3","dd5f484c1855bf55dc8af72f770fb8d3",TRUE

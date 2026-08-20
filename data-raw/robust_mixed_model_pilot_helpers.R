@@ -589,7 +589,8 @@ rmm_fit_and_extract <- function(dat,
     robustlmm::rlmer(
       formula = formula,
       data = dat,
-      method = "DAStau"
+      method = "DAStau",
+      setting = "RSEn"
     )
   )
 

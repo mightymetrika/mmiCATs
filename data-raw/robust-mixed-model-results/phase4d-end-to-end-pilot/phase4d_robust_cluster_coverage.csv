@@ -1,0 +1,10 @@
+"study","method","n_clusters","fit_success"
+"Study 1","robust_ri",10,TRUE
+"Study 2","robust_ri",10,TRUE
+"Study 2","robust_rs",10,TRUE
+"Study 1","robust_ri",20,TRUE
+"Study 2","robust_ri",20,TRUE
+"Study 2","robust_rs",20,TRUE
+"Study 1","robust_ri",40,TRUE
+"Study 2","robust_ri",40,TRUE
+"Study 2","robust_rs",40,TRUE

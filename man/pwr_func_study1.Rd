@@ -18,7 +18,8 @@ pwr_func_study1(
   leverage_size = 10,
   reps = 1000,
   alpha = 0.05,
-  methods = c("ri", "cr2", "cats", "cats_trunc", "cats_robust", "cats_robustbase"),
+  methods = c("ri", "cr2", "cats", "cats_trunc", "cats_robust", "cats_robustbase",
+    "robust_ri"),
   seed = NULL,
   keep_replicates = FALSE
 )
@@ -59,8 +60,8 @@ in predictor standard deviation units.}
 \item{alpha}{Numeric significance level.}
 
 \item{methods}{Character vector of methods to fit. Available values are
-\code{"ri"}, \code{"cr2"}, \code{"cats"}, \code{"cats_trunc"}, \code{"cats_robust"}, and
-\code{"cats_robustbase"}.}
+\code{"ri"}, \code{"cr2"}, \code{"cats"}, \code{"cats_trunc"}, \code{"cats_robust"},
+\code{"cats_robustbase"}, and \code{"robust_ri"}.}
 
 \item{seed}{Optional non-negative integer random-number seed.}
 
@@ -84,16 +85,18 @@ list column containing the cluster-specific coefficients and diagnostics.
 }
 \description{
 Runs one condition from a focused simulation study comparing a correctly
-specified random-intercept model, ordinary least squares with CR2 inference,
-ordinary cluster-adjusted t statistics (CATs), truncated CATs, and robust
-CATs based on either \code{robust::lmRob()} or \code{robustbase::lmrob()}.
+specified random-intercept model, a robust random-intercept mixed model,
+ordinary least squares with CR2 inference, ordinary cluster-adjusted t
+statistics (CATs), truncated CATs, and robust CATs based on either
+\code{robust::lmRob()} or \code{robustbase::lmrob()}.
 }
 \details{
 Data are generated from a constant-slope random-intercept model. Optional
 contamination is applied within every cluster after the clean data are
 generated. All requested methods are fit to the same data in each replication.
 The \code{"ri"} method uses Kenward-Roger inference and requires the suggested
-package \code{pbkrtest}.
+package \code{pbkrtest}. The \code{"robust_ri"} method uses robust Satterthwaite
+inference and requires the suggested package \code{robustlmm}.
 }
 \examples{
 pwr_func_study1(

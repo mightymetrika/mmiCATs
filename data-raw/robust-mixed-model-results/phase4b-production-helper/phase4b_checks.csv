@@ -1,0 +1,9 @@
+"check","passed","details"
+"production_matches_locked_phase4a_prototype",TRUE,"27 of 27 quantities matched."
+"all_three_production_models_converged",TRUE,"study1_robust_ri=TRUE; study2_robust_ri=TRUE; study2_robust_rs=TRUE"
+"known_random_slope_boundary_is_retained_and_nonfatal",TRUE,"boundary: TRUE ; converged: TRUE"
+"study1_dispatch_not_integrated_yet",TRUE,"ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase"
+"study2_dispatch_not_integrated_yet",TRUE,"rs,ri,cr2,cats,cats_trunc,cats_robust,cats_robustbase"
+"robustlmm_declared_as_suggested_dependency",TRUE,"pbkrtest,
+robustlmm (>= 3.5.0-2),
+testthat (>= 3.0.0)"

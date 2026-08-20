@@ -423,9 +423,10 @@ test_that("method order does not change Study 2 numerical results", {
 })
 
 
-test_that("pwr_func_study2 can run all seven methods", {
+test_that("pwr_func_study2 can run all nine methods", {
   skip_on_cran()
   skip_if_not_installed("pbkrtest")
+  skip_if_not_installed("robustlmm")
 
   result <- suppressWarnings(pwr_func_study2(
     n_clusters = 6,
@@ -439,7 +440,7 @@ test_that("pwr_func_study2 can run all seven methods", {
   ))
 
   expect_setequal(result$summary$model, study2_method_names())
-  expect_equal(nrow(result$replicates), 7)
+  expect_equal(nrow(result$replicates), 9)
 })
 
 

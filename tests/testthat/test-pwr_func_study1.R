@@ -142,9 +142,10 @@ test_that("pwr_func_study1 is reproducible", {
 })
 
 
-test_that("pwr_func_study1 can run all six methods", {
+test_that("pwr_func_study1 can run all seven methods", {
   skip_on_cran()
   skip_if_not_installed("pbkrtest")
+  skip_if_not_installed("robustlmm")
 
   result <- suppressWarnings(pwr_func_study1(
     n_clusters = 5,
@@ -157,7 +158,7 @@ test_that("pwr_func_study1 can run all six methods", {
   ))
 
   expect_setequal(result$summary$model, study1_method_names())
-  expect_equal(nrow(result$replicates), 6)
+  expect_equal(nrow(result$replicates), 7)
 })
 
 

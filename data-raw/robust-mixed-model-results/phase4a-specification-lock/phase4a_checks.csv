@@ -1,0 +1,12 @@
+"category","check","passed","required","details"
+"Specification","robustlmm_minimum_version_available",TRUE,TRUE,"Installed robustlmm: 3.5.0.2"
+"Specification","prototype_has_one_rlmer_call",TRUE,TRUE,"rlmer calls: 1"
+"Specification","dastau_is_explicit",TRUE,TRUE,
+"Specification","rsen_is_explicit",TRUE,TRUE,
+"Specification","no_rsea_or_dasvar_rescue_in_candidate_helper",TRUE,TRUE,
+"Specification","model_formulas_are_frozen",TRUE,TRUE,"study1_robust_ri=TRUE; study2_robust_ri=TRUE; study2_robust_rs=TRUE"
+"Numerical validation","all_helper_direct_quantities_match",TRUE,TRUE,"27 of 27 quantities matched."
+"Numerical validation","all_three_models_return_complete_inference",TRUE,TRUE,"study1_robust_ri=TRUE; study2_robust_ri=TRUE; study2_robust_rs=TRUE"
+"Convergence","processfit_codes_are_available_and_zero",TRUE,TRUE,"study1_robust_ri=0; study2_robust_ri=0; study2_robust_rs=0"
+"Boundary behavior","boundary_is_nonfatal_when_fit_and_inference_are_usable",TRUE,TRUE,"boundary: TRUE ; usable: TRUE"
+"Boundary behavior","actual_boundary_if_found_obeys_nonfatal_rule",TRUE,FALSE,"A boundary case was found; usable = TRUE"

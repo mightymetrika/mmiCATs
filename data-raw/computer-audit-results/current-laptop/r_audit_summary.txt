@@ -1,0 +1,11 @@
+mmiCATs R computer audit
+
+Label: current-laptop
+R: R version 4.6.1 (2026-06-24 ucrt)
+Logical cores detected: 2
+Physical cores detected: 2
+Phase 4D production baseline matched: TRUE
+Benchmark requested: TRUE
+Robust RI G=40 elapsed seconds: 66.89
+Robust RS G=40 elapsed seconds: 249.89
+Benchmark successes: 2 of 2

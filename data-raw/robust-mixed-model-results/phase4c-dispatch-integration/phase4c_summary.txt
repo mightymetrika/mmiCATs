@@ -1,0 +1,9 @@
+Robust mixed-model Phase 4C dispatch-integration validation
+
+Checks passed: 8 of 8
+Study 1 canonical methods: ri, cr2, cats, cats_trunc, cats_robust, cats_robustbase, robust_ri
+Study 2 canonical methods: rs, ri, cr2, cats, cats_trunc, cats_robust, cats_robustbase, robust_ri, robust_rs
+Existing Study 1 order invariance: TRUE
+Existing Study 2 order invariance: TRUE
+New top-level method fits successful: 3 of 3
+Known robust RS boundary usable: TRUE

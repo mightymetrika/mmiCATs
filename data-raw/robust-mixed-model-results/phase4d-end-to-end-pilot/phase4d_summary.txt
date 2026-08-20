@@ -1,0 +1,11 @@
+Robust mixed-model Phase 4D end-to-end integration pilot
+
+Required checks passed: 14 of 14
+Unresolved required checks: 0
+Study 1 pilot rows: 44
+Study 2 pilot rows: 76
+Successful rows: 120 of 120
+Study 1 full-schedule order invariance: TRUE
+Study 2 full-schedule order invariance: TRUE
+Study 1 robust subset invariance: TRUE
+Study 2 robust subset invariance: TRUE

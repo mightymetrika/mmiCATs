@@ -1,0 +1,8 @@
+Robust mixed-model Phase 4B production-helper validation
+
+Checks passed: 6 of 6
+Prototype quantities matched: 27 of 27
+Known random-slope boundary: TRUE
+Known random-slope converged: TRUE
+Study 1 method vector unchanged: TRUE
+Study 2 method vector unchanged: TRUE

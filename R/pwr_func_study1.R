@@ -1,15 +1,17 @@
 #' Simulation Study of Robust Cluster-Adjusted t Statistics
 #'
 #' Runs one condition from a focused simulation study comparing a correctly
-#' specified random-intercept model, ordinary least squares with CR2 inference,
-#' ordinary cluster-adjusted t statistics (CATs), truncated CATs, and robust
-#' CATs based on either `robust::lmRob()` or `robustbase::lmrob()`.
+#' specified random-intercept model, a robust random-intercept mixed model,
+#' ordinary least squares with CR2 inference, ordinary cluster-adjusted t
+#' statistics (CATs), truncated CATs, and robust CATs based on either
+#' `robust::lmRob()` or `robustbase::lmrob()`.
 #'
 #' Data are generated from a constant-slope random-intercept model. Optional
 #' contamination is applied within every cluster after the clean data are
 #' generated. All requested methods are fit to the same data in each replication.
 #' The `"ri"` method uses Kenward-Roger inference and requires the suggested
-#' package `pbkrtest`.
+#' package `pbkrtest`. The `"robust_ri"` method uses robust Satterthwaite
+#' inference and requires the suggested package `robustlmm`.
 #'
 #' @param n_clusters Integer number of clusters.
 #' @param cluster_size Integer number of observations in each cluster.
@@ -33,8 +35,8 @@
 #' @param reps Integer number of simulation replications.
 #' @param alpha Numeric significance level.
 #' @param methods Character vector of methods to fit. Available values are
-#'   `"ri"`, `"cr2"`, `"cats"`, `"cats_trunc"`, `"cats_robust"`, and
-#'   `"cats_robustbase"`.
+#'   `"ri"`, `"cr2"`, `"cats"`, `"cats_trunc"`, `"cats_robust"`,
+#'   `"cats_robustbase"`, and `"robust_ri"`.
 #' @param seed Optional non-negative integer random-number seed.
 #' @param keep_replicates Logical; if `TRUE`, retain the replicate-level results.
 #'
@@ -93,7 +95,8 @@ pwr_func_study1 <- function(
       "cats",
       "cats_trunc",
       "cats_robust",
-      "cats_robustbase"
+      "cats_robustbase",
+      "robust_ri"
     ),
     seed = NULL,
     keep_replicates = FALSE) {

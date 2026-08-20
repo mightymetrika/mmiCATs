@@ -1,0 +1,4 @@
+"model","helper_fit_available","helper_inference_complete","helper_convergence_code","helper_convergence_zero","helper_boundary_fit","direct_convergence_code","direct_boundary_fit","helper_fit_warning","helper_fit_message","helper_inference_warning","helper_inference_message","ci_warning","ci_message"
+"study1_robust_ri",TRUE,TRUE,0,TRUE,FALSE,0,FALSE,,,,,,
+"study2_robust_ri",TRUE,TRUE,0,TRUE,FALSE,0,FALSE,,,,,,
+"study2_robust_rs",TRUE,TRUE,0,TRUE,TRUE,0,TRUE,,"boundary (singular) fit: see help('isSingular')",,,,

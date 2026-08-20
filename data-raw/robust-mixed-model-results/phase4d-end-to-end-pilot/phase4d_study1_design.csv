@@ -1,0 +1,9 @@
+"condition_id","n_clusters","beta","contamination","random_slope_sd","method_scope","seed"
+"P4D_S1_01",10,0,"none",NA,"all",20269601
+"P4D_S1_02",10,0.1,"none",NA,"all",20269601
+"P4D_S1_03",10,0,"vertical",NA,"all",20269601
+"P4D_S1_04",10,0.1,"vertical",NA,"all",20269601
+"P4D_S1_05",10,0,"bad_leverage",NA,"all",20269601
+"P4D_S1_06",10,0.1,"bad_leverage",NA,"all",20269601
+"P4D_S1_07",20,0.1,"none",NA,"robust_only",20269602
+"P4D_S1_08",40,0.1,"none",NA,"robust_only",20269603

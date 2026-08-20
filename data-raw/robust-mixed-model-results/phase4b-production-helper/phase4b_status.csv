@@ -1,0 +1,5 @@
+"model","production_converged","production_boundary","production_optimizer_code","prototype_converged","prototype_boundary","prototype_optimizer_code","production_warning","prototype_fit_warning","prototype_fit_message"
+"study1_robust_ri",TRUE,FALSE,0,TRUE,FALSE,0,NA,NA,NA
+"study2_robust_ri",TRUE,FALSE,0,TRUE,FALSE,0,NA,NA,NA
+"study2_robust_rs",TRUE,TRUE,0,TRUE,TRUE,0,"boundary (singular) fit: see help('isSingular')
+",NA,"boundary (singular) fit: see help('isSingular')"

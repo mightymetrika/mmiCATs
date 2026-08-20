@@ -12,7 +12,8 @@ study1_method_names <- function() {
     "cats",
     "cats_trunc",
     "cats_robust",
-    "cats_robustbase"
+    "cats_robustbase",
+    "robust_ri"
   )
 }
 
@@ -110,6 +111,10 @@ study1_validate_inputs <- function(n_clusters,
       ),
       call. = FALSE
     )
+  }
+
+  if ("robust_ri" %in% methods) {
+    study_require_robustlmm()
   }
 
   if (!is.null(seed)) {
@@ -445,6 +450,11 @@ study1_fit_method <- function(dat,
         alpha = alpha,
         engine = "robustbase"
       ),
+      "robust_ri" = study_fit_robust_mixed(
+        dat = dat,
+        alpha = alpha,
+        model = "ri"
+      ),
       stop("Unknown Study 1 method.", call. = FALSE)
     )
   })
@@ -494,10 +504,30 @@ study1_fit_method <- function(dat,
     converged = converged,
     singular = result$singular,
     retained_clusters = result$retained_clusters,
+    estimated_random_intercept_sd = study1_result_component(
+      result,
+      "estimated_random_intercept_sd",
+      NA_real_
+    ),
+    estimated_random_slope_sd = study1_result_component(
+      result,
+      "estimated_random_slope_sd",
+      NA_real_
+    ),
     warning = study1_collapse_messages(c(
       captured$warning,
       result$warning
     )),
+    optimizer_warning = study1_result_component(
+      result,
+      "optimizer_warning",
+      NA_character_
+    ),
+    optimizer_code = study1_result_component(
+      result,
+      "optimizer_code",
+      NA_real_
+    ),
     error = captured$error,
     template_warning = study1_result_component(
       result,
@@ -591,7 +621,11 @@ study1_empty_result <- function(replicate_id,
     converged = NA,
     singular = NA,
     retained_clusters = NA_integer_,
+    estimated_random_intercept_sd = NA_real_,
+    estimated_random_slope_sd = NA_real_,
     warning = warning,
+    optimizer_warning = NA_character_,
+    optimizer_code = NA_real_,
     error = error,
     template_warning = NA_character_,
     template_error = NA_character_,

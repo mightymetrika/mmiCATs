@@ -3,7 +3,8 @@
 #' Runs one condition from Study 2, which extends Study 1 by generating genuine
 #' cluster-to-cluster slope heterogeneity. The comparison includes a correctly
 #' specified independent random-intercept and random-slope model, the Study 1
-#' random-intercept benchmark, ordinary least squares with CR2 inference,
+#' random-intercept benchmark, robust random-intercept and independent
+#' random-slope mixed models, ordinary least squares with CR2 inference,
 #' ordinary cluster-adjusted t statistics (CATs), truncated CATs, and robust
 #' CATs based on either `robust::lmRob()` or `robustbase::lmrob()`.
 #'
@@ -12,7 +13,8 @@
 #' applied within every cluster after the clean data are generated. All
 #' requested methods are fit to the same data in each replication. The `"rs"`
 #' and `"ri"` methods use Kenward-Roger inference and require the suggested
-#' package `pbkrtest`.
+#' package `pbkrtest`. The `"robust_ri"` and `"robust_rs"` methods use robust
+#' Satterthwaite inference and require the suggested package `robustlmm`.
 #'
 #' @param n_clusters Integer number of clusters.
 #' @param cluster_size Integer number of observations in each cluster.
@@ -36,7 +38,7 @@
 #' @param alpha Numeric significance level.
 #' @param methods Character vector of methods to fit. Available values are
 #'   `"rs"`, `"ri"`, `"cr2"`, `"cats"`, `"cats_trunc"`, `"cats_robust"`,
-#'   and `"cats_robustbase"`.
+#'   `"cats_robustbase"`, `"robust_ri"`, and `"robust_rs"`.
 #' @param seed Optional non-negative integer random-number seed.
 #' @param keep_replicates Logical; if `TRUE`, retain the replicate-level results.
 #'
@@ -97,7 +99,9 @@ pwr_func_study2 <- function(
       "cats",
       "cats_trunc",
       "cats_robust",
-      "cats_robustbase"
+      "cats_robustbase",
+      "robust_ri",
+      "robust_rs"
     ),
     seed = NULL,
     keep_replicates = FALSE) {

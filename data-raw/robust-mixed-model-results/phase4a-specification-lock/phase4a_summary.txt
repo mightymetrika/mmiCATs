@@ -1,0 +1,7 @@
+Robust mixed-model Phase 4A specification-lock audit
+
+Required checks passed: 10 of 10
+Unresolved required checks: 0
+Direct quantities matched: 27 of 27
+Actual boundary found in small search: TRUE
+robustlmm version: 3.5.0.2

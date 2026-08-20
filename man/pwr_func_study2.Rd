@@ -18,7 +18,8 @@ pwr_func_study2(
   contamination_size = 6,
   reps = 1000,
   alpha = 0.05,
-  methods = c("rs", "ri", "cr2", "cats", "cats_trunc", "cats_robust", "cats_robustbase"),
+  methods = c("rs", "ri", "cr2", "cats", "cats_trunc", "cats_robust", "cats_robustbase",
+    "robust_ri", "robust_rs"),
   seed = NULL,
   keep_replicates = FALSE
 )
@@ -59,7 +60,7 @@ residual standard deviation units.}
 
 \item{methods}{Character vector of methods to fit. Available values are
 \code{"rs"}, \code{"ri"}, \code{"cr2"}, \code{"cats"}, \code{"cats_trunc"}, \code{"cats_robust"},
-and \code{"cats_robustbase"}.}
+\code{"cats_robustbase"}, \code{"robust_ri"}, and \code{"robust_rs"}.}
 
 \item{seed}{Optional non-negative integer random-number seed.}
 
@@ -85,7 +86,8 @@ replication level as a diagnostic but is not used as the simulation truth.
 Runs one condition from Study 2, which extends Study 1 by generating genuine
 cluster-to-cluster slope heterogeneity. The comparison includes a correctly
 specified independent random-intercept and random-slope model, the Study 1
-random-intercept benchmark, ordinary least squares with CR2 inference,
+random-intercept benchmark, robust random-intercept and independent
+random-slope mixed models, ordinary least squares with CR2 inference,
 ordinary cluster-adjusted t statistics (CATs), truncated CATs, and robust
 CATs based on either \code{robust::lmRob()} or \code{robustbase::lmrob()}.
 }
@@ -95,7 +97,8 @@ intercept-slope covariance. Optional symmetric vertical contamination is
 applied within every cluster after the clean data are generated. All
 requested methods are fit to the same data in each replication. The \code{"rs"}
 and \code{"ri"} methods use Kenward-Roger inference and require the suggested
-package \code{pbkrtest}.
+package \code{pbkrtest}. The \code{"robust_ri"} and \code{"robust_rs"} methods use robust
+Satterthwaite inference and require the suggested package \code{robustlmm}.
 }
 \examples{
 pwr_func_study2(

@@ -1,0 +1,17 @@
+"study","method","attempted","successful","boundary","nonconverged","runtime_sec","failure_count","success_rate","boundary_rate","nonconvergence_rate"
+"Study 1","cats",6,6,0,0,0.499999999999986,0,1,0,0
+"Study 2","cats",8,8,0,0,0.279999999999916,0,1,0,0
+"Study 1","cats_robust",6,6,0,0,0.489999999999981,0,1,0,0
+"Study 2","cats_robust",8,8,0,0,0.569999999999823,0,1,0,0
+"Study 1","cats_robustbase",6,6,0,0,1.05000000000003,0,1,0,0
+"Study 2","cats_robustbase",8,8,0,0,1.06000000000012,0,1,0,0
+"Study 1","cats_trunc",6,6,0,0,0.280000000000001,0,1,0,0
+"Study 2","cats_trunc",8,8,0,0,0.2800000000002,0,1,0,0
+"Study 1","cr2",6,6,0,0,0.339999999999947,0,1,0,0
+"Study 2","cr2",8,8,0,0,0.910000000000082,0,1,0,0
+"Study 1","ri",6,6,0,0,2.43000000000002,0,1,0,0
+"Study 2","ri",8,8,0,0,2.21000000000004,0,1,0,0
+"Study 1","robust_ri",8,8,0,0,192.47,0,1,0,0
+"Study 2","robust_ri",10,10,0,0,185.97,0,1,0,0
+"Study 2","robust_rs",10,10,1,0,527.06,0,1,0.1,0
+"Study 2","rs",8,8,2,0,4.33999999999992,0,1,0.25,0
