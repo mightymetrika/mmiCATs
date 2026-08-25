@@ -1,0 +1,8 @@
+mmiCATs Study 3 Phase 6C
+Comparative-analysis runner validation
+
+Checks passed: 13 of 13
+Synthetic clusters: 6
+Synthetic LOO methods: 2
+Synthetic LOO rows: 12
+sleepstudy comparative results generated during validation: FALSE

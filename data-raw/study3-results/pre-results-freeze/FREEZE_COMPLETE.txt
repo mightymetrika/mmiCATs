@@ -1,0 +1,13 @@
+mmiCATs Study 3 Phase 6B pre-results freeze COMPLETE
+
+Created: 2026-08-25 13:13:50 PDT
+Approved plan MD5: 7929274ec42a14214a0935d2cb3edbd1
+Canonical data MD5: 5fb4c11256236e44a7c3103cc42e6cfb
+Contamination map MD5: 1e8676cb3fa1c8f7b5293394ff8a1c9a
+Perturbed data MD5: 8e0eb40ab5b31a995cc54ceccfd8db58
+Freeze record MD5: 57c2070d012786e6b29c0e1a2b2551a4
+Selection seed: 20261105
+Contaminated observations: 18 of 180
+Reference residual SD: 25.59181562672525
+Absolute displacement: 153.5508937603515
+Comparative Study 3 models fit during Phase 6B: FALSE

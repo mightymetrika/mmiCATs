@@ -1,0 +1,11 @@
+mmiCATs Study 3 definitive empirical analysis COMPLETE
+
+Completed: 2026-08-25 15:49:17 PDT
+Methods: rs, ri, cr2, cats, cats_trunc, cats_robust, cats_robustbase, robust_ri, robust_rs
+Analysis seed: 20261101
+Observed Subjects: 18
+Perturbed Subjects: 18
+Observed LOO rows: 162
+Perturbed LOO rows: 162
+Contaminated observations: 18
+Output checksum rows: 31

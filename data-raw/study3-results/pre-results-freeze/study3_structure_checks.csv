@@ -1,0 +1,8 @@
+"check","passed"
+"rows_equal_180",TRUE
+"subjects_equal_18",TRUE
+"no_missing_analysis_values",TRUE
+"each_subject_has_10_rows",TRUE
+"each_subject_has_days_0_to_9",TRUE
+"reaction_is_numeric",TRUE
+"days_is_numeric",TRUE

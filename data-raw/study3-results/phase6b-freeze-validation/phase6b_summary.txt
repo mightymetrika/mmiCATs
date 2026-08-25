@@ -1,0 +1,12 @@
+mmiCATs Study 3 Phase 6B
+Pre-results freeze validation
+
+Checks passed: 21 of 21
+Frozen subjects: 18
+Frozen observations: 180
+Contaminated observations: 18
+Nominal within-subject contamination rule: 0.05
+Realized overall contamination: 0.1
+Reference residual SD: 25.59181563
+Absolute displacement: 153.5508938
+Comparative Study 3 results inspected: FALSE

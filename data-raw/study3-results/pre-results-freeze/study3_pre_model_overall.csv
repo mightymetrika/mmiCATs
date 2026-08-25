@@ -1,0 +1,2 @@
+"response","predictor","cluster_variable","observations","observations_with_cluster","complete_analysis_observations","missing_cluster_observations","clusters","min_cluster_size","median_cluster_size","max_cluster_size","min_complete_cluster_size","median_complete_cluster_size","max_complete_cluster_size","clusters_with_estimable_slope","clusters_without_estimable_slope"
+"Reaction","Days","Subject",180,180,180,0,18,10,10,10,10,10,10,18,0

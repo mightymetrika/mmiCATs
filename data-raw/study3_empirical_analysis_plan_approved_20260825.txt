@@ -1,0 +1,289 @@
+mmiCATs Study 3 Empirical Illustration — Prespecified Analysis Plan
+APPROVED PRE-RESULTS PLAN
+Approved: 2026-08-25
+
+STATUS AND PURPOSE
+------------------
+Study 3 is an empirical illustration, not an external validation study. It will
+use the lme4::sleepstudy data to show how the method families behave on the
+observed data and after a prespecified vertical-outcome perturbation. Observed
+and perturbed analyses will be reported separately.
+
+This plan was approved before any comparative Study 3 model results were
+generated.
+
+DATA AND ANALYTIC VARIABLES
+---------------------------
+Dataset:
+  lme4::sleepstudy
+
+Outcome:
+  Reaction
+
+Focal predictor:
+  Days
+
+Clustering variable:
+  Subject
+
+The Phase 6A pre-model audit found 18 Subjects and 180 observations. The
+canonical data are balanced at 10 observations per Subject, Days spans 0 to 9
+within every Subject, there are no missing analysis variables, and every
+Subject has an estimable within-Subject Days slope.
+
+The Study 3 script will stop rather than proceed if these structural checks do
+not match the canonical data.
+
+ESTIMAND
+--------
+The common empirical estimand is the coefficient of Days: the average change
+in Reaction time, in milliseconds, associated with one additional day of sleep
+deprivation.
+
+Study 3 has no known statistical truth. Therefore bias, RMSE, coverage, power,
+and Type I error will not be reported for the empirical illustration.
+
+METHOD SET
+----------
+The observed and perturbed datasets will be analyzed with the same nine method
+families used in Study 2:
+
+  1. Conventional independent random-slope mixed model / Kenward-Roger
+  2. Conventional random-intercept mixed model / Kenward-Roger
+  3. OLS / CR2 / Satterthwaite
+  4. Ordinary CATs
+  5. Truncated CATs
+  6. Robust CATs using robust::lmRob()
+  7. Robust CATs using robustbase::lmrob()
+  8. Robust random-intercept mixed model / robust Satterthwaite
+  9. Robust independent random-slope mixed model / robust Satterthwaite
+
+No method will be added, removed, tuned, or selected on the basis of the
+observed comparative results.
+
+RANDOM-EFFECTS SPECIFICATIONS
+-----------------------------
+The random-slope specification will be:
+
+  Reaction ~ Days + (1 + Days || Subject)
+
+The random-intercept specification will be:
+
+  Reaction ~ Days + (1 | Subject)
+
+The random slope is prespecified because Days varies within Subject and the
+scientific setting permits Subject-to-Subject heterogeneity in the Days effect.
+The independent intercept/slope form is prespecified for parsimony and direct
+alignment with the verified Study 2 method family. The covariance structure
+will not be changed after seeing Study 3 model comparisons.
+
+ESTIMATION AND INFERENCE
+------------------------
+Conventional mixed models:
+  REML with the existing lmerTest/lme4 production path, package-default
+  optimizer/controls, Kenward-Roger degrees of freedom and t-based 95% CIs.
+
+Robust mixed models:
+  robustlmm::rlmer(), method = "DAStau", setting = "RSEn", with the project's
+  verified robust Satterthwaite inference and t-based 95% CIs.
+
+OLS/CR2:
+  stats::lm() with CR2 variance and Satterthwaite coefficient inference.
+
+CATs:
+  The verified ordinary/truncated CATs production path. Inference uses the
+  retained-cluster t reference with G_r - 1 degrees of freedom.
+
+Robust CATs:
+  The verified robust::lmRob() and robustbase::lmrob() within-cluster engines,
+  followed by the same audited CATs aggregation/inference rules.
+
+Alpha:
+  0.05, two-sided.
+
+OBSERVED-DATA ANALYSIS
+----------------------
+All nine methods will first be fit to the unchanged canonical sleepstudy data.
+
+For each method, report as applicable:
+  - Days estimate
+  - standard error
+  - degrees of freedom
+  - two-sided p value
+  - 95% confidence interval
+  - retained clusters
+  - fit success
+  - convergence status
+  - singular/boundary status
+  - estimated random-intercept and random-slope SDs
+  - warnings/errors
+  - CATs cluster warning/error/drop diagnostics
+  - runtime as descriptive computational information only
+
+The observed-data section will not label one method as empirically correct or
+best.
+
+PRESPECIFIED VERTICAL-CONTAMINATION ILLUSTRATION
+------------------------------------------------
+The perturbation mirrors the simulation studies' vertical observation-level
+contamination mechanism while remaining deterministic and fully reproducible.
+
+Contamination proportion:
+  0.05 within each Subject.
+
+Because each Subject has 10 observations and the simulation rule rounds
+cluster_size * contamination_prop to the nearest whole number with at least
+one contaminated observation when the proportion is positive, exactly one
+observation per Subject will be perturbed. Thus 18 of 180 empirical
+observations (10%) will be perturbed. This difference between the nominal 5%
+rule and the realized 10% fraction will be stated explicitly.
+
+Selection seed:
+  20261105L
+
+Selection procedure:
+  1. Sort the canonical data by Subject and Days.
+  2. Set the selection seed to 20261105L.
+  3. Within each Subject, select one observation uniformly without replacement.
+  4. After all 18 observations are selected, draw one sign independently for
+     each selected observation from {-1, +1} with equal probability, continuing
+     from the same fixed RNG stream.
+  5. Save the selected Subject/Days rows and signs before any perturbed-data
+     method comparison is fit.
+
+No selected observation will be replaced or altered after model results are
+viewed.
+
+PERTURBATION MAGNITUDE
+----------------------
+The vertical displacement will be six reference residual standard deviations,
+matching the vertical-contamination magnitude used in Studies 1 and 2.
+
+The reference residual SD will be computed from the unperturbed data using
+separate ordinary least-squares lines within each Subject. Equivalently, fit:
+
+  Reaction ~ 0 + Subject + Subject:Days
+
+and use its residual standard deviation.
+
+This scale is chosen prospectively only to put the empirical perturbation in
+the same residual-SD units as the simulation design. It is not selected from
+the comparative performance of any Study 3 method.
+
+For each selected observation:
+
+  Reaction_perturbed =
+    Reaction_observed +
+    sign * 6 * reference_residual_SD
+
+Subject and Days are unchanged.
+
+The perturbed data will contain the original Reaction value, perturbed Reaction
+value, contamination indicator, fixed sign, and signed/absolute displacement.
+
+PERTURBED-DATA ANALYSIS
+-----------------------
+Fit the identical nine-method schedule to the perturbed dataset with the same
+estimation and inference settings.
+
+For each method, report the same quantities as in the observed analysis.
+
+The primary empirical contrast is descriptive:
+  - observed Days estimate and 95% CI
+  - perturbed Days estimate and 95% CI
+  - perturbed minus observed estimate
+  - absolute estimate change
+  - change in CI width
+  - changes in retained-cluster, warning/error, convergence, and boundary
+    diagnostics as applicable
+
+These differences will not be interpreted as bias because no empirical truth
+is known.
+
+DIAGNOSTIC REPORTING
+--------------------
+Pre-model:
+  Use cluster_data_explore() on the canonical observed dataset.
+
+Post-fit:
+  Use cluster_model_diagnostics() for the observed and perturbed datasets.
+
+Report or preserve for supplement as applicable:
+  - cluster-specific OLS, lmRob, and lmrob slopes
+  - robust-minus-OLS cluster-slope differences
+  - OLS residual/leverage/Cook's-distance diagnostics
+  - robust regression weights available from the diagnostic layer
+  - method-level warnings/errors and boundary information
+  - contaminated-observation diagnostics
+  - method estimate/interval plot
+  - cluster slope and slope-difference plots
+  - residual/leverage and robust-weight plots
+  - within-cluster fit plots
+
+LEAVE-ONE-SUBJECT-OUT INFLUENCE
+-------------------------------
+A supplementary leave-one-Subject-out analysis will be run for both the
+observed and perturbed datasets for all nine methods.
+
+For each full-data method that fits, record omitted Subject, full-data Days
+estimate, leave-one-Subject-out Days estimate, estimate change, fit success,
+and warnings/errors.
+
+Failures are retained and reported; there will be no rescue tuning.
+
+FAILURE, CONVERGENCE, AND BOUNDARY RULES
+----------------------------------------
+Use the same verified production classifications as Studies 1 and 2.
+
+A finite mixed-model result is not discarded solely because it is
+boundary-singular. Genuine convergence failure, non-finite inference, or a
+method-specific fitting error remains a failure according to the verified
+production rules.
+
+No failed fit will be silently replaced by a different model or optimizer.
+
+REPORTING PRINCIPLES
+--------------------
+1. Study 3 is an illustration, not evidence that one method is universally
+   superior.
+2. Observed and perturbed results remain visibly separated.
+3. All nine prespecified methods remain in the record, including unfavorable
+   results and failures.
+4. No method tuning, contamination redesign, observation replacement, or
+   random-effects restructuring is allowed after comparative results are
+   inspected without a documented protocol amendment.
+5. Truncated CATs remains in the comparison because it is part of the frozen
+   method family; no special advantage is expected in this illustration.
+6. Runtime is descriptive only and is excluded from numerical-equivalence
+   claims.
+
+REPRODUCIBILITY RECORD
+----------------------
+Before fitting the comparative Study 3 models, save:
+  - this approved analysis plan and checksum
+  - canonical sleepstudy data checksum
+  - contamination seed
+  - selected contamination map and signs
+  - reference residual SD
+  - perturbed-data checksum
+  - mmiCATs source checksums
+  - package versions
+  - R version and sessionInfo()
+  - RNG kind/state needed for exact reconstruction
+
+The Study 3 results directory will be separate from development and validation
+outputs.
+
+FREEZE GATE
+-----------
+After approval, this plan is encoded in a Study 3 preparation script that first
+creates and archives the contamination map/data and reproducibility metadata,
+without fitting comparative models.
+
+Phase 6C may fit the comparative models only by reading the successfully
+validated Phase 6B frozen artifacts.
+
+Any change capable of altering the selected observations, perturbation
+magnitude, random-effects specification, estimates, standard errors, inclusion
+rules, or conclusions after that point requires a documented protocol
+amendment.
