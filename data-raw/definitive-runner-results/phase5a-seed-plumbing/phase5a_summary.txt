@@ -1,0 +1,8 @@
+Definitive simulation runner engineering: Phase 5A
+Deterministic replication-seed plumbing validation
+
+Checks passed: 8 of 8
+Study 1 full-method replicate equivalence: TRUE
+Study 1 full-method summary equivalence: TRUE
+Study 2 full-method replicate equivalence: TRUE
+Study 2 full-method summary equivalence: TRUE

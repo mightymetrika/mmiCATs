@@ -28,6 +28,7 @@ Imports:
     clubSandwich,
     clusterSEs,
     DT,
+    ggplot2,
     lme4,
     lmerTest,
     MASS,

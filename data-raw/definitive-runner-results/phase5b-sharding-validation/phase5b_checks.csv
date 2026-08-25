@@ -1,0 +1,13 @@
+"check","passed"
+"study1_all_shards_complete",TRUE
+"study1_global_replicate_ids",TRUE
+"study1_replicate_equivalence",TRUE
+"study1_summary_equivalence",TRUE
+"study1_completed_shard_preserved_on_resume",TRUE
+"study2_all_shards_complete",TRUE
+"study2_global_replicate_ids",TRUE
+"study2_replicate_equivalence",TRUE
+"study2_summary_equivalence",TRUE
+"study2_completed_shard_preserved_on_resume",TRUE
+"disk_guard_blocks_new_work_below_threshold",TRUE
+"mismatched_existing_checkpoint_is_refused",TRUE

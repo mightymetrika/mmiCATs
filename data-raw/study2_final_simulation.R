@@ -1,4 +1,4 @@
-# Study 2 final simulation
+# Study 2 definitive manuscript-version simulation
 #
 # This script runs the frozen Study 2 design comparing:
 #
@@ -8,8 +8,11 @@
 #   3. ordinary least squares with CR2 and Satterthwaite inference;
 #   4. ordinary cluster-adjusted t statistics (CATs);
 #   5. truncated CATs, retained as a negative control;
-#   6. robust CATs using robust::lmRob(); and
-#   7. robust CATs using robustbase::lmrob().
+#   6. robust CATs using robust::lmRob();
+#   7. robust CATs using robustbase::lmrob();
+#   8. a robust random-intercept mixed model; and
+#   9. a correctly specified robust independent random-intercept and
+#      random-slope mixed model, both using robust Satterthwaite inference.
 #
 # Frozen design:
 #
@@ -31,7 +34,7 @@
 # mean cluster slope is retained as a diagnostic but is not used as the truth.
 #
 # Conditions with the same number of clusters use common random numbers across
-# beta, random-slope SD, and contamination conditions. The final-study seeds
+# beta, random-slope SD, and contamination conditions. The definitive-study seeds
 # are distinct from the numerical-validation, plumbing-pilot, and
 # random-slope convergence-diagnostic seeds.
 #
@@ -41,9 +44,11 @@
 # suppressed during the long run because their information is preserved in
 # the replicate-level diagnostics.
 #
-# One checkpoint is saved per condition. Completed conditions are skipped on
-# rerun unless overwrite_completed is set to TRUE. Rerunning this script also
-# rebuilds the combined outputs from all completed checkpoints.
+# Each 2,000-replication condition is executed as deterministic small shards.
+# Completed shards are skipped on restart, and a completed condition checkpoint
+# is reconstructed only after every frozen shard is present and valid. No new
+# shard begins when free disk space is below the frozen safety threshold.
+# Rerunning the script also rebuilds combined outputs from completed conditions.
 #
 # Run this script from the mmiCATs project. The project root is located
 # automatically, so the script can also be sourced while the working directory
@@ -268,7 +273,9 @@ method_labels <- function() {
     cats = "CATs",
     cats_trunc = "Truncated CATs",
     cats_robust = "Robust CATs: lmRob",
-    cats_robustbase = "Robust CATs: lmrob"
+    cats_robustbase = "Robust CATs: lmrob",
+    robust_ri = "Robust random intercept",
+    robust_rs = "Robust random slope"
   )
 }
 
@@ -1672,6 +1679,12 @@ make_source_checksums <- function(project_root) {
       "R",
       "pwr_func_study2_helpers.R"
     ),
+    robust_mixed_models = file.path(
+      project_root, "R", "robust_mixed_models.R"
+    ),
+    definitive_sharding_helpers = file.path(
+      project_root, "data-raw", "definitive_sharding_helpers.R"
+    ),
     study2_final_simulation = file.path(
       project_root,
       "data-raw",
@@ -1719,14 +1732,32 @@ if (!requireNamespace("pbkrtest", quietly = TRUE)) {
 
 pkgload::load_all(project_root, quiet = TRUE)
 
+if (!requireNamespace("robustlmm", quietly = TRUE)) {
+  stop(
+    "The robustlmm package is required for the definitive robust mixed-model comparators.",
+    call. = FALSE
+  )
+}
+
+source(
+  file.path(
+    project_root,
+    "data-raw",
+    "definitive_sharding_helpers.R"
+  )
+)
+
 # -------------------------------------------------------------------------
-# Frozen final-study configuration
+# Frozen definitive-study configuration
 # -------------------------------------------------------------------------
 
 final_reps <- 2000L
 alpha <- 0.05
 minimum_usable_reps <- 1900L
 final_seed_base <- 20260905L
+shard_size <- 10L
+minimum_free_gb <- 2.0
+retain_completed_shards <- FALSE
 overwrite_completed <- FALSE
 
 # Set to a character vector such as c("S2C001", "S2C002") to run only
@@ -1740,14 +1771,16 @@ methods <- c(
   "cats",
   "cats_trunc",
   "cats_robust",
-  "cats_robustbase"
+  "cats_robustbase",
+  "robust_ri",
+  "robust_rs"
 )
 
 output_dir <- file.path(
   project_root,
   "data-raw",
   "study2-results",
-  "final-study"
+  "definitive-study"
 )
 
 checkpoint_dir <- file.path(
@@ -1760,6 +1793,12 @@ dir.create(
   recursive = TRUE,
   showWarnings = FALSE
 )
+
+shard_dir <- file.path(output_dir, "shards")
+shard_status_dir <- file.path(output_dir, "shard-status")
+
+dir.create(shard_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(shard_status_dir, recursive = TRUE, showWarnings = FALSE)
 
 contamination_specifications <- data.frame(
   contamination = c(
@@ -1827,6 +1866,9 @@ final_design$x_sd <- 1
 final_design$contamination_prop <- 0.05
 final_design$reps <- final_reps
 final_design$alpha <- alpha
+final_design$shard_size <- shard_size
+final_design$minimum_free_gb <- minimum_free_gb
+final_design$retain_completed_shards <- retain_completed_shards
 final_design$method_set <- paste(
   methods,
   collapse = ","
@@ -1865,6 +1907,9 @@ final_design <- final_design[
     "contamination_size",
     "reps",
     "alpha",
+    "shard_size",
+    "minimum_free_gb",
+    "retain_completed_shards",
     "method_set",
     "condition_seed",
     "common_random_number_group"
@@ -1883,7 +1928,7 @@ if (file.exists(design_path)) {
     if (!overwrite_completed) {
       stop(
         paste(
-          "The saved final-study design differs from the current design.",
+          "The saved definitive-study design differs from the current design.",
           "Set overwrite_completed <- TRUE only if the frozen design is",
           "intentionally being replaced."
         ),
@@ -1921,7 +1966,7 @@ package_description <- read.dcf(
 )
 
 metadata <- list(
-  study = "mmiCATs Study 2 final simulation",
+  study = "mmiCATs Study 2 definitive manuscript-version simulation",
   created_at = Sys.time(),
   project_root = project_root,
   package_version = unname(
@@ -1932,6 +1977,9 @@ metadata <- list(
   alpha = alpha,
   minimum_usable_reps = minimum_usable_reps,
   final_seed_base = final_seed_base,
+  shard_size = shard_size,
+  minimum_free_gb = minimum_free_gb,
+  retain_completed_shards = retain_completed_shards,
   methods = methods,
   primary_estimand = paste(
     "The superpopulation mean cluster slope beta. The realized",
@@ -1942,7 +1990,7 @@ metadata <- list(
     "the same condition seed. Seeds differ across cluster counts."
   ),
   calibration_independence = paste(
-    "The final-study seeds differ from numerical validation,",
+    "The definitive-study seeds differ from numerical validation,",
     "plumbing-pilot, and random-slope convergence-diagnostic seeds."
   ),
   frozen_parameters = list(
@@ -2006,7 +2054,7 @@ writeLines(
 )
 
 # -------------------------------------------------------------------------
-# Run final-study conditions
+# Run definitive-study conditions in deterministic shards
 # -------------------------------------------------------------------------
 
 run_design <- final_design
@@ -2028,8 +2076,7 @@ if (!is.null(condition_ids_to_run)) {
   }
 
   run_design <- final_design[
-    final_design$condition_id %in%
-      condition_ids_to_run,
+    final_design$condition_id %in% condition_ids_to_run,
     ,
     drop = FALSE
   ]
@@ -2044,214 +2091,247 @@ for (condition_index in seq_len(nrow(run_design))) {
 
   checkpoint_path <- file.path(
     checkpoint_dir,
-    paste0(
-      "condition_",
-      condition$condition_id,
-      ".rds"
-    )
+    paste0("condition_", condition$condition_id, ".rds")
   )
 
-  if (file.exists(checkpoint_path) &&
-      !overwrite_completed) {
+  if (file.exists(checkpoint_path) && !overwrite_completed) {
     existing_checkpoint <- tryCatch(
       readRDS(checkpoint_path),
       error = function(e) NULL
     )
 
     if (!is.null(existing_checkpoint) &&
-        identical(
-          existing_checkpoint$status,
-          "complete"
-        )) {
-      message(
-        sprintf(
-          "Skipping completed condition %s.",
-          condition$condition_id
-        )
-      )
+        identical(existing_checkpoint$status, "complete")) {
+      message(sprintf("Skipping completed condition %s.", condition$condition_id))
       next
     }
   }
 
-  message(
-    sprintf(
-      paste0(
-        "Running %s of %s: G = %s, beta = %s, ",
-        "random-slope SD = %s, condition = %s, reps = %s."
-      ),
-      condition$condition_id,
-      nrow(final_design),
-      condition$n_clusters,
-      format(condition$beta, trim = TRUE),
-      format(condition$random_slope_sd, trim = TRUE),
-      condition$contamination_label,
-      condition$reps
-    )
+  replicate_seed_vector <- definitive_make_replicate_seeds(
+    condition_seed = condition$condition_seed,
+    total_reps = condition$reps
   )
 
-  started_at <- Sys.time()
+  shard_plan <- definitive_make_shard_plan(
+    total_reps = condition$reps,
+    shard_size = condition$shard_size
+  )
 
-  function_contamination_size <- if (
-    condition$contamination == "none"
-  ) {
-    1
-  } else {
-    condition$contamination_size
-  }
-
-  simulation_result <- tryCatch(
-    suppressMessages(
-      mmiCATs::pwr_func_study2(
-        n_clusters = condition$n_clusters,
-        cluster_size = condition$cluster_size,
-        beta = condition$beta,
-        intercept = condition$intercept,
-        random_intercept_sd =
-          condition$random_intercept_sd,
-        random_slope_sd =
-          condition$random_slope_sd,
-        residual_sd = condition$residual_sd,
-        x_sd = condition$x_sd,
-        contamination = condition$contamination,
-        contamination_prop =
-          condition$contamination_prop,
-        contamination_size =
-          function_contamination_size,
-        reps = condition$reps,
-        alpha = condition$alpha,
-        methods = methods,
-        seed = condition$condition_seed,
-        keep_replicates = TRUE
-      )
+  message(sprintf(
+    paste0(
+      "Running %s of %s: G = %s, beta = %s, random-slope SD = %s, ",
+      "condition = %s; %s shards of up to %s reps."
     ),
-    error = function(e) e
-  )
+    condition$condition_id,
+    nrow(final_design),
+    condition$n_clusters,
+    format(condition$beta, trim = TRUE),
+    format(condition$random_slope_sd, trim = TRUE),
+    condition$contamination_label,
+    nrow(shard_plan),
+    condition$shard_size
+  ))
 
-  completed_at <- Sys.time()
-  elapsed_sec <- as.numeric(
-    difftime(
-      completed_at,
-      started_at,
-      units = "secs"
+  condition_failed <- FALSE
+
+  for (shard_index in seq_len(nrow(shard_plan))) {
+    shard_row <- shard_plan[
+      shard_index,
+      ,
+      drop = FALSE
+    ]
+
+    shard_result <- tryCatch(
+      definitive_run_shard_checkpoint(
+        study = "study2",
+        condition = condition,
+        shard_row = shard_row,
+        replicate_seed_vector = replicate_seed_vector,
+        methods = methods,
+        shard_dir = shard_dir,
+        minimum_free_gb = condition$minimum_free_gb,
+        overwrite_completed = overwrite_completed
+      ),
+      error = function(e) e
     )
-  )
 
-  if (inherits(simulation_result, "error")) {
-    checkpoint <- list(
-      status = "error",
+    if (inherits(shard_result, "error")) {
+      message(sprintf(
+        "Condition %s stopped before/at shard %s: %s",
+        condition$condition_id,
+        shard_row$shard_id,
+        conditionMessage(shard_result)
+      ))
+      condition_failed <- TRUE
+      break
+    }
+
+    if (identical(shard_result$action, "error")) {
+      message(sprintf(
+        "Condition %s shard %s returned a caught error: %s",
+        condition$condition_id,
+        shard_row$shard_id,
+        shard_result$checkpoint$error
+      ))
+      condition_failed <- TRUE
+      break
+    }
+
+    current <- definitive_collect_condition_shards(
       condition = condition,
-      result = NULL,
-      flagged_cluster_diagnostics = data.frame(),
-      error = conditionMessage(simulation_result),
-      started_at = started_at,
-      completed_at = completed_at,
-      elapsed_sec = elapsed_sec
-    )
-
-    save_rds_atomic(
-      checkpoint,
-      checkpoint_path
-    )
-
-    status_snapshot <- make_status_snapshot(
-      checkpoint_dir = checkpoint_dir,
-      design = final_design
+      shard_plan = shard_plan,
+      replicate_seed_vector = replicate_seed_vector,
+      methods = methods,
+      shard_dir = shard_dir
     )
 
     write_csv_atomic(
-      status_snapshot,
+      current$status,
       file.path(
-        output_dir,
-        "study2_condition_status.csv"
+        shard_status_dir,
+        paste0("condition_", condition$condition_id, "_shard_status.csv")
       )
     )
 
-    message(
-      sprintf(
-        "Condition %s failed: %s",
-        condition$condition_id,
-        conditionMessage(simulation_result)
-      )
-    )
+    completed_shards <- sum(current$status$status == "complete")
 
+    message(sprintf(
+      "  %s %s: %s of %s shards complete.",
+      condition$condition_id,
+      shard_row$shard_id,
+      completed_shards,
+      nrow(shard_plan)
+    ))
+  }
+
+  collected <- definitive_collect_condition_shards(
+    condition = condition,
+    shard_plan = shard_plan,
+    replicate_seed_vector = replicate_seed_vector,
+    methods = methods,
+    shard_dir = shard_dir
+  )
+
+  write_csv_atomic(
+    collected$status,
+    file.path(
+      shard_status_dir,
+      paste0("condition_", condition$condition_id, "_shard_status.csv")
+    )
+  )
+
+  if (condition_failed || !collected$complete) {
     next
   }
 
+  full_settings <- collected$checkpoints[[1L]]$settings
+  full_settings$reps <- condition$reps
+  full_settings$seed <- condition$condition_seed
+  full_settings$replicate_seeds <- replicate_seed_vector
+  full_settings$methods <- methods
+
   prepared <- prepare_replicates_for_storage(
-    replicates = simulation_result$replicates,
-    settings = simulation_result$settings,
+    replicates = collected$replicates,
+    settings = full_settings,
     condition = condition
   )
 
-  simulation_result$summary <- add_condition_columns(
-    data = simulation_result$summary,
-    condition = condition
+  condition_summary <- mmiCATs:::study1_summarize_results(
+    replicate_results = collected$replicates,
+    methods = methods,
+    reps = condition$reps
   )
-  simulation_result$summary <- add_method_labels(
-    simulation_result$summary
-  )
-  simulation_result$replicates <-
-    prepared$replicates
+  rownames(condition_summary) <- NULL
+  condition_summary <- add_condition_columns(condition_summary, condition)
+  condition_summary <- add_method_labels(condition_summary)
 
-  checkpoint <- list(
+  shard_elapsed <- vapply(
+    collected$checkpoints,
+    function(x) x$elapsed_sec,
+    numeric(1)
+  )
+  shard_started <- do.call(
+    c,
+    lapply(collected$checkpoints, function(x) x$started_at)
+  )
+  shard_completed <- do.call(
+    c,
+    lapply(collected$checkpoints, function(x) x$completed_at)
+  )
+
+  condition_checkpoint <- list(
     status = "complete",
     condition = condition,
-    result = simulation_result,
-    flagged_cluster_diagnostics =
-      prepared$flagged_diagnostics,
+    result = list(
+      summary = condition_summary,
+      replicates = prepared$replicates,
+      settings = full_settings
+    ),
+    flagged_cluster_diagnostics = prepared$flagged_diagnostics,
     error = NA_character_,
-    started_at = started_at,
-    completed_at = completed_at,
-    elapsed_sec = elapsed_sec
+    started_at = min(shard_started),
+    completed_at = max(shard_completed),
+    elapsed_sec = sum(shard_elapsed, na.rm = TRUE),
+    shard_plan = shard_plan
   )
 
-  save_rds_atomic(
-    checkpoint,
-    checkpoint_path
-  )
+  save_rds_atomic(condition_checkpoint, checkpoint_path)
+
+  # The complete condition checkpoint is the durable artifact. Shard files are
+  # temporary restart units and are removed after the condition checkpoint has
+  # been written atomically and verified by the save helper. This prevents the
+  # long local run from accumulating avoidable disk usage.
+  if (!isTRUE(condition$retain_completed_shards)) {
+    completed_shard_paths <- vapply(
+      seq_len(nrow(shard_plan)),
+      function(i) {
+        definitive_shard_checkpoint_path(
+          shard_dir = shard_dir,
+          condition_id = condition$condition_id,
+          shard_id = shard_plan$shard_id[i]
+        )
+      },
+      character(1)
+    )
+
+    existing_shard_paths <- completed_shard_paths[
+      file.exists(completed_shard_paths)
+    ]
+
+    if (length(existing_shard_paths) > 0L) {
+      removed <- file.remove(existing_shard_paths)
+      if (any(!removed)) {
+        warning(
+          sprintf(
+            "Could not remove %s completed temporary shard file(s) for %s.",
+            sum(!removed),
+            condition$condition_id
+          ),
+          call. = FALSE
+        )
+      }
+    }
+  }
 
   status_snapshot <- make_status_snapshot(
     checkpoint_dir = checkpoint_dir,
     design = final_design
   )
-
   write_csv_atomic(
     status_snapshot,
-    file.path(
-      output_dir,
-      "study2_condition_status.csv"
-    )
+    file.path(output_dir, "study2_condition_status.csv")
   )
 
-  completed_count <- sum(
-    status_snapshot$status == "complete"
-  )
-
-  total_elapsed_minutes <- sum(
-    status_snapshot$elapsed_sec[
-      status_snapshot$status == "complete"
-    ],
-    na.rm = TRUE
-  ) / 60
-
-  message(
-    sprintf(
-      paste0(
-        "Completed %s in %.2f minutes. ",
-        "Overall progress: %s of %s conditions; ",
-        "%.2f elapsed hours."
-      ),
-      condition$condition_id,
-      elapsed_sec / 60,
-      completed_count,
-      nrow(final_design),
-      total_elapsed_minutes / 60
-    )
-  )
+  message(sprintf(
+    "Completed %s: %s of %s conditions complete.",
+    condition$condition_id,
+    sum(status_snapshot$status == "complete"),
+    nrow(final_design)
+  ))
 }
 
 # -------------------------------------------------------------------------
-# Combine completed checkpoints
+# Combine completed definitive condition checkpoints
 # -------------------------------------------------------------------------
 
 final_status <- make_status_snapshot(
@@ -2280,7 +2360,7 @@ complete_ids <- final_status$condition_id[
 
 if (length(complete_ids) == 0L) {
   stop(
-    "No final-study conditions completed successfully.",
+    "No definitive-study conditions completed successfully.",
     call. = FALSE
   )
 }
@@ -3001,3 +3081,5 @@ if (completed_conditions < total_conditions) {
     )
   }
 }
+
+

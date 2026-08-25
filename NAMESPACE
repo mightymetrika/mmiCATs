@@ -2,8 +2,10 @@
 
 export(CloseCATs)
 export(KenRCATs)
+export(cluster_data_explore)
 export(cluster_im_glmRob)
 export(cluster_im_lmRob)
+export(cluster_model_diagnostics)
 export(kenward_roger)
 export(mmiCATs)
 export(pwr_func_lmer)

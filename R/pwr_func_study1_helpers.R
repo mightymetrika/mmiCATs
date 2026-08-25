@@ -183,6 +183,48 @@ study1_check_integer <- function(x,
   invisible(NULL)
 }
 
+#' Validate Explicit Replication Seeds
+#'
+#' @param replicate_seeds Optional vector of explicit replication seeds.
+#' @param reps Number of requested replications.
+#'
+#' @return `NULL` when `replicate_seeds` is `NULL`; otherwise an integer vector
+#'   containing the validated seeds.
+#'
+#' @keywords internal
+study_validate_replicate_seeds <- function(replicate_seeds, reps) {
+  if (is.null(replicate_seeds)) {
+    return(NULL)
+  }
+
+  valid <- is.numeric(replicate_seeds) &&
+    length(replicate_seeds) == reps &&
+    !anyNA(replicate_seeds) &&
+    all(is.finite(replicate_seeds)) &&
+    all(replicate_seeds == floor(replicate_seeds)) &&
+    all(replicate_seeds >= 1) &&
+    all(replicate_seeds <= .Machine$integer.max)
+
+  if (!valid) {
+    stop(
+      paste(
+        "replicate_seeds must be NULL or a numeric integer-valued vector",
+        "of length reps with values from 1 through .Machine$integer.max."
+      ),
+      call. = FALSE
+    )
+  }
+
+  if (anyDuplicated(replicate_seeds)) {
+    stop(
+      "replicate_seeds must contain unique values.",
+      call. = FALSE
+    )
+  }
+
+  as.integer(replicate_seeds)
+}
+
 #' Simulate One Study 1 Data Set
 #'
 #' Generates data from a constant-slope random-intercept model and then applies
@@ -1204,3 +1246,5 @@ study1_binomial_mcse <- function(proportion, n) {
 
   sqrt(proportion * (1 - proportion) / n)
 }
+
+

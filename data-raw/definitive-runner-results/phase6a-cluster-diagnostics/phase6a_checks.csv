@@ -1,0 +1,14 @@
+"check","passed","details"
+"sleepstudy_pre_model_cluster_count",TRUE,"Observed 18"
+"sleepstudy_pre_model_observation_count",TRUE,"Observed 180"
+"sleepstudy_all_clusters_have_estimable_days_slope",TRUE,
+"pre_model_outputs_are_structured_not_recommendations",TRUE,
+"pre_model_plots_are_ggplot_objects",TRUE,"Plot count: 6"
+"post_fit_requested_method_rows_returned",TRUE,
+"post_fit_method_rows_have_complete_identity",TRUE,
+"post_fit_cluster_fits_cover_all_clusters",TRUE,
+"post_fit_observation_diagnostics_cover_all_rows",TRUE,
+"post_fit_outputs_are_structured_not_recommendations",TRUE,
+"post_fit_core_plots_are_ggplot_objects",TRUE,"Plot count: 6"
+"loo_has_method_by_cluster_rows",TRUE,"Observed rows: 16"
+"loo_plot_created",TRUE,

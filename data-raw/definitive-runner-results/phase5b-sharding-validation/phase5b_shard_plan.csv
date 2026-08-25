@@ -1,0 +1,4 @@
+"shard_id","shard_index","replicate_start","replicate_end","shard_reps"
+"R0001-R0001",1,1,1,1
+"R0002-R0002",2,2,2,1
+"R0003-R0003",3,3,3,1

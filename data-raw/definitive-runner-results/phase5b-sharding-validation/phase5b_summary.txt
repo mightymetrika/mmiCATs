@@ -1,0 +1,12 @@
+Definitive simulation runner engineering: Phase 5B
+Deterministic shard/checkpoint/resume validation
+
+Checks passed: 12 of 12
+Study 1 full-method replicate equivalence: TRUE
+Study 1 full-method non-runtime summary equivalence: TRUE
+Study 1 first completed shard preserved on resume: TRUE
+Study 2 full-method replicate equivalence: TRUE
+Study 2 full-method non-runtime summary equivalence: TRUE
+Study 2 first completed shard preserved on resume: TRUE
+Disk guard passed: TRUE
+Mismatched checkpoint refusal passed: TRUE

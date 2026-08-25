@@ -1,0 +1,3 @@
+"study","total_reps","shard_size","shards","methods","replicate_results_match","summary_results_match","resume_preserved_first_shard"
+"study1",3,1,3,7,TRUE,TRUE,TRUE
+"study2",3,1,3,9,TRUE,TRUE,TRUE

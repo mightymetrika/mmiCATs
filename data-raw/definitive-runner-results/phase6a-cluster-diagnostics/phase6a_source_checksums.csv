@@ -1,0 +1,5 @@
+"source","path","md5"
+"diagnostic_functions","C:/Users/macks/Desktop/mmiCATs/R/cluster_diagnostics.R","3f8ebf90dce604d33ba87ecc4c4b0611"
+"description","C:/Users/macks/Desktop/mmiCATs/DESCRIPTION","8a7336747f732d68bebdbe1bab6d60e5"
+"tests","C:/Users/macks/Desktop/mmiCATs/tests/testthat/test-cluster-diagnostics.R","42064961c4d88d49c0eb08ea70e6f528"
+"validator","C:/Users/macks/Desktop/mmiCATs/data-raw/cluster_diagnostics_phase6a_validation.R","d0df811597d55d192cb1cde38a1d277d"

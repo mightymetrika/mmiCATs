@@ -1,0 +1,9 @@
+mmiCATs Phase 6A
+Pre-model and post-fit clustered-data diagnostic functions
+
+Checks passed: 13 of 13
+sleepstudy clusters: 18
+sleepstudy observations: 180
+Pre-model plot count: 6
+Post-fit plot count: 6
+Leave-one-cluster-out rows: 16

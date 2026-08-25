@@ -21,7 +21,8 @@ pwr_func_study1(
   methods = c("ri", "cr2", "cats", "cats_trunc", "cats_robust", "cats_robustbase",
     "robust_ri"),
   seed = NULL,
-  keep_replicates = FALSE
+  keep_replicates = FALSE,
+  replicate_seeds = NULL
 )
 }
 \arguments{
@@ -66,6 +67,10 @@ in predictor standard deviation units.}
 \item{seed}{Optional non-negative integer random-number seed.}
 
 \item{keep_replicates}{Logical; if \code{TRUE}, retain the replicate-level results.}
+
+\item{replicate_seeds}{Optional integer vector of length \code{reps} giving the
+exact random-number seed for each replication. This is intended for
+deterministic sharded execution. When supplied, \code{seed} must be \code{NULL}.}
 }
 \value{
 A list with three elements:

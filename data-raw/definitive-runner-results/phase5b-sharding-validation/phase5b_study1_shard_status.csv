@@ -1,0 +1,4 @@
+"condition_id","shard_id","shard_index","replicate_start","replicate_end","status","elapsed_sec","error"
+"P5B_S1","R0001-R0001",1,1,1,"complete",9.13228487968445,
+"P5B_S1","R0002-R0002",2,2,2,"complete",9.3937361240387,
+"P5B_S1","R0003-R0003",3,3,3,"complete",9.44171905517578,

@@ -39,6 +39,9 @@
 #'   `"cats_robustbase"`, and `"robust_ri"`.
 #' @param seed Optional non-negative integer random-number seed.
 #' @param keep_replicates Logical; if `TRUE`, retain the replicate-level results.
+#' @param replicate_seeds Optional integer vector of length `reps` giving the
+#'   exact random-number seed for each replication. This is intended for
+#'   deterministic sharded execution. When supplied, `seed` must be `NULL`.
 #'
 #' @return A list with three elements:
 #' \describe{
@@ -99,7 +102,8 @@ pwr_func_study1 <- function(
       "robust_ri"
     ),
     seed = NULL,
-    keep_replicates = FALSE) {
+    keep_replicates = FALSE,
+    replicate_seeds = NULL) {
   contamination <- match.arg(contamination)
 
   study1_validate_inputs(
@@ -121,15 +125,29 @@ pwr_func_study1 <- function(
     keep_replicates = keep_replicates
   )
 
-  if (!is.null(seed)) {
-    set.seed(seed)
+  replicate_seeds <- study_validate_replicate_seeds(
+    replicate_seeds = replicate_seeds,
+    reps = reps
+  )
+
+  if (!is.null(seed) && !is.null(replicate_seeds)) {
+    stop(
+      "seed must be NULL when replicate_seeds is supplied.",
+      call. = FALSE
+    )
   }
 
-  replicate_seeds <- sample.int(
-    .Machine$integer.max,
-    size = reps,
-    replace = FALSE
-  )
+  if (is.null(replicate_seeds)) {
+    if (!is.null(seed)) {
+      set.seed(seed)
+    }
+
+    replicate_seeds <- sample.int(
+      .Machine$integer.max,
+      size = reps,
+      replace = FALSE
+    )
+  }
 
   replicate_results <- lapply(seq_len(reps), function(replicate_id) {
     replicate_seed <- replicate_seeds[replicate_id]
@@ -204,4 +222,6 @@ pwr_func_study1 <- function(
     settings = settings
   )
 }
+
+
 

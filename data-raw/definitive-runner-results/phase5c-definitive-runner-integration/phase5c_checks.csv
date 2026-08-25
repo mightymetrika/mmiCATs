@@ -1,0 +1,28 @@
+"check","passed","details"
+"study1_canonical_7_method_schedule",TRUE,
+"study2_canonical_9_method_schedule",TRUE,
+"study1_2000_reps_frozen",TRUE,
+"study2_2000_reps_frozen",TRUE,
+"study1_seed_base_unchanged",TRUE,
+"study2_seed_base_unchanged",TRUE,
+"study1_shard_size_10",TRUE,
+"study2_shard_size_10",TRUE,
+"study1_disk_guard_2gb",TRUE,
+"study2_disk_guard_2gb",TRUE,
+"study1_uses_definitive_output_directory",TRUE,
+"study2_uses_definitive_output_directory",TRUE,
+"study1_sources_validated_sharding_helper",TRUE,
+"study2_sources_validated_sharding_helper",TRUE,
+"study1_calls_shard_engine",TRUE,
+"study2_calls_shard_engine",TRUE,
+"study1_recombines_before_summary",TRUE,
+"study2_recombines_before_summary",TRUE,
+"study1_temp_shard_cleanup_frozen",TRUE,
+"study2_temp_shard_cleanup_frozen",TRUE,
+"production_shard_plan_has_200_shards",TRUE,"Observed 200"
+"production_shard_plan_covers_1_to_2000_exactly_once",TRUE,
+"study1_cluster_count_seed_vectors_are_distinct",TRUE,
+"study2_cluster_count_seed_vectors_are_distinct",TRUE,
+"production_machine_free_space_is_measurable",TRUE,"Free GB: 6.76707"
+"production_machine_currently_clears_2gb_guard",TRUE,"Free GB: 6.76707"
+"matching_error_checkpoint_retries_successfully",TRUE,

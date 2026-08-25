@@ -1,0 +1,6 @@
+"method","estimate","std_error","df","p_value","conf_low","conf_high","fit_success","converged","singular","retained_clusters","estimated_random_intercept_sd","estimated_random_slope_sd","warning","optimizer_warning","optimizer_code","error","template_warning","template_error","cluster_warning_count","cluster_error_count","dropped_cluster_count","cluster_warning_ids","cluster_error_ids","dropped_cluster_ids","runtime_sec","method_order","method_label"
+"ri",0.12797824256974,0.0837314563473762,153.91936230861,0.12845657092994,-0.0374329358158366,0.293389420955316,TRUE,TRUE,FALSE,8,,,,,,,,,,,,,,,0.700000000000017,2,"Random intercept / KR"
+"cr2",0.11597471057222,0.0779063909825991,6.35022505910511,0.184475155683526,-0.0721356191523747,0.304085040296815,TRUE,,,8,,,,,,,,,,,,,,,0.00999999999999091,3,"OLS / CR2"
+"cats",0.139340675022579,0.0541652678462691,7,0.0368727145317159,0.011260169079272,0.267421180965885,TRUE,,,8,,,,,,,,,,,,,,,0.0600000000000023,4,"CATs"
+"cats_robust",0.121330253816266,0.0571043398542975,7,0.0712242334557819,-0.0137000530744024,0.256360560706934,TRUE,,,8,,,"Cluster : ",,,,,,0,0,0,,,,0.109999999999985,6,"Robust CATs: lmRob"
+"cats_robustbase",0.133915670170444,0.0544514061552361,7,0.0435060461158449,0.00515855464244425,0.262672785698444,TRUE,,,8,,,"Cluster : ",,,,,,0,0,0,,,,0.139999999999986,7,"Robust CATs: lmrob"
