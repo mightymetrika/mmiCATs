@@ -720,7 +720,7 @@ study3c_cross_dataset_plot <- function(comparison) {
       ggplot2::aes(xmin = conf_low, xmax = conf_high),
       orientation = "y",
       position = ggplot2::position_dodge(width = 0.5),
-      height = 0
+      width = 0
     ) +
     ggplot2::geom_point(position = ggplot2::position_dodge(width = 0.5)) +
     ggplot2::labs(

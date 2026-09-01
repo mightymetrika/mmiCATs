@@ -1,0 +1,13 @@
+mmiCATs Phase 6D corrected Study 3 equivalence audit
+Created: 2026-09-01 11:35:00 PDT
+Checks: 234
+Passed: 234
+Failed: 0
+
+Allowed differences:
+- runtime fields
+- phantom 'Cluster : ' warning -> missing when no genuine warning exists
+- lmRob robustness weights populated in corrected diagnostics
+- plots/checksums/session/source metadata affected by those documented changes
+
+Substantive numerical quantities are required to match within tolerance 1e-10.
