@@ -1003,14 +1003,18 @@ study1_fit_robust_cats <- function(
     nzchar(cluster_diagnostics$error)
   dropped_index <- !retained
 
-  cluster_warning <- study1_collapse_messages(
-    paste0(
-      "Cluster ",
-      cluster_diagnostics$cluster[warning_index],
-      ": ",
-      cluster_diagnostics$warning[warning_index]
+  cluster_warning <- if (any(warning_index)) {
+    study1_collapse_messages(
+      paste0(
+        "Cluster ",
+        cluster_diagnostics$cluster[warning_index],
+        ": ",
+        cluster_diagnostics$warning[warning_index]
+      )
     )
-  )
+  } else {
+    NA_character_
+  }
 
   list(
     estimate = estimate,
@@ -1246,5 +1250,3 @@ study1_binomial_mcse <- function(proportion, n) {
 
   sqrt(proportion * (1 - proportion) / n)
 }
-
-

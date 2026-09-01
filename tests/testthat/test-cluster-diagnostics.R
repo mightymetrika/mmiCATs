@@ -262,3 +262,100 @@ test_that("diagnostic specification rejects transformed or multiple-predictor fo
     "untransformed"
   )
 })
+
+test_that("cluster_diag_extract_weights recognizes lmRob M.weights", {
+  expected <- c(
+    1.0,
+    0.75,
+    0.25,
+    0.0
+  )
+
+  synthetic_fit <- list(
+    M.weights = expected
+  )
+
+  observed <- cluster_diag_extract_weights(
+    fit = synthetic_fit,
+    n = length(expected)
+  )
+
+  expect_equal(
+    observed,
+    expected
+  )
+})
+
+
+test_that("cluster_diag_extract_weights returns real lmRob MM weights", {
+  set.seed(1006)
+
+  dat <- data.frame(
+    y = rnorm(80),
+    x = rnorm(80)
+  )
+
+  fit <- robust::lmRob(
+    y ~ x,
+    data = dat
+  )
+
+  expected <- fit[[
+    "M.weights"
+  ]]
+
+  expect_true(
+    is.numeric(expected)
+  )
+
+  expect_equal(
+    length(expected),
+    nrow(dat)
+  )
+
+  observed <- cluster_diag_extract_weights(
+    fit = fit,
+    n = nrow(dat)
+  )
+
+  expect_equal(
+    observed,
+    as.numeric(expected)
+  )
+
+  expect_true(
+    any(
+      is.finite(observed)
+    )
+  )
+})
+
+
+test_that("method-comparison diagnostic plot builds without orientation translation messages", {
+  set.seed(1007)
+
+  dat <- data.frame(
+    y = rnorm(80),
+    x = rnorm(80),
+    id = rep(
+      seq_len(8),
+      each = 10
+    )
+  )
+
+  out <- cluster_model_diagnostics(
+    y ~ x,
+    ~ id,
+    dat,
+    methods = "cr2",
+    seed = 1008L,
+    leave_one_cluster_out = FALSE
+  )
+
+  expect_silent(
+    ggplot2::ggplot_build(
+      out$plots$method_comparison
+    )
+  )
+})
+

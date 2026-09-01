@@ -1,0 +1,181 @@
+mmiCATs Study 3 — Phase 6D Post-Results Diagnostic and Reproducibility Amendment
+Date: 2026-08-26
+Status: POST-RESULTS AMENDMENT
+
+PURPOSE
+-------
+This amendment was created after the original Study 3 comparative results were
+generated and inspected. It must not be described as prespecified.
+
+The original Study 3 analysis completed on 2026-08-25 and remains preserved in:
+
+  data-raw/study3-results/definitive-study3/
+
+The original Phase 6B pre-results freeze also remains unchanged in:
+
+  data-raw/study3-results/pre-results-freeze/
+
+No original Study 3 result or Phase 6B frozen input should be overwritten by
+the work described here.
+
+WHY AN AMENDMENT IS REQUIRED
+----------------------------
+Review of the completed Study 3 diagnostic output identified three
+diagnostic/reporting implementation defects. None was identified because a
+particular statistical method produced a favorable or unfavorable substantive
+result. In addition, the project reproducibility architecture is being
+consolidated so manuscript results can be reproduced through package functions
+rather than long project-only scripts.
+
+CORRECTION 1 — EMPTY ROBUST CATs WARNING STRING
+------------------------------------------------
+The robust-CATs result aggregator can currently return the literal warning:
+
+  "Cluster : "
+
+when no cluster-specific warning exists.
+
+The cluster warning count correctly remains zero in these cases, showing that
+the string is a formatting/aggregation defect rather than a model warning.
+
+Correction:
+- return NA_character_ when no cluster-specific warning is present;
+- retain genuine cluster ID + warning text when a real warning occurs.
+
+This correction is not permitted to change estimates, standard errors,
+degrees of freedom, p-values, confidence intervals, fit success, retained
+clusters, or cluster error/drop classifications.
+
+CORRECTION 2 — robust::lmRob() MM WEIGHT EXTRACTION
+---------------------------------------------------
+The diagnostic weight extractor did not inspect the M.weights component used
+by robust::lmRob() for final MM robustness weights. As a result, lmRob
+observation-level diagnostic weights were returned as missing and the
+corresponding Study 3 diagnostic plots dropped those rows.
+
+Correction:
+- recognize fit[["M.weights"]] as a valid robust-weight source;
+- preserve the existing robustbase weight extraction behavior.
+
+This is an observation-level diagnostic correction only. It is not permitted
+to change fitted model estimates or inference.
+
+CORRECTION 3 — ggplot HORIZONTAL ERROR-BAR ARGUMENT
+---------------------------------------------------
+The current plotting code supplies height = 0 to geom_errorbar() with
+orientation = "y". Current ggplot2 reports that height is translated to width.
+
+Correction:
+- use width = 0 for the horizontal error-bar geometry.
+
+This is a plot-construction correction only and is not permitted to alter
+statistical results.
+
+REPRODUCIBILITY ARCHITECTURE CONSOLIDATION
+------------------------------------------
+The statistical engines already reside in the mmiCATs package R/ directory,
+but manuscript orchestration accumulated substantial logic under data-raw/
+while deterministic sharding, checkpoint/resume behavior, and Study 3
+execution were being developed and validated.
+
+The final reproducibility architecture will enforce:
+
+  No manuscript result may depend on substantive computational logic that
+  exists only in a data-raw runner script.
+
+Result-producing logic will be migrated into package functions under R/.
+data-raw scripts may remain as thin project-specific entry points that specify
+paths/configuration and call package functions.
+
+The migration must preserve all previously validated scientific behavior,
+including seeds, method order, sharding, checkpoint semantics, inferential
+rules, and Study 3 frozen inputs.
+
+NO SCIENTIFIC DESIGN CHANGES
+----------------------------
+This amendment does NOT change:
+- the Study 1 DGP;
+- the Study 2 DGP;
+- any Study 1 or Study 2 condition;
+- any method family;
+- method order;
+- Study 1 or Study 2 condition seeds;
+- replication seed-generation rules;
+- shard size;
+- checkpoint semantics;
+- contamination rules;
+- Study 3 selected observations;
+- Study 3 contamination signs;
+- Study 3 reference residual SD;
+- Study 3 six-SD displacement;
+- Study 3 analysis seed;
+- Study 3 random-effects specifications;
+- CR2/Satterthwaite inference;
+- Kenward-Roger inference;
+- robustlmm DAStau/RSEn specification;
+- convergence/boundary rules;
+- the no-rescue rule.
+
+ORIGINAL STUDY 3 REAL WARNINGS TO PRESERVE
+------------------------------------------
+The original observed robustbase CATs analysis recorded a genuine warning for
+Subject 334:
+
+  M-step did NOT converge. Returning unconverged SM-estimate
+
+The original perturbed robustbase CATs analysis recorded a genuine warning for
+Subject 371 concerning find_scale() convergence.
+
+Both full-data analyses retained all 18 clusters and returned finite results.
+These warnings must remain in corrected output if the corrected code
+reproduces the same fits. They must not be suppressed simply to produce
+cleaner output.
+
+CORRECTED STUDY 3 OUTPUT
+------------------------
+Any Phase 6D-corrected Study 3 analysis must be written to a NEW directory,
+for example:
+
+  data-raw/study3-results/definitive-study3-phase6d-corrected/
+
+The original directory must remain untouched.
+
+Before corrected Study 3 results are accepted, an automated old-versus-new
+equivalence audit must require unchanged substantive quantities, including:
+- method identity/order;
+- estimate;
+- standard error;
+- degrees of freedom;
+- p-value;
+- confidence limits;
+- fit success;
+- convergence status;
+- singular/boundary status;
+- retained clusters;
+- random-effect SD estimates;
+- optimizer status;
+- real errors;
+- cluster error/drop counts;
+- leave-one-Subject-out estimates and estimate changes.
+
+Runtime is excluded from substantive equivalence.
+
+Allowed changes are limited to:
+- phantom "Cluster : " warning becoming NA when no real warning exists;
+- correct preservation of genuine warning text;
+- populated lmRob robustness-weight diagnostics;
+- plots reflecting those weights;
+- elimination of the ggplot height-to-width translation message;
+- checksums/session/source metadata that necessarily change because code changed.
+
+If any unexpected substantive quantity changes, Phase 6D must stop for review.
+
+NEXT GATE
+---------
+The diagnostic corrections must pass focused tests and the full package check.
+The subsequent Phase 6D architecture migration must then pass exact/non-runtime
+equivalence tests against the already validated Phase 5 runner behavior before
+the corrected Study 3 rerun is generated.
+
+Definitive Study 1 and Study 2 manuscript simulations remain blocked until
+Phase 6D and the final prospective code-freeze/registration gate are complete.

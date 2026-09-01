@@ -892,7 +892,7 @@ cluster_model_diagnostics <- function(
           xmin = conf_low,
           xmax = conf_high
         ),
-        height = 0,
+        width = 0,
         orientation = "y"
       ) +
       ggplot2::geom_point() +
@@ -1526,6 +1526,8 @@ cluster_diag_extract_weights <- function(
   }
 
   candidates <- list(
+    # robust::lmRob() stores final MM robustness weights here.
+    fit[["M.weights"]],
     tryCatch(
       stats::weights(fit),
       error = function(e) NULL

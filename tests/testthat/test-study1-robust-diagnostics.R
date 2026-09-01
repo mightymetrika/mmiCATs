@@ -224,3 +224,120 @@ test_that("robust CATs replicate results retain cluster diagnostics", {
     result$replicates$retained_clusters
   )
 })
+
+test_that("robust CATs does not create a phantom warning when clusters are clean", {
+  dat <- study1_simulate_data(
+    n_clusters = 4,
+    cluster_size = 20,
+    beta = 0.10,
+    intercept = 0,
+    random_intercept_sd = 1,
+    residual_sd = 1,
+    x_sd = 1,
+    contamination = "none",
+    contamination_prop = 0.05,
+    contamination_size = 6,
+    leverage_size = 4
+  )
+
+  clean_fit <- function(formula, data, engine) {
+    stats::lm(
+      formula = formula,
+      data = data
+    )
+  }
+
+  observed <- study1_fit_robust_cats(
+    dat = dat,
+    alpha = 0.05,
+    engine = "robust",
+    fit_function = clean_fit
+  )
+
+  expect_true(is.na(observed$warning))
+  expect_equal(observed$cluster_warning_count, 0L)
+  expect_true(is.na(observed$cluster_warning_ids))
+  expect_false(
+    identical(
+      observed$warning,
+      "Cluster : "
+    )
+  )
+})
+
+
+test_that("robust CATs preserves a genuine retained-cluster warning", {
+  dat <- study1_simulate_data(
+    n_clusters = 4,
+    cluster_size = 20,
+    beta = 0.10,
+    intercept = 0,
+    random_intercept_sd = 1,
+    residual_sd = 1,
+    x_sd = 1,
+    contamination = "none",
+    contamination_prop = 0.05,
+    contamination_size = 6,
+    leverage_size = 4
+  )
+
+  controlled_fit <- function(formula, data, engine) {
+    cluster_ids <- unique(
+      as.character(
+        data$cluster
+      )
+    )
+
+    if (
+      length(cluster_ids) == 1L &&
+      identical(
+        cluster_ids,
+        "2"
+      )
+    ) {
+      warning(
+        "Synthetic retained cluster warning."
+      )
+    }
+
+    stats::lm(
+      formula = formula,
+      data = data
+    )
+  }
+
+  observed <- study1_fit_robust_cats(
+    dat = dat,
+    alpha = 0.05,
+    engine = "robust",
+    fit_function = controlled_fit
+  )
+
+  expect_equal(
+    observed$cluster_warning_count,
+    1L
+  )
+
+  expect_equal(
+    observed$cluster_warning_ids,
+    "2"
+  )
+
+  expect_match(
+    observed$warning,
+    "Cluster 2: Synthetic retained cluster warning.",
+    fixed = TRUE
+  )
+
+  expect_equal(
+    observed$retained_clusters,
+    4L
+  )
+
+  expect_true(
+    is.finite(
+      observed$estimate
+    )
+  )
+})
+
