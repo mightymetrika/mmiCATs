@@ -1,0 +1,504 @@
+mmiCATs DEFINITIVE STUDY 1/2 PROSPECTIVE PROTOCOL
+DRAFT FOR PHASE 7 REVIEW — NOT YET THE REGISTERED/APPROVED COPY
+Date: 2026-09-02
+Project: mmiCATs / robust cluster-adjusted t-statistics manuscript
+Primary journal target: Methodology
+
+======================================================================
+1. STATUS, PURPOSE, AND TRANSPARENCY
+======================================================================
+
+This document prospectively specifies the definitive manuscript-version
+simulations for Study 1 and Study 2. It is intentionally created after earlier
+calibration studies, developmental simulations, implementation audits,
+numerical-validation runs, sharding pilots, robust-mixed-model pilots, and the
+Study 3 empirical illustration were conducted and inspected.
+
+The project therefore must NOT describe this protocol as a preregistration of
+the original research program or as having been written before all preliminary
+results were observed. It is a prospectively registered protocol for the
+definitive manuscript-version Study 1 and Study 2 reruns, transparently informed
+by the earlier design-development evidence.
+
+No definitive Study 1 or Study 2 manuscript-version simulation may begin until:
+1. the final source state has passed the completed software-verification gates;
+2. the exact manuscript-version source state has been committed and pushed;
+3. the prospective source-freeze bundle has been generated and verified;
+4. this protocol and its accompanying registration manifest/freeze records have
+   been archived in the external pre-results registration; and
+5. the permanent registration location has been recorded in the project gate.
+
+Earlier Study 1/2 simulation, calibration, numerical-validation, and runtime
+pilot results remain development evidence and will not be mixed into the
+definitive manuscript results.
+
+======================================================================
+2. STUDY PROGRAM AND COMMON PRINCIPLES
+======================================================================
+
+The manuscript contains:
+- Study 1: random-intercept simulation with constant population slope across
+  clusters.
+- Study 2: random-intercept/random-slope simulation with genuine
+  cluster-to-cluster slope heterogeneity.
+- Study 3: empirical illustration using lme4::sleepstudy, handled under its
+  separate prospective empirical plan and preserved Phase 6B freeze.
+
+Studies 1 and 2 compare conventional mixed models, robust mixed models,
+OLS/CR2, ordinary CATs, truncated CATs, and robust CATs. Truncated CATs is
+retained as a prespecified negative-control/comparison method.
+
+No method will be added, removed, tuned, rescued, or selected on the basis of
+the definitive comparative results.
+
+Common two-sided alpha:
+  0.05
+
+======================================================================
+3. STUDY 1 — FROZEN DESIGN
+======================================================================
+
+Data-generating structure:
+  out = intercept + beta * x + random_intercept + residual
+
+Frozen values:
+- clusters, G: 10, 20, 40
+- observations per cluster: 40
+- population slope beta: 0, 0.10
+- fixed intercept: 0
+- random-intercept SD: 1
+- predictor SD: 1
+- residual SD: 1
+- contamination proportion: exactly 0.05 within each cluster
+- attempted replications: 2,000 per condition
+- conditions: 18
+
+Contamination regimes:
+1. Clean: no contamination.
+2. Vertical: two of 40 observations per cluster; predictor unchanged; outcome
+   displaced by 6 residual SDs with the prespecified symmetric sign mechanism.
+3. Bad leverage: two of 40 observations per cluster; predictor set to the
+   prespecified extreme magnitude of 4 predictor SDs and outcome displacement
+   governed by the frozen 0.375 residual-SD bad-leverage rule.
+
+Primary estimand:
+  beta, the common population slope.
+
+Study 1 method order:
+1. ri               Conventional random-intercept LMM / Kenward-Roger
+2. cr2              OLS / CR2 / Satterthwaite
+3. cats             Ordinary CATs
+4. cats_trunc       Truncated CATs
+5. cats_robust      Robust CATs using robust::lmRob()
+6. cats_robustbase  Robust CATs using robustbase::lmrob()
+7. robust_ri        Robust random-intercept LMM / robust Satterthwaite
+
+======================================================================
+4. STUDY 2 — FROZEN DESIGN
+======================================================================
+
+Data-generating structure:
+  out = intercept + random_intercept +
+        (beta + random_slope) * x + residual
+
+Frozen values:
+- clusters, G: 10, 20, 40
+- observations per cluster: 40
+- population mean slope beta: 0, 0.10
+- fixed intercept: 0
+- random-intercept SD: 1
+- random-slope SD: 0.05, 0.10
+- intercept-slope covariance: 0
+- predictor SD: 1
+- residual SD: 1
+- contamination regimes: clean and vertical
+- vertical contamination proportion: exactly 0.05 within each cluster
+- vertical outcome displacement: 6 residual SDs
+- attempted replications: 2,000 per condition
+- conditions: 24
+
+Primary estimand:
+  beta, the superpopulation mean cluster slope.
+
+The realized sample mean cluster slope and realized random-slope SD are
+diagnostics, not the statistical truth used for bias/RMSE/coverage.
+
+Study 2 method order:
+1. rs               Conventional independent random-slope LMM / Kenward-Roger
+2. ri               Conventional random-intercept LMM / Kenward-Roger
+3. cr2              OLS / CR2 / Satterthwaite
+4. cats             Ordinary CATs
+5. cats_trunc       Truncated CATs
+6. cats_robust      Robust CATs using robust::lmRob()
+7. cats_robustbase  Robust CATs using robustbase::lmrob()
+8. robust_ri        Robust random-intercept LMM / robust Satterthwaite
+9. robust_rs        Robust independent random-slope LMM / robust Satterthwaite
+
+Study 2 computational-adequacy criterion:
+- at least 1,900 usable results among 2,000 attempted replications for every
+  method-condition combination.
+- a cell below this threshold triggers documented diagnostic review rather than
+  replacement simulations, tuning changes, or silent method substitution.
+
+======================================================================
+5. FROZEN ESTIMATION AND INFERENCE
+======================================================================
+
+Conventional random-intercept model:
+  out ~ x + (1 | cluster)
+
+Conventional independent random-slope model:
+  out ~ x + (1 + x || cluster)
+
+Conventional mixed-model estimation/inference:
+- lmerTest::lmer()
+- REML = TRUE
+- package-default lme4 optimizer/control settings
+- Kenward-Roger coefficient degrees of freedom
+- t-based 95% confidence intervals
+
+OLS/CR2:
+- stats::lm(out ~ x)
+- CR2 variance
+- Satterthwaite coefficient inference and confidence intervals
+
+Ordinary/truncated CATs:
+- verified production implementation
+- retained-cluster mean slope
+- t reference with df = retained clusters - 1
+
+Robust CATs:
+- robust::lmRob() or robustbase::lmrob() within clusters using package defaults
+- audited CATs aggregation/inference after cluster-level robust fits
+- no robust-engine substitution or fallback
+
+Robust mixed models:
+- robustlmm::rlmer()
+- method = "DAStau"
+- setting = "RSEn"
+- no customized robustness functions, tuning constants, optimizer rescue, or
+  alternate robust setting
+- fixed-effect inference from summary(fit, df = "satterthwaite")
+- robustlmm default covariance
+- t-based Wald 95% confidence interval
+
+Study 1 robust mixed formula:
+  out ~ x + (1 | cluster)
+
+Study 2 robust random-intercept formula:
+  out ~ x + (1 | cluster)
+
+Study 2 robust independent random-slope formula:
+  out ~ x + (1 + x || cluster)
+
+======================================================================
+6. CONVERGENCE, BOUNDARY, FAILURE, AND NO-RESCUE RULES
+======================================================================
+
+Conventional mixed models:
+- a fit error, missing focal coefficient, nonfinite required inference, or
+  genuine optimizer/convergence failure is a failed method result.
+- the standard boundary-singularity message alone is not a convergence failure.
+- a finite, otherwise converged boundary-singular fit remains in the primary
+  analysis and is flagged separately.
+- conventional singularity uses the verified 1e-4 tolerance.
+
+Robust mixed models:
+- a fit is usable only when robustlmm returns a fit, processFit supplies a
+  finite convergence code equal to 0, and fixed-slope inference is complete and
+  finite.
+- robust boundary status is recorded using the validated theta/lower-bound rule
+  at tolerance 1e-4.
+- a converged finite robust boundary fit remains in the primary analysis.
+- warnings/messages do not automatically invalidate an otherwise usable fit.
+
+CR2:
+- OLS and requested CR2 extraction must succeed with finite estimate, SE, df,
+  p value, and CI, with SE > 0 and df > 0.
+
+CATs methods:
+- at least two retained cluster slopes are required and aggregate inference must
+  be finite.
+- robust-CATs warning-bearing cluster fits are retained when required
+  coefficients are finite; fitting errors, missing coefficients, and nonfinite
+  coefficients cause the affected cluster to be dropped under the verified
+  production rule.
+- retained-cluster counts determine CATs degrees of freedom.
+
+No-rescue rule:
+- failed fits are not replaced.
+- no alternate optimizer, RSEa refit, alternate robust setting, fallback
+  variance estimator, or robust-engine substitution is used after a failure.
+- method-specific usable denominators and failure rates are reported.
+
+======================================================================
+7. PERFORMANCE MEASURES
+======================================================================
+
+Primary simulation summaries, as applicable:
+- mean estimate
+- bias
+- RMSE
+- Type I error under beta = 0
+- power/rejection rate under beta = 0.10
+- 95% confidence-interval coverage
+- average confidence-interval width
+
+Secondary diagnostics include:
+- empirical SD
+- mean reported SE
+- mean SE / empirical SD
+- usable-result and failure rates
+- warnings/errors/messages
+- conventional singular-fit rates
+- robust boundary-fit rates
+- estimated variance-component/SD diagnostics
+- robust mixed-model residual/random-effect weight summaries
+- robust CATs warning/error/dropped/retained-cluster diagnostics
+- runtime as descriptive computational information
+- Monte Carlo SEs for binomial performance measures
+
+Boundary behavior is a prespecified method-performance outcome, not a reason to
+exclude a method.
+
+======================================================================
+8. DETERMINISTIC RANDOM-NUMBER DESIGN
+======================================================================
+
+The definitive simulation uses common random numbers within cluster-count
+blocks.
+
+Study 1 condition seed blocks:
+- G = 10: 20260815
+- G = 20: 20260816
+- G = 40: 20260817
+
+All six Study 1 conditions with a given G use the same 2,000-replication seed
+vector.
+
+Study 2 condition seed blocks:
+- G = 10: 20260905
+- G = 20: 20260906
+- G = 40: 20260907
+
+All eight Study 2 conditions with a given G use the same 2,000-replication seed
+vector.
+
+For every cluster-count block, the exact replication seed vector is generated
+monolithically as:
+
+  set.seed(condition_seed)
+  sample.int(
+    .Machine$integer.max,
+    2000,
+    replace = FALSE
+  )
+
+The prospective freeze archives the complete six 2,000-replication seed vectors
+and validates them against this deterministic rule.
+
+Method-specific seeds are derived deterministically from each replication seed
+using the already-validated package implementation so method results remain
+reproducible and invariant to requested method order.
+
+The freeze records RNGkind() and the relevant R/software environment. The RNG
+state of the caller is restored after seed-vector construction during freeze
+preparation.
+
+======================================================================
+9. SHARDING, CHECKPOINTS, RESUME, AND DISK RULES
+======================================================================
+
+Production shard size:
+  10 replications
+
+Shards per 2,000-replication condition:
+  200
+
+Rules:
+- sharding receives the exact frozen subset of the monolithic 2,000-rep seed
+  vector; shards do not regenerate shorter seed vectors.
+- each shard checkpoint records condition ID, shard ID, replicate range,
+  replication seeds, method schedule, status, timing, and fitting output.
+- completed compatible shard checkpoints are reused.
+- an existing checkpoint that does not match the frozen condition/shard/seeds/
+  method specification is refused rather than silently reused.
+- a matching error checkpoint may be retried using the exact same frozen
+  specification; this is recovery from interrupted/failed computation, not
+  replacement of a failed method fit.
+- atomic write/replace logic is used for restartable artifacts.
+- before a new shard begins, at least 2 GB free disk space must be verified.
+  Failure to determine free disk space stops new work.
+- after a complete condition checkpoint has been written and verified,
+  temporary completed shard files may be removed under the frozen
+  retain_completed_shards = FALSE rule to limit disk use.
+- complete condition checkpoints are the durable simulation artifacts.
+
+The definitive runs are serial/local unless a separately documented prospective
+amendment changes execution scheduling without changing scientific results.
+
+======================================================================
+10. COMPLETED SOFTWARE-VERIFICATION HISTORY
+======================================================================
+
+Before this prospective protocol, the project completed the structured
+mmiCATs/clusterSEs source review, independent robust CATs numerical/source
+audits, robust mixed-model specification/production validation, deterministic
+seed/sharding validation, definitive-runner integration, and Phase 6D package
+architecture consolidation.
+
+Phase 6D also documented and corrected Study 3 diagnostic/reporting defects
+without changing the Study 1/2 scientific designs. The corrected Study 3
+old-versus-new substantive equivalence audit passed, and the active package
+architecture now places substantive manuscript computation under R/ package
+functions.
+
+These completed audits are part of the design-development history. They do not
+convert earlier preliminary simulation results into prospective evidence.
+
+The final prospective gate additionally requires:
+- complete package tests and R CMD/devtools check from the final source state;
+- exact source checksums;
+- exact package/source versions;
+- exact Git commit and upstream verification;
+- clean worktree before freeze creation;
+- frozen Study 1/2 designs and method schedules;
+- complete seed vectors and shard plan;
+- session information;
+- the registration manifest generated from the exact committed source state.
+
+No unresolved potentially result-altering implementation discrepancy may remain
+when the definitive run begins.
+
+======================================================================
+11. SOURCE FREEZE AND EXTERNAL REGISTRATION PROCEDURE
+======================================================================
+
+The registration is intentionally a two-step gate so the exact Git commit can
+be included in the externally archived materials without creating a
+self-referential commit problem.
+
+Step 1 — final source state
+- Finish all Phase 7 code, tests, documentation, and this protocol.
+- Run the required focused tests and full package check.
+- Commit the exact manuscript-version source state.
+- Push it and verify that HEAD equals the configured upstream commit.
+- Ensure the worktree is clean.
+- Confirm that no definitive Study 1/2 output exists.
+
+Step 2 — source-freeze bundle
+- Run prepare_study12_freeze().
+- The function must fit no models and run no simulation replications.
+- It records the exact Git commit/upstream, package source checksums, protocol
+  checksum, package versions, R/session information, RNG kind, both frozen
+  designs, method order, condition seeds, all 12,000 replication seeds, the
+  200-shard plan, and prospective validation checks.
+- It creates a registration manifest containing the exact frozen Git commit.
+- The source freeze is immutable once FREEZE_COMPLETE.txt exists.
+- Study 1/2 remain blocked because registration is still pending.
+
+Step 3 — external prospective registration/archive
+- Archive/register at minimum:
+  * this protocol;
+  * study12_registration_manifest.txt;
+  * study12_git_record.csv;
+  * study12_source_checksums.csv;
+  * study12_package_versions.csv;
+  * study12_seed_blocks.csv;
+  * study12_replicate_seeds.csv or its checksummed RDS equivalent;
+  * study12_method_schedule.csv;
+  * study1_frozen_design.csv;
+  * study2_frozen_design.csv;
+  * study12_shard_plan.csv;
+  * study12_scientific_checks.csv;
+  * study12_frozen_artifact_checksums.csv;
+  * FREEZE_COMPLETE.txt.
+- The registration/archive must clearly predate the definitive Study 1 run.
+- Record the stable registration URL/DOI/identifier locally with
+  record_study12_registration().
+- REGISTRATION_COMPLETE.txt must exist and verify before a definitive runner is
+  allowed to start.
+
+REGISTRATION LOCATION:
+  TO BE COMPLETED ONLY AFTER THE PROSPECTIVE REGISTRATION IS CREATED.
+
+The final approved copy should retain the transparency statement in Section 1.
+
+======================================================================
+12. DEFINITIVE EXECUTION ORDER
+======================================================================
+
+1. Complete and verify source freeze.
+2. Complete external prospective registration and record it locally.
+3. Launch definitive Study 1 only.
+4. Allow Study 1 to run/resume from the exact frozen source state.
+5. When all Study 1 conditions are complete, secure and review its output and
+   validation/diagnostic records without changing the frozen Study 2 design.
+6. Proceed to definitive Study 2 according to the prespecified sequence.
+7. Do not launch Study 1 and Study 2 simultaneously unless an execution-only
+   protocol amendment is deliberately made before Study 2 begins.
+
+Planned default result directories:
+- Study 1:
+  data-raw/study1-results/definitive-study
+- Study 2:
+  data-raw/study2-results/definitive-study
+
+Development changes made while a long definitive simulation is running must
+occur outside the frozen simulation worktree/checkout used for the run.
+
+======================================================================
+13. CHANGE CONTROL AFTER REGISTRATION
+======================================================================
+
+After the prospective registration is complete, any change capable of altering:
+- data generation;
+- contamination;
+- condition definitions;
+- random-number generation or seed mapping;
+- method membership/order when it affects computation;
+- fitting;
+- inference;
+- convergence/boundary classification;
+- inclusion/exclusion;
+- failure handling;
+- checkpoint interpretation;
+- aggregation;
+- performance measures; or
+- reported scientific conclusions
+
+requires a documented protocol amendment before the affected definitive results
+are used. Affected batches/conditions must be rerun when the change can alter
+their numerical or inclusion results.
+
+Purely descriptive/cosmetic reporting changes that cannot alter a scientific
+quantity should be documented but do not automatically require simulation
+reruns.
+
+No unfavorable definitive result, high boundary rate, warning pattern, or
+method failure may be used as a reason for an unregistered rescue, method
+removal, method substitution, or tuning change.
+
+======================================================================
+14. FINAL APPROVAL CHECKLIST
+======================================================================
+
+Before renaming this draft as the approved prospective protocol:
+
+[ ] Phase 7A freeze infrastructure implemented.
+[ ] Phase 7B focused tests pass.
+[ ] Full devtools::check()/R CMD check passes with 0 errors, warnings, and notes
+    unless a newly reviewed non-result-altering project-specific exception is
+    explicitly documented.
+[ ] Final protocol text reviewed.
+[ ] Exact source state committed.
+[ ] Exact source state pushed.
+[ ] HEAD equals configured upstream commit.
+[ ] Worktree clean before source freeze.
+[ ] No definitive Study 1 output exists.
+[ ] No definitive Study 2 output exists.
+[ ] prepare_study12_freeze() completes and all prospective checks pass.
+[ ] Source-freeze bundle archived in the external prospective registration.
+[ ] Stable registration URL/DOI/identifier recorded.
+[ ] record_study12_registration() completes and full gate verification passes.
+[ ] Only then: launch run_study1_definitive().

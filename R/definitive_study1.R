@@ -249,6 +249,18 @@ run_study1_definitive <- function(
     mustWork = TRUE
   )
 
+  # The definitive manuscript-version simulation is prospectively gated.
+  # This verifies the immutable Study 1/2 source freeze, exact frozen source/Git
+  # state, package/RNG environment, and completed external pre-results
+  # registration before any output directory or shard can be created.
+  study12f_verify_gate(
+    project_root = project_root,
+    verify_current_source = TRUE,
+    verify_current_git = TRUE,
+    verify_package_versions = TRUE,
+    verify_rng = TRUE
+  )
+
   if (!requireNamespace("pbkrtest", quietly = TRUE)) {
     stop(
       paste(

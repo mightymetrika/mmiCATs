@@ -4,3 +4,6 @@
 .httr-oauth
 .DS_Store
 .quarto
+data-raw/study12-results/
+data-raw/study1-results/definitive-study/
+data-raw/study2-results/definitive-study/

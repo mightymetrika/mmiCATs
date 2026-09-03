@@ -8,6 +8,8 @@ test_that("all manuscript execution entry points are exported", {
       c(
         "run_study1_definitive",
         "run_study2_definitive",
+        "prepare_study12_freeze",
+        "record_study12_registration",
         "prepare_study3_empirical",
         "run_study3_empirical"
       ) %in% exports
@@ -22,6 +24,10 @@ test_that("package manuscript runners do not source project scripts", {
       run_study1_definitive,
     run_study2_definitive =
       run_study2_definitive,
+    prepare_study12_freeze =
+      prepare_study12_freeze,
+    record_study12_registration =
+      record_study12_registration,
     prepare_study3_empirical =
       prepare_study3_empirical,
     run_study3_empirical =
